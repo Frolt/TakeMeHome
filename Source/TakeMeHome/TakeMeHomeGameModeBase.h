@@ -13,5 +13,8 @@ UCLASS()
 class TAKEMEHOME_API ATakeMeHomeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+	ATakeMeHomeGameModeBase();
 	
 };
