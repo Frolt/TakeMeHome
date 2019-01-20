@@ -25,31 +25,23 @@ public:
 	void LookRight(float NormalizedRate);
 	void LookUp(float NormalizedRate);
 	void Zoom(float NormalizedRate);
-
-// 	void LookRightAtRate(float NormalizedRate);
-// 	void LookUpAtRate(float NormalizedRate);
-
-	/// Getters
-	USpringArmComponent *GetCameraBoom() const;
-	UCameraComponent *GetFollowCamera() const;
+	void LeftMouseButtonPressed();
+	void LeftMouseButtonReleased();
+	void RightMouseButtonPressed();
+	void RightMouseButtonReleased();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-		USpringArmComponent *CameraBoom = nullptr;
+	USpringArmComponent *CameraBoom = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-		UCameraComponent *FollowCamera = nullptr;
-
-// 	// Base turn rate, in deg/sec. Other scaling may affect final turn rate
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-// 		float BaseTurnRate = 45.0f;;
-// 	// Base look up/down rate, in deg/sec. Other scaling may affect final rate
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-// 		float BaseLookUpRate = 45.0f;;
+	UCameraComponent *FollowCamera = nullptr;
 	
 private:
-	bool bCanRotateCamera = false;		// not using atm
-	bool bCanRotateCharacter = false;	// not using atm
 	float MaxZoom = 1000.0f;
 	float MinZoom = 300.0f;
 	float ZoomStrength = 50.0f;
+
+	bool bIsLeftMouseButtonPressed = false;
+	bool bIsRightMouseButtonPressed = false;
+	FVector2D PrevMousePos;
 };

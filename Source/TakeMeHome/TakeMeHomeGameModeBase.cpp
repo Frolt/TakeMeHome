@@ -12,8 +12,8 @@ ATakeMeHomeGameModeBase::ATakeMeHomeGameModeBase()
 		DefaultPawnClass = UmirBPClass.Class;
 	}
 	// Sets default player controller
-	//static ConstructorHelpers::FClassFinder<APawn> UmirBPClass(TEXT("/Game/Blueprints/Umir_BP"));
-	//if (UmirBPClass.Succeeded()) {
-	//	DefaultPawnClass = UmirBPClass.Class;
-	//}
+	static ConstructorHelpers::FClassFinder<APlayerController> UmirPlayerControllerBPClass(TEXT("/Game/Blueprints/UmirPlayerController_BP"));
+	if (UmirBPClass.Succeeded()) {
+		PlayerControllerClass = UmirPlayerControllerBPClass.Class;
+	}
 }

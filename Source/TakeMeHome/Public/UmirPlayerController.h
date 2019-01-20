@@ -13,5 +13,6 @@ UCLASS()
 class TAKEMEHOME_API AUmirPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+		AUmirPlayerController();
 };

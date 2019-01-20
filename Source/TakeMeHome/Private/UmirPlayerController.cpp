@@ -2,3 +2,7 @@
 
 #include "UmirPlayerController.h"
 
+AUmirPlayerController::AUmirPlayerController()
+{
+	bShowMouseCursor = true;
+}

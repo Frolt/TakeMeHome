@@ -1,11 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Umir.h"
+#include "Engine/World.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 
 
 AUmir::AUmir()
@@ -18,20 +21,25 @@ AUmir::AUmir()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Custom
+	// Possessing
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoPossessAI = EAutoPossessAI::Disabled;
+
+	// Eye height
+	BaseEyeHeight = 90.0f;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->AirControl = 0.0f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 500.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->RelativeLocation.Z = BaseEyeHeight;
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -61,18 +69,16 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AUmir::LeftMouseButtonPressed);
+	PlayerInputComponent->BindAction("LeftMouseButton", IE_Released, this, &AUmir::LeftMouseButtonReleased);
+	PlayerInputComponent->BindAction("RightMouseButton", IE_Pressed, this, &AUmir::RightMouseButtonPressed);
+	PlayerInputComponent->BindAction("RightMouseButton", IE_Released, this, &AUmir::RightMouseButtonReleased);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUmir::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUmir::MoveRight);
-
 	PlayerInputComponent->BindAxis("LookRight", this, &AUmir::LookRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &AUmir::LookUp);
-
 	PlayerInputComponent->BindAxis("Zoom", this, &AUmir::Zoom);
-
-
-	//PlayerInputComponent->BindAxis("TurnRate", this, &AUmir::TurnAtRate); // Slow camera movement is diabled
-	//PlayerInputComponent->BindAxis("LookUpRate", this, &AUmir::LookUpAtRate); // Slow camera movement is diabled
 }
 
 void AUmir::MoveForward(float NormalizedRate)
@@ -105,43 +111,88 @@ void AUmir::MoveRight(float NormalizedRate)
 
 void AUmir::LookRight(float NormalizedRate)
 {
-	if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown(FKey("RightMouseButton"))) {
+	auto UmirPC = GetWorld()->GetFirstPlayerController();
+	check(UmirPC);
+
+	if (bIsRightMouseButtonPressed)
+	{
+		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+
 		AddControllerYawInput(NormalizedRate);
+		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
+	}
+	else if (bIsLeftMouseButtonPressed)
+	{
+		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+
+		CameraBoom->RelativeRotation.Yaw += NormalizedRate * -UmirPC->InputPitchScale;
+	}
+	else
+	{
+		UmirPC->bShowMouseCursor = true;
 	}
 }
 
 void AUmir::LookUp(float NormalizedRate)
 {
-	if (GetWorld()->GetFirstPlayerController()->IsInputKeyDown(FKey("RightMouseButton"))) {
-		AddControllerPitchInput(NormalizedRate);
+	auto UmirPC = GetWorld()->GetFirstPlayerController();
+	check(UmirPC);
+
+	if (bIsRightMouseButtonPressed)
+	{
+		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+
+		AddControllerPitchInput(-NormalizedRate);
+		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
+	}
+	else if (bIsLeftMouseButtonPressed)
+	{
+		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+
+		CameraBoom->RelativeRotation.Pitch = FMath::Clamp(CameraBoom->RelativeRotation.Pitch + NormalizedRate * -UmirPC->InputPitchScale, -89.0f, 89.0f);
+	}
+	else 
+	{
+		UmirPC->bShowMouseCursor = true;
 	}
 }
 
 void AUmir::Zoom(float NormalizedRate)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Zooming value is: %f"), NormalizedRate);
 	CameraBoom->TargetArmLength += NormalizedRate * ZoomStrength;
 	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength, MinZoom, MaxZoom);
 }
 
-//  void AUmir::LookRightAtRate(float NormalizedRate)
-//  {
-//  	// calculate delta for this frame from the rate information
-//  	AddControllerYawInput(NormalizedRate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-//  }
-//  
-//  void AUmir::LookUpAtRate(float NormalizedRate)
-//  {
-//  	// calculate delta for this frame from the rate information
-//  	AddControllerPitchInput(NormalizedRate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-//  }
-
-USpringArmComponent *AUmir::GetCameraBoom() const
+void AUmir::LeftMouseButtonPressed()
 {
-	return CameraBoom;
+	bIsLeftMouseButtonPressed = true;
+
+	auto UmirPC = GetWorld()->GetFirstPlayerController();
+	check(UmirPC);
+	UmirPC->bShowMouseCursor = false;
+	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
 }
 
-UCameraComponent *AUmir::GetFollowCamera() const
+void AUmir::LeftMouseButtonReleased()
 {
-	return FollowCamera;
+	bIsLeftMouseButtonPressed = false;
+}
+
+void AUmir::RightMouseButtonPressed()
+{
+	bIsRightMouseButtonPressed = true;
+
+	auto UmirPC = GetWorld()->GetFirstPlayerController();
+	check(UmirPC);
+	UmirPC->bShowMouseCursor = false;
+	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
+
+	auto ControllerRot = Controller->GetControlRotation();
+	auto CamRot = CameraBoom->RelativeRotation;
+	Controller->SetControlRotation(FRotator(CamRot.Pitch, CamRot.Yaw, ControllerRot.Roll));
+}
+
+void AUmir::RightMouseButtonReleased()
+{
+	bIsRightMouseButtonPressed = false;
 }
