@@ -8,6 +8,9 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class AStarfall;
+class AForcePush;
+class ATornado;
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ACharacter
@@ -29,6 +32,9 @@ public:
 	void LeftMouseButtonReleased();
 	void RightMouseButtonPressed();
 	void RightMouseButtonReleased();
+	void CastSpell1();
+	void CastSpell2();
+	void CastSpell3();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -44,4 +50,10 @@ private:
 	bool bIsLeftMouseButtonPressed = false;
 	bool bIsRightMouseButtonPressed = false;
 	FVector2D PrevMousePos;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	TSubclassOf<ATornado> TornadoBP;
+	TSubclassOf<AStarfall> StarfallBP;
+	TSubclassOf<AForcePush> ForcePushBP;
 };

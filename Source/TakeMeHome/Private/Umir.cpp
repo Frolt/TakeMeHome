@@ -9,10 +9,26 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Tornado.h"
+#include "Starfall.h"
+#include "ForcePush.h"
 
 
 AUmir::AUmir()
 {
+	// Enable this actor to tick
+	PrimaryActorTick.bCanEverTick = true;
+
+	// Find blueprint classes (Might do this in blueprint for soft referencing)
+	static ConstructorHelpers::FClassFinder<AStarfall> StarfallBPClass(TEXT("/Game/Blueprints/Starfall_BP"));
+	if (StarfallBPClass.Succeeded()) {
+		StarfallBP = StarfallBPClass.Class;
+	}	static ConstructorHelpers::FClassFinder<AForcePush> ForcePushBPClass(TEXT("/Game/Blueprints/ForcePush_BP"));
+	if (ForcePushBPClass.Succeeded()) {
+		ForcePushBP = ForcePushBPClass.Class;
+	}
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -32,7 +48,7 @@ AUmir::AUmir()
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.0f;
+	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -73,6 +89,9 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftMouseButton", IE_Released, this, &AUmir::LeftMouseButtonReleased);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Pressed, this, &AUmir::RightMouseButtonPressed);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Released, this, &AUmir::RightMouseButtonReleased);
+	PlayerInputComponent->BindAction("Spell1", IE_Pressed, this, &AUmir::CastSpell1);
+	PlayerInputComponent->BindAction("Spell2", IE_Pressed, this, &AUmir::CastSpell2);
+	PlayerInputComponent->BindAction("Spell3", IE_Pressed, this, &AUmir::CastSpell3);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUmir::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUmir::MoveRight);
@@ -195,4 +214,19 @@ void AUmir::RightMouseButtonPressed()
 void AUmir::RightMouseButtonReleased()
 {
 	bIsRightMouseButtonPressed = false;
+}
+
+void AUmir::CastSpell1()
+{
+	auto SpawnedActor = GetWorld()->SpawnActor<ATornado>(TornadoBP, GetActorLocation(), GetActorRotation());
+}
+
+void AUmir::CastSpell2()
+{
+	auto SpawnedActor = GetWorld()->SpawnActor<AStarfall>(StarfallBP, GetActorLocation(), GetActorRotation());
+}
+
+void AUmir::CastSpell3()
+{
+	auto SpawnedActor = GetWorld()->SpawnActor<AForcePush>(ForcePushBP, GetActorLocation(), GetActorRotation());
 }
