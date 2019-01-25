@@ -241,22 +241,22 @@ void AUmir::CastSpell1()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Tornado not found!"));
 	}
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(TornadoBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell2()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(StarfallBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Starfall)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell3()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(ForcePushBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Force_Push)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell4()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(LightningBoltBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Lightning_Bolt)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::HandleEscape()
