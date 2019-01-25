@@ -16,6 +16,7 @@
 #include "ForcePush.h"
 #include "LightningBolt.h"
 #include "Spellbook.h"
+#include "SpellBase.h"
 
 
 AUmir::AUmir()
@@ -65,7 +66,7 @@ void AUmir::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentHealth = MaxHealth;
+	CurrentHealth = 20;
 	SpellCircle->Activate();
 }
 
@@ -232,22 +233,30 @@ void AUmir::RightMouseButtonReleased()
 
 void AUmir::CastSpell1()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado)->Get(), GetActorLocation(), GetActorRotation());
+	if (SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Found Tornado"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Tornado not found!"));
+	}
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(TornadoBP, GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell2()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Starfall)->Get(), GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(StarfallBP, GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell3()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Force_Push)->Get(), GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(ForcePushBP, GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell4()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Lightning_Bolt)->Get(), GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(LightningBoltBP, GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::HandleEscape()

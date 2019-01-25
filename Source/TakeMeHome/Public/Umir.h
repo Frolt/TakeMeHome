@@ -13,6 +13,7 @@ class AForcePush;
 class ATornado;
 class ALightningBolt;
 class USpellBook;
+class ASpellBase;
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ACharacter
@@ -58,6 +59,17 @@ public:
 	// Spell book
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spell Book")
 	USpellBook *SpellBook = nullptr;
+
+	// Testing normal way of spawning spells
+	UPROPERTY(EditDefaultsOnly, Category = "Spells")
+		TSubclassOf<ASpellBase> TornadoBP;
+	UPROPERTY(EditDefaultsOnly, Category = "Spells")
+		TSubclassOf<ASpellBase> StarfallBP;
+	UPROPERTY(EditDefaultsOnly, Category = "Spells")
+		TSubclassOf<ASpellBase> ForcePushBP;
+	UPROPERTY(EditDefaultsOnly, Category = "Spells")
+		TSubclassOf<ASpellBase> LightningBoltBP;
+
 
 	// Spell bar TEST // TODO might make struct later
 

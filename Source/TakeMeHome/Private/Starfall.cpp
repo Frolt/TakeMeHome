@@ -36,13 +36,16 @@ void AStarfall::BeginPlay()
 
 void AStarfall::SpawnProjectile()
 {
-	auto Projectile = GetWorld()->SpawnActor<AStarfallProjectile>(StarfallProjectileBP, SpawnLocations[Index++], GetActorRotation() + ProjectileRotation);
-	Projectile->Force = ProjectileSpeed;
-
-	if (Index == SpawnLocations.Num())
+	if (Index + 1 < SpawnLocations.Num())
 	{
-		// Done spawning projectiles
-		GetWorldTimerManager().ClearAllTimersForObject(this);
-		Destroy();
+		auto Projectile = GetWorld()->SpawnActor<AStarfallProjectile>(StarfallProjectileBP, SpawnLocations[Index++], GetActorRotation() + ProjectileRotation);
+		Projectile->Force = ProjectileSpeed;
+
+		if (Index == SpawnLocations.Num())
+		{
+			// Done spawning projectiles
+			GetWorldTimerManager().ClearAllTimersForObject(this);
+			Destroy();
+		}
 	}
 }
