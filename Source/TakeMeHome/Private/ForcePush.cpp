@@ -19,14 +19,13 @@ AForcePush::AForcePush()
 	Cooldown = 0.0f;
 	StunDuration = 3.0f;
 	ElementType = EElement::E_None;
-	Owner = ESpellOwner::E_Umir;
+	Owner = ECharacterType::E_Umir;
 }
 
 void AForcePush::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!ensure(BoxComponent)) { return; }
 
 }
 
@@ -34,8 +33,10 @@ void AForcePush::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!ensure(BoxCollision)) { return; }
+
 	// Finds the X extent of the collision box
-	MaxRange = BoxComponent->GetScaledBoxExtent().X * 2.0f;
+	MaxRange = BoxCollision->GetScaledBoxExtent().X * 2.0f;
 
 	// Scans the collision box for actor and applies force
 	PushAllOverlappingActors(MaxRange);
@@ -43,9 +44,11 @@ void AForcePush::Tick(float DeltaTime)
 
 void AForcePush::PushAllOverlappingActors(float MaxRange)
 {
+	if (!ensure(BoxCollision)) { return; }
+
 	// Finds all overlapping primitive components
 	TArray<UPrimitiveComponent *> OverlappingActors;
-	BoxComponent->GetOverlappingComponents(OverlappingActors);
+	BoxCollision->GetOverlappingComponents(OverlappingActors);
 
 	// Calculates and applies force to all actors
 	for (auto element : OverlappingActors)
@@ -72,7 +75,7 @@ void AForcePush::PushAllOverlappingActors(float MaxRange)
 	// Spawn particle effect
 	auto SpawnRotation = GetActorRotation();
 	SpawnRotation.Pitch -= 90.0f;
-	auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystemPtr, GetActorLocation(), SpawnRotation, true);
+	auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ForcePushEffect, GetActorLocation(), SpawnRotation, true);
 
 	Destroy();
 }

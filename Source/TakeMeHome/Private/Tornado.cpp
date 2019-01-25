@@ -19,15 +19,17 @@ ATornado::ATornado()
 	Cooldown = 0.0f;
 	StunDuration = 3.0f;
 	ElementType = EElement::E_None;
-	Owner = ESpellOwner::E_Umir;
+	Owner = ECharacterType::E_Umir;
 }
 
 void ATornado::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!ensure(CapsuleComponent)) { return; }
-	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);
+	if (!ensure(CapsuleCollision)) { return; }
+
+	// Setup onOverlap event
+	CapsuleCollision->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);
 
 	// Set duration timer
 	FTimerHandle DurationTimer;
@@ -66,6 +68,7 @@ void ATornado::MoveAlongGround(float DeltaTime)
 
 void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!OtherActor->IsRootComponentMovable()) { return; }
 	// Lifts OtherActor into the air
 	auto NewPos = OtherActor->GetActorLocation();
 	NewPos.Z = GetActorLocation().Z + LiftHeight;
@@ -87,7 +90,9 @@ void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActo
 
 void ATornado::DurationExpired()
 {
-	CapsuleComponent->SetGenerateOverlapEvents(false);
+	if (!ensure(CapsuleCollision)) { return; }
+
+	CapsuleCollision->SetGenerateOverlapEvents(false);
 	auto Particle = FindComponentByClass<UParticleSystemComponent>();
 	Particle->SecondsBeforeInactive = 10.0f;
 	Particle->CustomTimeDilation = 2.0f;
@@ -106,12 +111,11 @@ void ATornado::DestroyActor()
 
 void ATornado::PutDown(UPrimitiveComponent *OtherComponent, bool bHadPhysics)
 {
-	if (ensure(OtherComponent))
+	if (!ensure(OtherComponent)) { return; }
+
+	if (bHadPhysics)
 	{
-		if (bHadPhysics)
-		{
-			OtherComponent->SetSimulatePhysics(true);
-		}
-		OtherComponent->SetEnableGravity(true);
+		OtherComponent->SetSimulatePhysics(true);
 	}
+	OtherComponent->SetEnableGravity(true);
 }

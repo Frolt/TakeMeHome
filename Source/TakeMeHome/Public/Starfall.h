@@ -7,6 +7,7 @@
 #include "Starfall.generated.h"
 
 class AStaticMeshActor;
+class AStarfallProjectile;
 
 /**
  * 
@@ -19,17 +20,16 @@ class TAKEMEHOME_API AStarfall : public ASpellBase
 public:
 	AStarfall();
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 
 	void SpawnProjectile();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell setup")
-	TSubclassOf<AStaticMeshActor> TestBP;
+	TSubclassOf<AStarfallProjectile> StarfallProjectileBP;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
-	int NumOfProjectiles = 5;
+	int32 NumOfProjectiles = 5;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float SpawnHeight = 500.0f;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
@@ -38,6 +38,11 @@ private:
 	float FirstSpawnDelay = 0.0f;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float SpawnTimeInterval = 0.2f;
-	int Index = 0.0f;
+	UPROPERTY(EditAnywhere, Category = "Spell settings")
+	FRotator ProjectileRotation = FRotator(-80.0f, 0.0f, 0.0f);
+	UPROPERTY(EditAnywhere, Category = "Spell settings")
+	float ProjectileSpeed = 1000.0f;
+
+	int32 Index = 0.0f;
 	TArray<FVector> SpawnLocations;
 };

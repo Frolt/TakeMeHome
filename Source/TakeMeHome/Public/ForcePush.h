@@ -26,9 +26,9 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
-	UBoxComponent *BoxComponent = nullptr;
+	UBoxComponent *BoxCollision = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Spell setup")
-	UParticleSystem *ParticleSystemPtr;
+	UParticleSystem *ForcePushEffect;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")

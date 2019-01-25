@@ -34,7 +34,7 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
-	UCapsuleComponent *CapsuleComponent = nullptr;
+	UCapsuleComponent *CapsuleCollision = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")

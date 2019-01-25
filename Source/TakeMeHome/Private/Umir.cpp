@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/DecalComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -13,21 +14,14 @@
 #include "Tornado.h"
 #include "Starfall.h"
 #include "ForcePush.h"
+#include "LightningBolt.h"
+#include "Spellbook.h"
 
 
 AUmir::AUmir()
 {
 	// Enable this actor to tick
 	PrimaryActorTick.bCanEverTick = true;
-
-	// Find blueprint classes (Might do this in blueprint for soft referencing)
-	static ConstructorHelpers::FClassFinder<AStarfall> StarfallBPClass(TEXT("/Game/Blueprints/Starfall_BP"));
-	if (StarfallBPClass.Succeeded()) {
-		StarfallBP = StarfallBPClass.Class;
-	}	static ConstructorHelpers::FClassFinder<AForcePush> ForcePushBPClass(TEXT("/Game/Blueprints/ForcePush_BP"));
-	if (ForcePushBPClass.Succeeded()) {
-		ForcePushBP = ForcePushBPClass.Class;
-	}
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -62,22 +56,29 @@ AUmir::AUmir()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	// Create spellbook
+	SpellBook = CreateDefaultSubobject<USpellBook>(FName("Spell Book"));
+
 }
 
 void AUmir::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	CurrentHealth = MaxHealth;
+	SpellCircle->Activate();
 }
 
 void AUmir::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (!ensure(SpellCircle)) { return; }
 
+	if (SpellCircle->IsActive())
+	{
+		ShowDecalAtMousePosInWorld();
+	}
 }
 
 void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -92,6 +93,8 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Spell1", IE_Pressed, this, &AUmir::CastSpell1);
 	PlayerInputComponent->BindAction("Spell2", IE_Pressed, this, &AUmir::CastSpell2);
 	PlayerInputComponent->BindAction("Spell3", IE_Pressed, this, &AUmir::CastSpell3);
+	PlayerInputComponent->BindAction("Spell4", IE_Pressed, this, &AUmir::CastSpell4);
+	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &AUmir::HandleEscape);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUmir::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUmir::MoveRight);
@@ -133,15 +136,19 @@ void AUmir::LookRight(float NormalizedRate)
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
 
+	// Left button
 	if (bIsRightMouseButtonPressed)
 	{
+		// Lock mouse
 		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
 
 		AddControllerYawInput(NormalizedRate);
 		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
 	}
+	// Right button
 	else if (bIsLeftMouseButtonPressed)
 	{
+		// Lock mouse
 		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
 
 		CameraBoom->RelativeRotation.Yaw += NormalizedRate * -UmirPC->InputPitchScale;
@@ -157,15 +164,19 @@ void AUmir::LookUp(float NormalizedRate)
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
 
+	// Left button
 	if (bIsRightMouseButtonPressed)
 	{
+		// Lock mouse
 		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
 
 		AddControllerPitchInput(-NormalizedRate);
 		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
 	}
+	// Right button
 	else if (bIsLeftMouseButtonPressed)
 	{
+		// Lock mouse
 		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
 
 		CameraBoom->RelativeRotation.Pitch = FMath::Clamp(CameraBoom->RelativeRotation.Pitch + NormalizedRate * -UmirPC->InputPitchScale, -89.0f, 89.0f);
@@ -184,11 +195,12 @@ void AUmir::Zoom(float NormalizedRate)
 
 void AUmir::LeftMouseButtonPressed()
 {
-	bIsLeftMouseButtonPressed = true;
-
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
+
+	bIsLeftMouseButtonPressed = true;
 	UmirPC->bShowMouseCursor = false;
+	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
 }
 
@@ -199,13 +211,15 @@ void AUmir::LeftMouseButtonReleased()
 
 void AUmir::RightMouseButtonPressed()
 {
-	bIsRightMouseButtonPressed = true;
-
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
+
+	bIsRightMouseButtonPressed = true;
 	UmirPC->bShowMouseCursor = false;
+	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
 
+	// Sets player rotation to the camera, the camera rotation resets in LookRight/Left method
 	auto ControllerRot = Controller->GetControlRotation();
 	auto CamRot = CameraBoom->RelativeRotation;
 	Controller->SetControlRotation(FRotator(CamRot.Pitch, CamRot.Yaw, ControllerRot.Roll));
@@ -218,15 +232,67 @@ void AUmir::RightMouseButtonReleased()
 
 void AUmir::CastSpell1()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ATornado>(TornadoBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell2()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AStarfall>(StarfallBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Starfall)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell3()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AForcePush>(ForcePushBP, GetActorLocation(), GetActorRotation());
+	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Force_Push)->Get(), GetActorLocation(), GetActorRotation());
+}
+
+void AUmir::CastSpell4()
+{
+	auto SpawnedActor = GetWorld()->SpawnActor<AActor>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Lightning_Bolt)->Get(), GetActorLocation(), GetActorRotation());
+}
+
+void AUmir::HandleEscape()
+{
+	// Find out if a widget has focus
+	// Close it
+	// Repeat until all focused widgets are closed
+	// If no widget has focus check if player has active spell
+	// If so cancel the active state
+	// If none of above is the case open pause menu
+	
+}
+
+void AUmir::ShowDecalAtMousePosInWorld()
+{
+	if (!ensure(SpellCircle)) { return; }
+
+	// Find mouse world pos
+	FVector MouseLocation;
+	FVector MouseDirection;
+	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+
+	// linetrace to find ground
+	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * TargetRange);
+	FHitResult HitResult;
+	auto bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
+
+	// Set decal component pos here
+
+	if (bFoundGround)
+	{
+		SpellCircle->SetWorldLocation(HitResult.Location);
+	}
+	else
+	{
+		auto NewEndLocation = EndLocation + (FVector::UpVector * -1000000.0f);
+		auto bFoundGroundSecondTry = GetWorld()->LineTraceSingleByChannel(HitResult, EndLocation, NewEndLocation, ECC_Visibility);
+		if (bFoundGroundSecondTry)
+		{
+			SpellCircle->SetWorldLocation(HitResult.Location);
+		}
+	}
+}
+
+float AUmir::GetHealthPercentage() const
+{
+	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
 }

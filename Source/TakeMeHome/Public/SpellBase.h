@@ -23,5 +23,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float StunDuration = 0.0f;
 	EElement ElementType = EElement::E_None;
-	ESpellOwner Owner = ESpellOwner::E_Umir;
+	ECharacterType Owner = ECharacterType::E_Umir;
 };

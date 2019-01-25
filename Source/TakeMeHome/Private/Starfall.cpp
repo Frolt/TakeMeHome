@@ -4,11 +4,12 @@
 #include "Engine/World.h"
 #include "Engine/StaticMeshActor.h"
 #include "Engine/Public/TimerManager.h"
+#include "StarfallProjectile.h"
 
 
 AStarfall::AStarfall()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 
 }
@@ -17,35 +18,30 @@ void AStarfall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Find first spawn position above the player
 	auto InitLocation = GetActorLocation();
-	auto ForwardVector = GetActorForwardVector();
 	InitLocation.Z += SpawnHeight;
+	auto ForwardVector = GetActorForwardVector();
 	SpawnLocations.SetNum(NumOfProjectiles);
 
-	for (int i = 0; i < NumOfProjectiles; i++)
+	for (int32 i = 0; i < NumOfProjectiles; i++)
 	{
 		SpawnLocations[i] = InitLocation + (SpawnDelta * ForwardVector * i);
 	}
 
-	FTimerDelegate TimerDelegate;
+	// Fire timer based on SpawnTimeInterval
 	FTimerHandle TimerHandle;
-	//TimerDelegate.BindUFunction(this, FName("SpawnProjectile"), i);
-	//GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, SpawnInterval, false);
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AStarfall::SpawnProjectile, SpawnTimeInterval, true, FirstSpawnDelay);
-}
-
-void AStarfall::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-
 }
 
 void AStarfall::SpawnProjectile()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<AStaticMeshActor>(TestBP, SpawnLocations[Index++], GetActorRotation());
+	auto Projectile = GetWorld()->SpawnActor<AStarfallProjectile>(StarfallProjectileBP, SpawnLocations[Index++], GetActorRotation() + ProjectileRotation);
+	Projectile->Force = ProjectileSpeed;
+
 	if (Index == SpawnLocations.Num())
 	{
+		// Done spawning projectiles
 		GetWorldTimerManager().ClearAllTimersForObject(this);
 		Destroy();
 	}
