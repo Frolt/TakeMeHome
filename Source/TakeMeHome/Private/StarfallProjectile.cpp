@@ -31,8 +31,6 @@ void AStarfallProjectile::BeginPlay()
 
 void AStarfallProjectile::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OVERLAPPED: %s"), *OtherActor->GetName());
-
 	// Spawn particle effect
 	if (ProjectileContactParticle)
 	{

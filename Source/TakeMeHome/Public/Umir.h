@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "TakeMeHomeEnums.h"
+#include "Abilities.h"
 #include "Umir.generated.h"
 
 class USpringArmComponent;
@@ -14,6 +16,8 @@ class ATornado;
 class ALightningBolt;
 class USpellBook;
 class ASpellBase;
+class UUserDefinedStruct;
+class UTakeMeHomeGameInstance;
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ACharacter
@@ -26,7 +30,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Input methods
+	/// Input methods
 	void MoveForward(float NormalizedRate);
 	void MoveRight(float NormalizedRate);
 	void LookRight(float NormalizedRate);
@@ -42,6 +46,7 @@ public:
 	void CastSpell4();
 	void HandleEscape();
 
+	/// Others
 	void ShowDecalAtMousePosInWorld();
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
@@ -51,28 +56,25 @@ public:
 	USpringArmComponent *CameraBoom = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent *FollowCamera = nullptr;
-
-	// Decal
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	UDecalComponent *SpellCircle = nullptr;
-	
-	// Spell book
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spell Book")
-	USpellBook *SpellBook = nullptr;
-
-	// Testing normal way of spawning spells
-	UPROPERTY(EditDefaultsOnly, Category = "Spells")
-		TSubclassOf<ASpellBase> TornadoBP;
-	UPROPERTY(EditDefaultsOnly, Category = "Spells")
-		TSubclassOf<ASpellBase> StarfallBP;
-	UPROPERTY(EditDefaultsOnly, Category = "Spells")
-		TSubclassOf<ASpellBase> ForcePushBP;
-	UPROPERTY(EditDefaultsOnly, Category = "Spells")
-		TSubclassOf<ASpellBase> LightningBoltBP;
-
 
 	// Spell bar TEST // TODO might make struct later
+	// ---------------------------------------------------------------------------------------------------------
+	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
+	EOffensiveSpell OffensiveSpellActive1 = EOffensiveSpell::E_None;
+	EOffensiveSpell OffensiveSpellActive2 = EOffensiveSpell::E_None;
+	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_None;
+	EOffensiveSpell OffensiveSpellActive4 = EOffensiveSpell::E_None;
+	EPotion PotionActive = EPotion::E_None;
+	// ---------------------------------------------------------------------------------------------------------
 
+	// Aquired spells
+	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	TMap<EOffensiveSpell, FOffensiveSpell> AquiredOffensiveSpells;
+
+	// Game instance ref (Safe to use since game instance are never destroyed)
+	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")

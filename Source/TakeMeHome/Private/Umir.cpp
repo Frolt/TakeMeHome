@@ -17,6 +17,7 @@
 #include "LightningBolt.h"
 #include "Spellbook.h"
 #include "SpellBase.h"
+#include "TakeMeHomeGameInstance.h"
 
 
 AUmir::AUmir()
@@ -57,17 +58,24 @@ AUmir::AUmir()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Create spellbook
-	SpellBook = CreateDefaultSubobject<USpellBook>(FName("Spell Book"));
-
 }
 
 void AUmir::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Find game instance
+	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());
+
+	// Testing stuff
 	CurrentHealth = 20;
 	SpellCircle->Activate();
+
+	// Adding spells
+	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Tornado, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Tornado));
+	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Starfall, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
+	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Force_Push, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
+	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Lightning_Bolt, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
 }
 
 void AUmir::Tick(float DeltaSeconds)
@@ -233,30 +241,42 @@ void AUmir::RightMouseButtonReleased()
 
 void AUmir::CastSpell1()
 {
-	if (SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado))
+	if (OffensiveSpellActive1 != EOffensiveSpell::E_None)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found Tornado"));
+		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive1);
+		if (!ensure(Spell)) return;
+		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, GetActorLocation(), GetActorRotation());
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Tornado not found!"));
-	}
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Tornado)->Get(), GetActorLocation(), GetActorRotation());
 }
 
 void AUmir::CastSpell2()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Starfall)->Get(), GetActorLocation(), GetActorRotation());
+	if (OffensiveSpellActive2 != EOffensiveSpell::E_None)
+	{
+		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive2);
+		if (!ensure(Spell)) return;
+		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
+	}
 }
 
 void AUmir::CastSpell3()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Force_Push)->Get(), GetActorLocation(), GetActorRotation());
+	if (OffensiveSpellActive3 != EOffensiveSpell::E_None)
+	{
+		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive3);
+		if (!ensure(Spell)) return;
+		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
+	}
 }
 
 void AUmir::CastSpell4()
 {
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(SpellBook->OffensiveSpellClasses.Find(EOffensiveSpell::E_Lightning_Bolt)->Get(), GetActorLocation(), GetActorRotation());
+	if (OffensiveSpellActive4 != EOffensiveSpell::E_None)
+	{
+		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive4);
+		if (!ensure(Spell)) return;
+		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
+	}
 }
 
 void AUmir::HandleEscape()

@@ -39,7 +39,10 @@ void AStarfall::SpawnProjectile()
 	if (Index + 1 < SpawnLocations.Num())
 	{
 		auto Projectile = GetWorld()->SpawnActor<AStarfallProjectile>(StarfallProjectileBP, SpawnLocations[Index++], GetActorRotation() + ProjectileRotation);
-		Projectile->Force = ProjectileSpeed;
+		if (Projectile)
+		{
+			Projectile->Force = ProjectileSpeed;
+		}
 
 		if (Index == SpawnLocations.Num())
 		{
