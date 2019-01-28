@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "TakeMeHomeEnums.h"
-#include "Abilities.h"
+#include "TakeMeHomeStructs.h"
 #include "TakeMeHomeGameInstance.generated.h"
 
 /**

@@ -68,7 +68,8 @@ void AUmir::BeginPlay()
 	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());
 
 	// Testing stuff
-	CurrentHealth = 20;
+	CurrentHealth = 20.0f;
+	CurrentMana = 40.0f;
 	SpellCircle->Activate();
 
 	// Adding spells
@@ -76,6 +77,9 @@ void AUmir::BeginPlay()
 	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Starfall, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
 	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Force_Push, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
 	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Lightning_Bolt, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
+	// TODO add normal attacks
+	// TODO add defensive spells
+	// TODO add potions
 }
 
 void AUmir::Tick(float DeltaSeconds)
@@ -88,6 +92,12 @@ void AUmir::Tick(float DeltaSeconds)
 	{
 		ShowDecalAtMousePosInWorld();
 	}
+	// Passive regen TODO check if out of combat
+	if (true)
+	{
+		CurrentMana = FMath::Min(CurrentMana + PassiveManaRegenPerSecond * DeltaSeconds, MaxMana);
+		CurrentHealth = FMath::Min(CurrentHealth + PassiveHealthRegenPerSecond * DeltaSeconds, MaxHealth);
+	}
 }
 
 void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -99,11 +109,11 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftMouseButton", IE_Released, this, &AUmir::LeftMouseButtonReleased);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Pressed, this, &AUmir::RightMouseButtonPressed);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Released, this, &AUmir::RightMouseButtonReleased);
-	PlayerInputComponent->BindAction("Spell1", IE_Pressed, this, &AUmir::CastSpell1);
-	PlayerInputComponent->BindAction("Spell2", IE_Pressed, this, &AUmir::CastSpell2);
-	PlayerInputComponent->BindAction("Spell3", IE_Pressed, this, &AUmir::CastSpell3);
-	PlayerInputComponent->BindAction("Spell4", IE_Pressed, this, &AUmir::CastSpell4);
-	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &AUmir::HandleEscape);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell1", IE_Pressed, this, &AUmir::CastOffensiveSpell1);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell2", IE_Pressed, this, &AUmir::CastOffensiveSpell2);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell3", IE_Pressed, this, &AUmir::CastOffensiveSpell3);
+	PlayerInputComponent->BindAction("ActivateDefensiveSpell", IE_Pressed, this, &AUmir::CastDefensiveSpell);
+	PlayerInputComponent->BindAction("ActivatePotion", IE_Pressed, this, &AUmir::UsePotion);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUmir::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUmir::MoveRight);
@@ -142,14 +152,18 @@ void AUmir::MoveRight(float NormalizedRate)
 
 void AUmir::LookRight(float NormalizedRate)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Mouse delta: %f"), NormalizedRate);
+
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
 
 	// Left button
 	if (bIsRightMouseButtonPressed)
 	{
-		// Lock mouse
-		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		if (bShouldLockMouse)
+		{
+			UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		}
 
 		AddControllerYawInput(NormalizedRate);
 		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
@@ -157,8 +171,10 @@ void AUmir::LookRight(float NormalizedRate)
 	// Right button
 	else if (bIsLeftMouseButtonPressed)
 	{
-		// Lock mouse
-		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		if (bShouldLockMouse)
+		{
+			UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		}
 
 		CameraBoom->RelativeRotation.Yaw += NormalizedRate * -UmirPC->InputPitchScale;
 	}
@@ -176,8 +192,10 @@ void AUmir::LookUp(float NormalizedRate)
 	// Left button
 	if (bIsRightMouseButtonPressed)
 	{
-		// Lock mouse
-		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		if (bShouldLockMouse)
+		{
+			UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		}
 
 		AddControllerPitchInput(-NormalizedRate);
 		CameraBoom->SetRelativeRotation(Controller->GetControlRotation());
@@ -185,8 +203,10 @@ void AUmir::LookUp(float NormalizedRate)
 	// Right button
 	else if (bIsLeftMouseButtonPressed)
 	{
-		// Lock mouse
-		UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		if (bShouldLockMouse)
+		{
+			UmirPC->SetMouseLocation(PrevMousePos.X, PrevMousePos.Y);
+		}
 
 		CameraBoom->RelativeRotation.Pitch = FMath::Clamp(CameraBoom->RelativeRotation.Pitch + NormalizedRate * -UmirPC->InputPitchScale, -89.0f, 89.0f);
 	}
@@ -208,7 +228,10 @@ void AUmir::LeftMouseButtonPressed()
 	check(UmirPC);
 
 	bIsLeftMouseButtonPressed = true;
-	UmirPC->bShowMouseCursor = false;
+	if (bShouldLockMouse)
+	{
+		UmirPC->bShowMouseCursor = false;
+	}
 	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
 }
@@ -224,7 +247,10 @@ void AUmir::RightMouseButtonPressed()
 	check(UmirPC);
 
 	bIsRightMouseButtonPressed = true;
-	UmirPC->bShowMouseCursor = false;
+	if (bShouldLockMouse)
+	{
+		UmirPC->bShowMouseCursor = false;
+	}
 	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
 
@@ -239,17 +265,18 @@ void AUmir::RightMouseButtonReleased()
 	bIsRightMouseButtonPressed = false;
 }
 
-void AUmir::CastSpell1()
+void AUmir::CastOffensiveSpell1()
 {
 	if (OffensiveSpellActive1 != EOffensiveSpell::E_None)
 	{
-		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive1);
+		FOffensiveSpell *Spell = AquiredOffensiveSpells.Find(OffensiveSpellActive1);
 		if (!ensure(Spell)) return;
+
 		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, GetActorLocation(), GetActorRotation());
 	}
 }
 
-void AUmir::CastSpell2()
+void AUmir::CastOffensiveSpell2()
 {
 	if (OffensiveSpellActive2 != EOffensiveSpell::E_None)
 	{
@@ -259,7 +286,7 @@ void AUmir::CastSpell2()
 	}
 }
 
-void AUmir::CastSpell3()
+void AUmir::CastOffensiveSpell3()
 {
 	if (OffensiveSpellActive3 != EOffensiveSpell::E_None)
 	{
@@ -269,25 +296,14 @@ void AUmir::CastSpell3()
 	}
 }
 
-void AUmir::CastSpell4()
+void AUmir::CastDefensiveSpell()
 {
-	if (OffensiveSpellActive4 != EOffensiveSpell::E_None)
-	{
-		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive4);
-		if (!ensure(Spell)) return;
-		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
-	}
+	// TODO
 }
 
-void AUmir::HandleEscape()
+void AUmir::UsePotion()
 {
-	// Find out if a widget has focus
-	// Close it
-	// Repeat until all focused widgets are closed
-	// If no widget has focus check if player has active spell
-	// If so cancel the active state
-	// If none of above is the case open pause menu
-	
+	// TODO
 }
 
 void AUmir::ShowDecalAtMousePosInWorld()
@@ -300,7 +316,7 @@ void AUmir::ShowDecalAtMousePosInWorld()
 	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
 
 	// linetrace to find ground
-	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * TargetRange);
+	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTargetRange);
 	FHitResult HitResult;
 	auto bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
 
@@ -308,20 +324,33 @@ void AUmir::ShowDecalAtMousePosInWorld()
 
 	if (bFoundGround)
 	{
-		SpellCircle->SetWorldLocation(HitResult.Location);
-	}
-	else
-	{
-		auto NewEndLocation = EndLocation + (FVector::UpVector * -1000000.0f);
-		auto bFoundGroundSecondTry = GetWorld()->LineTraceSingleByChannel(HitResult, EndLocation, NewEndLocation, ECC_Visibility);
-		if (bFoundGroundSecondTry)
+		// TODO read range from active spell
+		float SpellRange = 2000.0f;
+		FVector DirectionToHitLocation = HitResult.Location - GetActorLocation();
+		if (DirectionToHitLocation.Size() > SpellRange)
 		{
-			SpellCircle->SetWorldLocation(HitResult.Location);
+			// Find new location
+			DirectionToHitLocation.Z = GetActorLocation().Z;
+			FVector NewDirection = DirectionToHitLocation.GetSafeNormal();
+			FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);
+			FVector StartTrace(NewPos.X, NewPos.Y, NewPos.Z + 100000.0f);
+			FVector EndTrace(NewPos.X, NewPos.Y, NewPos.Z - 100000.0f);
+			GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility);
+			SpellCircle->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
+		}
+		else
+		{
+			SpellCircle->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
 		}
 	}
 }
 
 float AUmir::GetHealthPercentage() const
 {
-	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
+	return CurrentHealth / MaxHealth;
+}
+
+float AUmir::GetManaPercentage() const
+{
+	return CurrentMana / MaxMana;
 }

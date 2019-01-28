@@ -4,28 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "TakeMeHomeEnums.h"
-#include "Abilities.generated.h"
+#include "Engine/UserDefinedStruct.h"
+#include "TakeMeHomeStructs.generated.h"
 
 class ASpellBase;
 
 /**
- * This struct keeps instances of all the spells and abilities in the game
+ * Contains all the structs for items and abilities
  */
-USTRUCT(BlueprintType)
-struct FAbilities
-{
-	GENERATED_BODY()
-
-	// TODO May keep all abilities inside this struct in future
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "setup")
-	//TMap<EOffensiveSpell, FOffensiveSpell> OffensiveSpells;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "setup")
-	//TMap<EDefensiveSpell, FDefensiveSpell> DefensiveSpells;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "setup")
-	//TMap<ENormalAttack, FNormalAttack> NormalAttacks;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "setup")
-	//TMap<EPotion, FPotion> Potions;
-};
 
 USTRUCT(BlueprintType)
 struct FOffensiveSpell
@@ -33,7 +19,10 @@ struct FOffensiveSpell
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EOffensiveSpell SpellName = EOffensiveSpell::E_None;
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	EOffensiveSpell Key = EOffensiveSpell::E_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FString Description;
@@ -42,7 +31,7 @@ struct FOffensiveSpell
 	TSubclassOf<ASpellBase> ClassRef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	int32 ManaCost = 0.0f;
+	float ManaCost = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
@@ -67,7 +56,10 @@ struct FDefensiveSpell
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EOffensiveSpell SpellName = EOffensiveSpell::E_None;
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	EDefensiveSpell Key = EDefensiveSpell::E_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FString Description;
@@ -98,7 +90,10 @@ struct FNormalAttack
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EOffensiveSpell SpellName = EOffensiveSpell::E_None;
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	ENormalAttack Key = ENormalAttack::E_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FString Description;
@@ -120,7 +115,10 @@ struct FPotion
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EOffensiveSpell SpellName = EOffensiveSpell::E_None;
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	EPotion Key = EPotion::E_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FString Description;
@@ -134,4 +132,11 @@ struct FPotion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	UTexture2D *Icon = nullptr;
 
+};
+
+// Empty class to show in editor
+UCLASS()
+class UTakeMeHomeStructs : public UUserDefinedStruct
+{
+	GENERATED_BODY()
 };

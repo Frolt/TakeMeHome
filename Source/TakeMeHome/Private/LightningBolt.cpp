@@ -48,7 +48,7 @@ bool ALightningBolt::TrySetActorLocation()
 	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
 
 	// Find end location
-	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * Umir->TargetRange);
+	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * Umir->MaxTargetRange);
 
 	// Linetrace to ground
 	FHitResult HitResult;

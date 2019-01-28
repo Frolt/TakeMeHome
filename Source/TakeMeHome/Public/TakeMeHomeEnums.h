@@ -86,3 +86,10 @@ enum class EDecalType : uint8
 	E_Arrow  			UMETA(DisplayName = "Arrow"),
 	E_Box_Indicator		UMETA(DisplayName = "Box Indicator"),
 };
+
+// Empty class to show in editor
+UCLASS()
+class UTakeMeHomeEnums : public UUserDefinedEnum
+{
+	GENERATED_BODY()
+};

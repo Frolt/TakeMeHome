@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "TakeMeHomeEnums.h"
-#include "Abilities.h"
+#include "TakeMeHomeStructs.h"
 #include "Umir.generated.h"
 
 class USpringArmComponent;
@@ -40,16 +40,23 @@ public:
 	void LeftMouseButtonReleased();
 	void RightMouseButtonPressed();
 	void RightMouseButtonReleased();
-	void CastSpell1();
-	void CastSpell2();
-	void CastSpell3();
-	void CastSpell4();
-	void HandleEscape();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void CastOffensiveSpell1();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void CastOffensiveSpell2();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void CastOffensiveSpell3();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void CastDefensiveSpell();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void UsePotion();
 
 	/// Others
 	void ShowDecalAtMousePosInWorld();
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetManaPercentage() const;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -62,29 +69,50 @@ public:
 	// Spell bar TEST // TODO might make struct later
 	// ---------------------------------------------------------------------------------------------------------
 	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
-	EOffensiveSpell OffensiveSpellActive1 = EOffensiveSpell::E_None;
-	EOffensiveSpell OffensiveSpellActive2 = EOffensiveSpell::E_None;
-	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_None;
-	EOffensiveSpell OffensiveSpellActive4 = EOffensiveSpell::E_None;
+	EOffensiveSpell OffensiveSpellActive1 = EOffensiveSpell::E_Tornado;
+	EOffensiveSpell OffensiveSpellActive2 = EOffensiveSpell::E_Starfall;
+	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_Lightning_Bolt;
 	EPotion PotionActive = EPotion::E_None;
 	// ---------------------------------------------------------------------------------------------------------
 
-	// Aquired spells
+	// Aquired abilities
+	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadOnly, Category = "Spells")
 	TMap<EOffensiveSpell, FOffensiveSpell> AquiredOffensiveSpells;
+	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	TMap<EDefensiveSpell, FDefensiveSpell> AquiredDefensiveSpells;
+	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	TMap<ENormalAttack, FNormalAttack> AquiredNormalAttacksSpells;
+	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	TMap<EPotion, FPotion> AquiredPotions;
+	// ---------------------------------------------------------------------------------------------------------
 
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	int32 MaxHealth = 100;
+	float MaxHealth = 100.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	int32 CurrentHealth;
+	float CurrentHealth;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float MaxMana = 100.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float CurrentMana;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float PassiveHealthRegenPerSecond = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float PassiveManaRegenPerSecond = 1.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	float LastTimeTookDamage = 0.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
-	float TargetRange = 1000.0f;
+	float MaxTargetRange = 1000000.0f;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bShouldLockMouse = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bIsLeftMouseButtonPressed = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bIsRightMouseButtonPressed = false;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
@@ -93,9 +121,6 @@ private:
 	float MinZoom = 300.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
-
-	bool bIsLeftMouseButtonPressed = false;
-	bool bIsRightMouseButtonPressed = false;
 	FVector2D PrevMousePos;
 
 };
