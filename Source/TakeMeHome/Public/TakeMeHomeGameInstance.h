@@ -27,6 +27,8 @@ public:
 	TMap<ENormalAttack, FNormalAttack> NormalAttacks;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EPotion, FPotion> Potions;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
+	TMap<EItem, FItem> Items;
 	// -------------------------------------------------------------------------------------
 
 	// All items

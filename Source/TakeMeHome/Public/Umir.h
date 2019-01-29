@@ -18,6 +18,7 @@ class USpellBook;
 class ASpellBase;
 class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
+class UInventory;
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ACharacter
@@ -30,7 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/// Input methods
+	// Input methods
 	void MoveForward(float NormalizedRate);
 	void MoveRight(float NormalizedRate);
 	void LookRight(float NormalizedRate);
@@ -51,12 +52,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void UsePotion();
 
-	/// Others
+	// Others
 	void ShowDecalAtMousePosInWorld();
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetManaPercentage() const;
+
+	// Spell/Item utility functions
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void AddDefensiveSpell(EDefensiveSpell DefensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void AddOffensiveSpell(EOffensiveSpell OffensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void AddPotion(EPotion Potion);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BindDefensiveSpell(EDefensiveSpell DefensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BindOffensiveSpell1(EOffensiveSpell OffensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BindOffensiveSpell2(EOffensiveSpell OffensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BindOffensiveSpell3(EOffensiveSpell OffensiveSpell);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BindPotion(EPotion Potion);
+
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -65,6 +85,12 @@ public:
 	UCameraComponent *FollowCamera = nullptr;
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	UDecalComponent *SpellCircle = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	UInventory *Inventory = nullptr;
+
+	// Game instance ref (Safe to use since game instance are never destroyed)
+	UTakeMeHomeGameInstance *GameInstance = nullptr;
+
 
 	// Spell bar TEST // TODO might make struct later
 	// ---------------------------------------------------------------------------------------------------------
@@ -78,17 +104,15 @@ public:
 	// Aquired abilities
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TMap<EOffensiveSpell, FOffensiveSpell> AquiredOffensiveSpells;
+	TArray<FOffensiveSpell> AquiredOffensiveSpells;
 	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TMap<EDefensiveSpell, FDefensiveSpell> AquiredDefensiveSpells;
+	TArray<FDefensiveSpell> AquiredDefensiveSpells;
 	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TMap<ENormalAttack, FNormalAttack> AquiredNormalAttacksSpells;
+	TArray<FNormalAttack> AquiredNormalAttacks;
 	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TMap<EPotion, FPotion> AquiredPotions;
+	TArray<FPotion> AquiredPotions;
 	// ---------------------------------------------------------------------------------------------------------
 
-	// Game instance ref (Safe to use since game instance are never destroyed)
-	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
@@ -109,6 +133,8 @@ public:
 	float MaxTargetRange = 1000000.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bShouldLockMouse = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bStopMovingCamera = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bIsLeftMouseButtonPressed = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")

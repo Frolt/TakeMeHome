@@ -18,6 +18,7 @@
 #include "Spellbook.h"
 #include "SpellBase.h"
 #include "TakeMeHomeGameInstance.h"
+#include "Inventory.h"
 
 
 AUmir::AUmir()
@@ -58,6 +59,8 @@ AUmir::AUmir()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create inventory
+	Inventory = CreateDefaultSubobject<UInventory>(FName("Inventory"));
 }
 
 void AUmir::BeginPlay()
@@ -73,10 +76,10 @@ void AUmir::BeginPlay()
 	SpellCircle->Activate();
 
 	// Adding spells
-	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Tornado, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Tornado));
-	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Starfall, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
-	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Force_Push, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
-	AquiredOffensiveSpells.Add(EOffensiveSpell::E_Lightning_Bolt, *GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
+	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Tornado));
+	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
+	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
+	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
 	// TODO add normal attacks
 	// TODO add defensive spells
 	// TODO add potions
@@ -152,10 +155,9 @@ void AUmir::MoveRight(float NormalizedRate)
 
 void AUmir::LookRight(float NormalizedRate)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Mouse delta: %f"), NormalizedRate);
-
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
+	if (bStopMovingCamera) return;
 
 	// Left button
 	if (bIsRightMouseButtonPressed)
@@ -188,6 +190,7 @@ void AUmir::LookUp(float NormalizedRate)
 {
 	auto UmirPC = GetWorld()->GetFirstPlayerController();
 	check(UmirPC);
+	if (bStopMovingCamera) return;
 
 	// Left button
 	if (bIsRightMouseButtonPressed)
@@ -269,7 +272,7 @@ void AUmir::CastOffensiveSpell1()
 {
 	if (OffensiveSpellActive1 != EOffensiveSpell::E_None)
 	{
-		FOffensiveSpell *Spell = AquiredOffensiveSpells.Find(OffensiveSpellActive1);
+		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive1);
 		if (!ensure(Spell)) return;
 
 		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, GetActorLocation(), GetActorRotation());
@@ -280,7 +283,7 @@ void AUmir::CastOffensiveSpell2()
 {
 	if (OffensiveSpellActive2 != EOffensiveSpell::E_None)
 	{
-		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive2);
+		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive2);
 		if (!ensure(Spell)) return;
 		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
 	}
@@ -290,7 +293,7 @@ void AUmir::CastOffensiveSpell3()
 {
 	if (OffensiveSpellActive3 != EOffensiveSpell::E_None)
 	{
-		auto Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive3);
+		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive3);
 		if (!ensure(Spell)) return;
 		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
 	}
@@ -299,11 +302,13 @@ void AUmir::CastOffensiveSpell3()
 void AUmir::CastDefensiveSpell()
 {
 	// TODO
+	UE_LOG(LogTemp, Warning, TEXT("Casting defensive spell"));
 }
 
 void AUmir::UsePotion()
 {
 	// TODO
+	UE_LOG(LogTemp, Warning, TEXT("Using potion"));
 }
 
 void AUmir::ShowDecalAtMousePosInWorld()
@@ -353,4 +358,44 @@ float AUmir::GetHealthPercentage() const
 float AUmir::GetManaPercentage() const
 {
 	return CurrentMana / MaxMana;
+}
+
+void AUmir::AddDefensiveSpell(EDefensiveSpell DefensiveSpell)
+{
+	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(DefensiveSpell));
+}
+
+void AUmir::AddOffensiveSpell(EOffensiveSpell OffensiveSpell)
+{
+	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(OffensiveSpell));
+}
+
+void AUmir::AddPotion(EPotion Potion)
+{
+	AquiredPotions.Add(*GameInstance->Potions.Find(Potion));
+}
+
+void AUmir::BindDefensiveSpell(EDefensiveSpell DefensiveSpell)
+{
+	DefensiveSpellActive = DefensiveSpell;
+}
+
+void AUmir::BindOffensiveSpell1(EOffensiveSpell OffensiveSpell)
+{
+	OffensiveSpellActive1 = OffensiveSpell;
+}
+
+void AUmir::BindOffensiveSpell2(EOffensiveSpell OffensiveSpell)
+{
+	OffensiveSpellActive2 = OffensiveSpell;
+}
+
+void AUmir::BindOffensiveSpell3(EOffensiveSpell OffensiveSpell)
+{
+	OffensiveSpellActive3 = OffensiveSpell;
+}
+
+void AUmir::BindPotion(EPotion Potion)
+{
+	PotionActive = Potion;
 }
