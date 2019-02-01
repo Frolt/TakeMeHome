@@ -19,11 +19,11 @@ struct FOffensiveSpell
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Name;
+	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EOffensiveSpell Key = EOffensiveSpell::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Description;
+	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -47,11 +47,11 @@ struct FDefensiveSpell
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Name;
+	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EDefensiveSpell Key = EDefensiveSpell::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Description;
+	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -72,11 +72,11 @@ struct FNormalAttack
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Name;
+	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	ENormalAttack Key = ENormalAttack::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Description;
+	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -92,11 +92,11 @@ struct FPotion
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Name;
+	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EPotion Key = EPotion::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Description;
+	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -112,11 +112,11 @@ struct FItem
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Name;
+	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EItem Key = EItem::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FString Description;
+	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<AActor> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")

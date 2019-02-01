@@ -82,7 +82,12 @@ void AUmir::BeginPlay()
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
 	// TODO add normal attacks
 	// TODO add defensive spells
+	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Counter_Strike));
+	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Star_Shield));
+	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Spirit_Walk));
 	// TODO add potions
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Healing_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Mana_Potion));
 }
 
 void AUmir::Tick(float DeltaSeconds)

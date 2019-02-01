@@ -89,15 +89,21 @@ public:
 	UInventory *Inventory = nullptr;
 
 	// Game instance ref (Safe to use since game instance are never destroyed)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 
-	// Spell bar TEST // TODO might make struct later
+	// Action bar TEST // TODO might make struct later
 	// ---------------------------------------------------------------------------------------------------------
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpellActive1 = EOffensiveSpell::E_Tornado;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpellActive2 = EOffensiveSpell::E_Starfall;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_Lightning_Bolt;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionActive = EPotion::E_None;
 	// ---------------------------------------------------------------------------------------------------------
 

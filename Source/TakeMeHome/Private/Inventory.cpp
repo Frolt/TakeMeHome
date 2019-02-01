@@ -56,6 +56,6 @@ bool UInventory::RemoveAllItemsOfType(EItem Item)
 void UInventory::SortByName()
 {
 	Items.Sort([](const FItem& A, const FItem& B) {
-		return A.Name > B.Name;
+		return A.Name.ToString() > B.Name.ToString();
 	});
 }
