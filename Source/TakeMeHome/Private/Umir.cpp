@@ -70,6 +70,10 @@ void AUmir::BeginPlay()
 	// Find game instance
 	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());
 
+	// Set camera init rotation
+	CameraBoom->SetRelativeRotation(GetControlRotation());
+
+
 	// Testing stuff
 	CurrentHealth = 20.0f;
 	CurrentMana = 40.0f;
