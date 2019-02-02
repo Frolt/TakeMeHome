@@ -78,20 +78,166 @@ void AUmir::BeginPlay()
 	CurrentHealth = 20.0f;
 	CurrentMana = 40.0f;
 	SpellCircle->Activate();
+	SpellCircle->SetDecalMaterial(SpellArrowMaterial);
 
 	// Adding spells
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Tornado));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
-	// TODO add normal attacks
-	// TODO add defensive spells
+	// Add normal attacks
+	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_1));
+	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_2));
+	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_3));
+	// Add defensive spells
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Counter_Strike));
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Star_Shield));
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Spirit_Walk));
-	// TODO add potions
+	// Add potions
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Healing_Potion));
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Mana_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Fire_Elemental_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Nature_Elemental_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Water_Elemental_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Lightning_Elemental_Potion));
+	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Earth_Elemental_Potion));
+	// Add items
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
+	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
+	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+
 }
 
 void AUmir::Tick(float DeltaSeconds)
@@ -136,7 +282,7 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 
 void AUmir::MoveForward(float NormalizedRate)
 {
-	if (Controller && (NormalizedRate != 0.0f))
+	if (Controller && (NormalizedRate != 0.0f) && !bStopMovement)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -150,7 +296,7 @@ void AUmir::MoveForward(float NormalizedRate)
 
 void AUmir::MoveRight(float NormalizedRate)
 {
-	if (Controller && (NormalizedRate != 0.0f))
+	if (Controller && (NormalizedRate != 0.0f) && !bStopMovement)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -230,8 +376,11 @@ void AUmir::LookUp(float NormalizedRate)
 
 void AUmir::Zoom(float NormalizedRate)
 {
-	CameraBoom->TargetArmLength += NormalizedRate * ZoomStrength;
-	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength, MinZoom, MaxZoom);
+	if (!bStopZooming)
+	{
+		CameraBoom->TargetArmLength += NormalizedRate * ZoomStrength;
+		CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength, MinZoom, MaxZoom);
+	}
 }
 
 void AUmir::LeftMouseButtonPressed()

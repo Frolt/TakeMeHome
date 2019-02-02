@@ -19,6 +19,8 @@ struct FOffensiveSpell
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UTexture2D *Icon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EOffensiveSpell Key = EOffensiveSpell::E_None;
@@ -36,8 +38,6 @@ struct FOffensiveSpell
 	EDecalType DecalType = EDecalType::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	UTexture2D *Icon = nullptr;
 
 };
 
@@ -46,6 +46,8 @@ struct FDefensiveSpell
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UTexture2D *Icon = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -62,8 +64,6 @@ struct FDefensiveSpell
 	EDecalType DecalType = EDecalType::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	UTexture2D *Icon = nullptr;
 
 };
 
@@ -71,6 +71,9 @@ USTRUCT(BlueprintType)
 struct FNormalAttack
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UTexture2D *Icon = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -81,8 +84,6 @@ struct FNormalAttack
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	UTexture2D *Icon = nullptr;
 
 };
 
@@ -91,6 +92,8 @@ struct FPotion
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UTexture2D *Icon = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -101,8 +104,6 @@ struct FPotion
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	UTexture2D *Icon = nullptr;
 
 };
 
@@ -112,15 +113,23 @@ struct FItem
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UTexture2D *Icon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EItem Key = EItem::E_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TSubclassOf<AActor> ClassRef;
+	int32 Value = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	UTexture2D *Icon = nullptr;
+	int32 Quantity = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 MaxQuantity = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	EQuality Quality = EQuality::E_Poor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	TSubclassOf<AActor> ClassRef;
 
 };
 

@@ -21,35 +21,27 @@ void UInventory::BeginPlay()
 	GameInstance = Cast<UTakeMeHomeGameInstance>(GetWorld()->GetGameInstance());
 }
 
-bool UInventory::AddItem(EItem Item)
-{
-	if (Items.Num() < InventorySize)
-	{
-		Items.Add(*GameInstance->Items.Find(Item));
-		return true;
-	}
-	return false;
-}
-
-bool UInventory::RemoveSingleItem(EItem Item)
-{
-	//Items.RemoveSingle(*GameInstance->Items.Find(Item));
-
-	int32 Index = Items.IndexOfByPredicate([Item](const FItem& A) {
-		return A.Key == Item;
-	});
-	if (Index != INDEX_NONE)
-	{
-		Items.RemoveAt(Index);
-		return true;
-	}
-	return false;
-}
-
-bool UInventory::RemoveAllItemsOfType(EItem Item)
+bool UInventory::AddItems(EItem Item, int32 Quantity)
 {
 	// TODO
-	//Items.Remove(*GameInstance->Items.Find(Item));
+	return true;
+}
+
+bool UInventory::AddItemsAtIndex(EItem Item, int32 Quantity, int32 Index)
+{
+	// TODO
+	return true;
+}
+
+bool UInventory::RemoveItems(EItem Item, int32 Quantity)
+{
+	// TODO
+	return true;
+}
+
+bool UInventory::RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index)
+{
+	// TODO
 	return true;
 }
 
@@ -57,5 +49,19 @@ void UInventory::SortByName()
 {
 	Items.Sort([](const FItem& A, const FItem& B) {
 		return A.Name.ToString() > B.Name.ToString();
+	});
+}
+
+void UInventory::SortByQuantity()
+{
+	Items.Sort([](const FItem& A, const FItem& B) {
+		return A.Quantity > B.Quantity;
+	});
+}
+
+void UInventory::SortByQuality()
+{
+	Items.Sort([](const FItem& A, const FItem& B) {
+		return A.Quality > B.Quality;
 	});
 }

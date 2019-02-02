@@ -85,6 +85,12 @@ public:
 	UCameraComponent *FollowCamera = nullptr;
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 	UDecalComponent *SpellCircle = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellCircleMaterial = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellBoxMaterial = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellArrowMaterial = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UInventory *Inventory = nullptr;
 
@@ -93,7 +99,7 @@ public:
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 
-	// Action bar TEST // TODO might make struct later
+	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
@@ -141,6 +147,10 @@ public:
 	bool bShouldLockMouse = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopMovingCamera = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bStopMovement = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bStopZooming = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bIsLeftMouseButtonPressed = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")

@@ -109,6 +109,18 @@ enum class EItem : uint8
 	E_Item_4		UMETA(DisplayName = "Item 4"),
 };
 
+// Decal types
+UENUM(BlueprintType)
+enum class EQuality : uint8
+{
+	E_None			UMETA(DisplayName = "None"),
+	E_Poor			UMETA(DisplayName = "Poor"),
+	E_Common		UMETA(DisplayName = "Common"),
+	E_Uncommon		UMETA(DisplayName = "Uncommon"),
+	E_Rare			UMETA(DisplayName = "Rare"),
+	E_Epic			UMETA(DisplayName = "Epic"),
+};
+
 // Empty class to show in editor
 UCLASS()
 class UTakeMeHomeEnums : public UUserDefinedEnum
