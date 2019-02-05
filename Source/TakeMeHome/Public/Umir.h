@@ -45,6 +45,7 @@ public:
 	// Activate action bar
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void ActivateOffensiveSlot1();
+
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void ActivateOffensiveSlot2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -64,9 +65,33 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetManaPercentage() const;
 
+	// Cooldown functions
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetDefensiveSlotCooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetDefensiveSlotCooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot1Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot1CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot2Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot2CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot3Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot3CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetPotionSlotCooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetPotionSlotCooldownPercentage() const;
+
 	// HUD Warnings
 	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
 	void NotEnoughMana();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
+	void IsOnCooldown();
 
 	// Add/Bind abilities
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -128,6 +153,11 @@ public:
 	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionActive = EPotion::E_None;
+	float LastTimeActivatedDefensiveSpell = 0.0f;
+	float LastTimeActivatedOffensiveSpell1 = 0.0f;
+	float LastTimeActivatedOffensiveSpell2 = 0.0f;
+	float LastTimeActivatedOffensiveSpell3 = 0.0f;
+	float LastTimeActivatedPotion = 0.0f;
 	// ---------------------------------------------------------------------------------------------------------
 
 	// Aquired abilities
@@ -156,7 +186,7 @@ public:
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveManaRegenPerSecond = 1.0f;
-	// Used to calculate if umir was interrupted
+	// TODO not using atm
 	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	float LastTimeTookDamage = 0.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
