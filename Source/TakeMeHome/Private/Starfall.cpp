@@ -5,6 +5,8 @@
 #include "Engine/StaticMeshActor.h"
 #include "Engine/Public/TimerManager.h"
 #include "StarfallProjectile.h"
+#include "TakeMeHomeGameInstance.h"
+#include "TakeMeHomeEnums.h"
 
 
 AStarfall::AStarfall()
@@ -17,6 +19,14 @@ AStarfall::AStarfall()
 void AStarfall::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Spell settings
+	auto *Starfall = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Starfall);
+	Damage = Starfall->Damage;
+	CastTime = Starfall->CastTime;
+	StunDuration = Starfall->StunDuration;
+	ElementType = Starfall->ElementType;
+	Owner = ECharacterType::E_Umir;
 
 	// Find first spawn position above the player
 	auto InitLocation = GetActorLocation();
@@ -42,6 +52,7 @@ void AStarfall::SpawnProjectile()
 		if (Projectile)
 		{
 			Projectile->Force = ProjectileSpeed;
+			Projectile->Damage = Damage;
 		}
 
 		if (Index == SpawnLocations.Num())

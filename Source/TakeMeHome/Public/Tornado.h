@@ -45,7 +45,5 @@ private:
 	float Speed = 1000.0f;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float LiftHeight = 500.0f;
-
-private:
 	bool bCanMove = true;
 };

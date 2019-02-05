@@ -14,7 +14,7 @@
 UENUM(BlueprintType)
 enum class EElement : uint8
 {
-	E_None				UMETA(DisplayName = "None"),
+	E_Neutral			UMETA(DisplayName = "Neutral"),
 	E_Fire 				UMETA(DisplayName = "Fire"),
 	E_Nature 			UMETA(DisplayName = "Nature"),
 	E_Water				UMETA(DisplayName = "Water"),
@@ -26,7 +26,6 @@ enum class EElement : uint8
 UENUM(BlueprintType)
 enum class ECharacterType : uint8
 {
-	E_None				UMETA(DisplayName = "None"),
 	E_Umir 				UMETA(DisplayName = "Umir"),
 	E_Verdant 			UMETA(DisplayName = "Verdant"),
 	E_Enemy				UMETA(DisplayName = "Enemy"),
@@ -91,7 +90,6 @@ enum class EDecalType : uint8
 UENUM(BlueprintType)
 enum class EAbilityType : uint8
 {
-	E_None					UMETA(DisplayName = "None"),
 	E_Offensive_Spell		UMETA(DisplayName = "Offensive Spell"),
 	E_Defensive_Spell		UMETA(DisplayName = "Defensive Spell"),
 	E_Normal_Attack 		UMETA(DisplayName = "Normal Attack"),
@@ -103,6 +101,7 @@ UENUM(BlueprintType)
 enum class EItem : uint8
 {
 	E_None			UMETA(DisplayName = "None"),
+	E_Empty			UMETA(DisplayName = "Empty"),
 	E_Item_1		UMETA(DisplayName = "Item 1"),
 	E_Item_2		UMETA(DisplayName = "Item 2"),
 	E_Item_3		UMETA(DisplayName = "Item 3"),
@@ -113,12 +112,20 @@ enum class EItem : uint8
 UENUM(BlueprintType)
 enum class EQuality : uint8
 {
-	E_None			UMETA(DisplayName = "None"),
 	E_Poor			UMETA(DisplayName = "Poor"),
 	E_Common		UMETA(DisplayName = "Common"),
 	E_Uncommon		UMETA(DisplayName = "Uncommon"),
 	E_Rare			UMETA(DisplayName = "Rare"),
 	E_Epic			UMETA(DisplayName = "Epic"),
+};
+
+// Decal types
+UENUM(BlueprintType)
+enum class ETextWarningLevel : uint8
+{
+	E_Good				UMETA(DisplayName = "Good"),
+	E_Bad				UMETA(DisplayName = "Bad"),
+	E_Indifferent		UMETA(DisplayName = "Indifferent"),
 };
 
 // Empty class to show in editor

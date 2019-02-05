@@ -4,22 +4,15 @@
 #include "Engine/World.h"
 #include "Components/CapsuleComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "TakeMeHomeGameInstance.h"
+#include "TakeMeHomeEnums.h"
 #include "TimerManager.h"
 
 
 ATornado::ATornado()
 {
-	// Enable this actor to tick
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Spell settings
-	ManaCost = 10.0f;
-	Damage = 10.0f;
-	CastTime = 0.0f;
-	Cooldown = 0.0f;
-	StunDuration = 3.0f;
-	ElementType = EElement::E_None;
-	Owner = ECharacterType::E_Umir;
 }
 
 void ATornado::BeginPlay()
@@ -27,6 +20,14 @@ void ATornado::BeginPlay()
 	Super::BeginPlay();
 
 	if (!ensure(CapsuleCollision)) { return; }
+
+	// Spell settings
+	auto *Tornado = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Tornado);
+	Damage = Tornado->Damage;
+	CastTime = Tornado->CastTime;
+	StunDuration = Tornado->StunDuration;
+	ElementType = Tornado->ElementType;
+	Owner = ECharacterType::E_Umir;
 
 	// Setup onOverlap event
 	CapsuleCollision->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);

@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/DecalComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -19,12 +20,15 @@
 #include "SpellBase.h"
 #include "TakeMeHomeGameInstance.h"
 #include "Inventory.h"
+#include "Public/TimerManager.h"
 
 
 AUmir::AUmir()
 {
 	// Enable this actor to tick
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetMesh()->bReceivesDecals = false;
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -77,22 +81,25 @@ void AUmir::BeginPlay()
 	// Testing stuff
 	CurrentHealth = 20.0f;
 	CurrentMana = 40.0f;
-	SpellCircle->Activate();
-	SpellCircle->SetDecalMaterial(SpellArrowMaterial);
+	Decal->Activate();
+	Decal->SetDecalMaterial(SpellArrowMaterial);
 
 	// Adding spells
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Tornado));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Starfall));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push));
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt));
+
 	// Add normal attacks
 	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_1));
 	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_2));
 	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(ENormalAttack::E_Melee_Attack_3));
+
 	// Add defensive spells
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Counter_Strike));
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Star_Shield));
 	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::E_Spirit_Walk));
+
 	// Add potions
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Healing_Potion));
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Mana_Potion));
@@ -101,142 +108,13 @@ void AUmir::BeginPlay()
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Water_Elemental_Potion));
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Lightning_Elemental_Potion));
 	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::E_Earth_Elemental_Potion));
+
 	// Add items
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_1));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_2));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_3));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
-	Inventory->Items.Add(*GameInstance->Items.Find(EItem::E_Item_4));
-	Inventory->Items.Last().Quantity = FMath::Rand() % 20;
-	Inventory->Items.Last().Quality = static_cast<EQuality>((FMath::Rand() % 5) + 1);
+	//Inventory->Items.Init(*GameInstance->Items.Find(EItem::E_Empty), 100);
+	Inventory->AddItems(EItem::E_Item_2, 20);
+	Inventory->AddItems(EItem::E_Item_1, 555);
+	Inventory->RemoveItems(EItem::E_Item_1, 400);
+	Inventory->RemoveItems(EItem::E_Item_2, 4);
 
 }
 
@@ -244,12 +122,29 @@ void AUmir::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!ensure(SpellCircle)) { return; }
+	if (!ensure(Decal)) { return; }
 
-	if (SpellCircle->IsActive())
+	// Activate correct decal type
+	switch (ActiveDecal)
 	{
-		ShowDecalAtMousePosInWorld();
+	case EDecalType::E_None:
+		Decal->SetVisibility(false);
+		break;
+	case EDecalType::E_Spell_Circle:
+		Decal->SetVisibility(true);
+		MoveDecalToMouseHitLocation();
+		break;
+	case EDecalType::E_Arrow:
+		RotateDecalAroundPlayer();
+		Decal->SetVisibility(true);
+		break;
+	case EDecalType::E_Box_Indicator:
+		Decal->SetVisibility(true);
+		break;
+	default:
+		break;
 	}
+
 	// Passive regen TODO check if out of combat
 	if (true)
 	{
@@ -267,11 +162,11 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("LeftMouseButton", IE_Released, this, &AUmir::LeftMouseButtonReleased);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Pressed, this, &AUmir::RightMouseButtonPressed);
 	PlayerInputComponent->BindAction("RightMouseButton", IE_Released, this, &AUmir::RightMouseButtonReleased);
-	PlayerInputComponent->BindAction("ActivateOffensiveSpell1", IE_Pressed, this, &AUmir::CastOffensiveSpell1);
-	PlayerInputComponent->BindAction("ActivateOffensiveSpell2", IE_Pressed, this, &AUmir::CastOffensiveSpell2);
-	PlayerInputComponent->BindAction("ActivateOffensiveSpell3", IE_Pressed, this, &AUmir::CastOffensiveSpell3);
-	PlayerInputComponent->BindAction("ActivateDefensiveSpell", IE_Pressed, this, &AUmir::CastDefensiveSpell);
-	PlayerInputComponent->BindAction("ActivatePotion", IE_Pressed, this, &AUmir::UsePotion);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell1", IE_Pressed, this, &AUmir::ActivateOffensiveSlot1);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell2", IE_Pressed, this, &AUmir::ActivateOffensiveSlot2);
+	PlayerInputComponent->BindAction("ActivateOffensiveSpell3", IE_Pressed, this, &AUmir::ActivateOffensiveSlot3);
+	PlayerInputComponent->BindAction("ActivateDefensiveSpell", IE_Pressed, this, &AUmir::ActivateDefensiveSlot);
+	PlayerInputComponent->BindAction("ActivatePotion", IE_Pressed, this, &AUmir::ActivatePotionSlot);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUmir::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUmir::MoveRight);
@@ -395,11 +290,28 @@ void AUmir::LeftMouseButtonPressed()
 	}
 	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
+	PrevCamRotation = CameraBoom->RelativeRotation;
 }
 
 void AUmir::LeftMouseButtonReleased()
 {
 	bIsLeftMouseButtonPressed = false;
+
+	// Cast spell if one is activated
+
+	FRotator CurrentCamRotation = CameraBoom->RelativeRotation;
+	bool bDidMouseMove = true;
+	if (CurrentCamRotation.Equals(PrevCamRotation))
+	{
+		bDidMouseMove = false;
+	}
+
+	if (ActivatedSpell != EOffensiveSpell::E_None && !bDidMouseMove)
+	{
+		CastOffensiveSpell(ActivatedSpell);
+		ActivatedSpell = EOffensiveSpell::E_None;
+		ActiveDecal = EDecalType::E_None;
+	}
 }
 
 void AUmir::RightMouseButtonPressed()
@@ -419,6 +331,10 @@ void AUmir::RightMouseButtonPressed()
 	auto ControllerRot = Controller->GetControlRotation();
 	auto CamRot = CameraBoom->RelativeRotation;
 	Controller->SetControlRotation(FRotator(CamRot.Pitch, CamRot.Yaw, ControllerRot.Roll));
+
+	// Cancel activated spell
+	ActivatedSpell = EOffensiveSpell::E_None;
+	ActiveDecal = EDecalType::E_None;
 }
 
 void AUmir::RightMouseButtonReleased()
@@ -426,84 +342,277 @@ void AUmir::RightMouseButtonReleased()
 	bIsRightMouseButtonPressed = false;
 }
 
-void AUmir::CastOffensiveSpell1()
+void AUmir::ActivateOffensiveSlot1()
 {
 	if (OffensiveSpellActive1 != EOffensiveSpell::E_None)
 	{
 		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive1);
 		if (!ensure(Spell)) return;
 
-		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, GetActorLocation(), GetActorRotation());
+		if (Spell->bMustActivate)
+		{
+			// Activate spell
+			ActivatedSpell = OffensiveSpellActive1;
+			switch (Spell->DecalType)
+			{
+			case EDecalType::E_None:
+				ActiveDecal = EDecalType::E_None;
+				break;
+			case EDecalType::E_Spell_Circle:
+				Decal->SetDecalMaterial(SpellCircleMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Arrow:
+				Decal->SetDecalMaterial(SpellArrowMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Box_Indicator:
+				Decal->SetDecalMaterial(SpellBoxMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			// Cast spell
+			CastOffensiveSpell(OffensiveSpellActive1);
+		}
 	}
 }
 
-void AUmir::CastOffensiveSpell2()
+void AUmir::ActivateOffensiveSlot2()
 {
 	if (OffensiveSpellActive2 != EOffensiveSpell::E_None)
 	{
 		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive2);
 		if (!ensure(Spell)) return;
-		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
+
+		if (Spell->bMustActivate)
+		{
+			// Activate spell
+			ActivatedSpell = OffensiveSpellActive2;
+			switch (Spell->DecalType)
+			{
+			case EDecalType::E_None:
+				ActiveDecal = EDecalType::E_None;
+				break;
+			case EDecalType::E_Spell_Circle:
+				Decal->SetDecalMaterial(SpellCircleMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Arrow:
+				Decal->SetDecalMaterial(SpellArrowMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Box_Indicator:
+				Decal->SetDecalMaterial(SpellBoxMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			// Cast spell
+			CastOffensiveSpell(OffensiveSpellActive2);
+		}
 	}
 }
 
-void AUmir::CastOffensiveSpell3()
+void AUmir::ActivateOffensiveSlot3()
 {
 	if (OffensiveSpellActive3 != EOffensiveSpell::E_None)
 	{
 		FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpellActive3);
 		if (!ensure(Spell)) return;
-		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(*Spell->ClassRef, GetActorLocation(), GetActorRotation());
+
+		if (Spell->bMustActivate)
+		{
+			// Activate spell
+			ActivatedSpell = OffensiveSpellActive3;
+			switch (Spell->DecalType)
+			{
+			case EDecalType::E_None:
+				ActiveDecal = EDecalType::E_None;
+				break;
+			case EDecalType::E_Spell_Circle:
+				Decal->SetDecalMaterial(SpellCircleMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Arrow:
+				Decal->SetDecalMaterial(SpellArrowMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			case EDecalType::E_Box_Indicator:
+				Decal->SetDecalMaterial(SpellBoxMaterial);
+				ActiveDecal = Spell->DecalType;
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			// Cast spell
+			CastOffensiveSpell(OffensiveSpellActive3);
+		}
 	}
 }
 
-void AUmir::CastDefensiveSpell()
+void AUmir::ActivateDefensiveSlot()
 {
 	// TODO
 	UE_LOG(LogTemp, Warning, TEXT("Casting defensive spell"));
 }
 
-void AUmir::UsePotion()
+void AUmir::ActivatePotionSlot()
 {
 	// TODO
 	UE_LOG(LogTemp, Warning, TEXT("Using potion"));
 }
 
-void AUmir::ShowDecalAtMousePosInWorld()
+void AUmir::MoveDecalToMouseHitLocation()
 {
-	if (!ensure(SpellCircle)) { return; }
+	if (!ensure(Decal)) return;
+	if (ActivatedSpell == EOffensiveSpell::E_None) return;
+
+	// Reset decal scale
+	Decal->RelativeScale3D.Y = 1.0f;
+	Decal->RelativeScale3D.Z = 1.0f;
 
 	// Find mouse world pos
 	FVector MouseLocation;
 	FVector MouseDirection;
 	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
 
-	// linetrace to find ground
-	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTargetRange);
+	// linetrace to find ground first attempt
+	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTraceDistance);
 	FHitResult HitResult;
-	auto bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
-
-	// Set decal component pos here
-
-	if (bFoundGround)
+	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
+	
+	if (bFoundGround == false)
 	{
-		// TODO read range from active spell
-		float SpellRange = 2000.0f;
-		FVector DirectionToHitLocation = HitResult.Location - GetActorLocation();
-		if (DirectionToHitLocation.Size() > SpellRange)
+		// linetrace to find ground second attempt
+		UE_LOG(LogTemp, Warning, TEXT("Line trace second try"));
+		FVector NewStartPos = MouseLocation + (MouseDirection * 10000.0f);
+		FVector NewEndPos = FVector::UpVector * -MaxTraceDistance;
+		bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, NewStartPos, NewEndPos, ECC_Visibility);
+		if (bFoundGround == false)
 		{
-			// Find new location
-			DirectionToHitLocation.Z = GetActorLocation().Z;
-			FVector NewDirection = DirectionToHitLocation.GetSafeNormal();
-			FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);
-			FVector StartTrace(NewPos.X, NewPos.Y, NewPos.Z + 100000.0f);
-			FVector EndTrace(NewPos.X, NewPos.Y, NewPos.Z - 100000.0f);
-			GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility);
-			SpellCircle->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
+			UE_LOG(LogTemp, Warning, TEXT("Could not find ground on second attempt"));
+			return;
 		}
-		else
+	}
+
+	float SpellRange = GameInstance->OffensiveSpells.Find(ActivatedSpell)->Range;
+	FVector DirectionFromPlayerToHitLocation = HitResult.Location - GetActorLocation();
+	if (DirectionFromPlayerToHitLocation.Size() > SpellRange)
+	{
+		// Find new location
+		DirectionFromPlayerToHitLocation.Z = GetActorLocation().Z;
+		FVector NewDirection = DirectionFromPlayerToHitLocation.GetSafeNormal();
+		FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);
+		FVector StartTrace(NewPos.X, NewPos.Y, NewPos.Z + MaxTraceDistance);
+		FVector EndTrace(NewPos.X, NewPos.Y, NewPos.Z - MaxTraceDistance);
+		GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility); // TODO this might not work in roof environments like caves
+		Decal->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
+	}
+	else
+	{
+		Decal->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
+	}
+}
+
+void AUmir::RotateDecalAroundPlayer()
+{
+	if (!ensure(Decal)) return;
+	if (ActivatedSpell == EOffensiveSpell::E_None) return;
+
+	// Find mouse world pos
+	FVector MouseLocation;
+	FVector MouseDirection;
+	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+
+	// linetrace to find ground first attempt
+	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTraceDistance);
+	FHitResult HitResult;
+	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
+
+	if (bFoundGround == false)
+	{
+		// linetrace to find ground second attempt
+		FVector NewStartPos = MouseLocation + (MouseDirection * 10000.0f);
+		FVector NewEndPos = FVector::UpVector * -MaxTraceDistance;
+		bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, NewStartPos, NewEndPos, ECC_Visibility);
+		if (bFoundGround == false)
 		{
-			SpellCircle->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
+			return;
+		}
+	}
+
+	// Calculate new decal position/scale/rotation
+	FVector DirectionFromPlayerToHitLocation = (HitResult.Location - GetActorLocation()).GetSafeNormal();
+	DirectionFromPlayerToHitLocation.Z = 0.0f;
+	DirectionFromPlayerToHitLocation.Normalize();
+	FRotator NewDecalRotation = FRotator(90.0f, 90.0f + DirectionFromPlayerToHitLocation.Rotation().Yaw, 0.0f);
+
+	Decal->SetWorldRotation(NewDecalRotation);
+	Decal->SetWorldLocation(GetActorLocation() + (DirectionFromPlayerToHitLocation * 500.0f));
+	Decal->RelativeScale3D.Y = 2.0f;
+	Decal->RelativeScale3D.Z = 0.5f;
+
+}
+
+void AUmir::RestoreMovement()
+{
+	bStopMovement = false;
+	bUseControllerRotationYaw = false;
+}
+
+void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
+{
+	auto *Spell = GameInstance->OffensiveSpells.Find(SpellKey);
+
+	// Check for mana
+	if (CurrentMana < Spell->ManaCost)
+	{
+		NotEnoughMana();
+	}
+	else
+	{
+		CurrentMana -= Spell->ManaCost;
+
+		// Check for cast time
+		if (Spell->CastTime > 0.00001f)
+		{
+			bStopMovement = true;
+			bUseControllerRotationYaw = true;
+
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &AUmir::RestoreMovement, Spell->CastTime);
+		}
+
+		// Find correct spawn location/rotation
+		FVector SpawnLocation = GetActorLocation();
+		FRotator SpawnRotation = GetActorRotation();
+		if (Spell->DecalType == EDecalType::E_Spell_Circle)
+		{
+			SpawnLocation = Decal->GetComponentLocation();
+		}
+		else if (Spell->DecalType == EDecalType::E_Arrow)
+		{
+			// TODO find decal arrow direction
+			SpawnRotation = (-Decal->GetRightVector()).Rotation();
+		}
+		auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, SpawnLocation, SpawnRotation);
+
+		// Set spell element according to Umir's active element
+		if (Spell->ElementType == EElement::E_Neutral)
+		{
+			SpawnedActor->ElementType = ActiveElement;
 		}
 	}
 }
