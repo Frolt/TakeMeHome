@@ -213,6 +213,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
 	FVector2D PrevMousePos;
-	FRotator PrevCamRotation;
 
 };

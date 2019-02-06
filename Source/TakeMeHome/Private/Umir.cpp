@@ -65,6 +65,9 @@ AUmir::AUmir()
 
 	// Create inventory
 	Inventory = CreateDefaultSubobject<UInventory>(FName("Inventory"));
+	//Inventory->AddItems(EItem::E_Item_2, 35);
+	//Inventory->AddItems(EItem::E_Item_3, 35);
+	//Inventory->AddItems(EItem::E_Item_4, 35);
 }
 
 void AUmir::BeginPlay()
@@ -289,28 +292,19 @@ void AUmir::LeftMouseButtonPressed()
 	}
 	// Stores the mouse position
 	UmirPC->GetMousePosition(PrevMousePos.X, PrevMousePos.Y);
-	PrevCamRotation = CameraBoom->RelativeRotation;
-}
-
-void AUmir::LeftMouseButtonReleased()
-{
-	bIsLeftMouseButtonPressed = false;
 
 	// Cast spell if one is activated
-
-	FRotator CurrentCamRotation = CameraBoom->RelativeRotation;
-	bool bDidMouseMove = true;
-	if (CurrentCamRotation.Equals(PrevCamRotation))
-	{
-		bDidMouseMove = false;
-	}
-
-	if (ActivatedSpell != EOffensiveSpell::E_None && !bDidMouseMove)
+	if (ActivatedSpell != EOffensiveSpell::E_None)
 	{
 		CastOffensiveSpell(ActivatedSpell);
 		ActivatedSpell = EOffensiveSpell::E_None;
 		ActiveDecal = EDecalType::E_None;
 	}
+}
+
+void AUmir::LeftMouseButtonReleased()
+{
+	bIsLeftMouseButtonPressed = false;
 }
 
 void AUmir::RightMouseButtonPressed()
@@ -616,7 +610,7 @@ void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
 		if (Spell->CastTime > 0.00001f)
 		{
 			bStopMovement = true;
-			bUseControllerRotationYaw = true;
+			bUseControllerRotationYaw = false;
 
 			FTimerHandle TimerHandle;
 			GetWorldTimerManager().SetTimer(TimerHandle, this, &AUmir::RestoreMovement, Spell->CastTime);
