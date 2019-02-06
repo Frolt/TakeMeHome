@@ -16,12 +16,9 @@ protected:
 	ASpellBase();
 
 public:
-	float ManaCost = 0.0f;
 	float Damage = 0.0f;
 	float CastTime = 0.0f;
-	float Cooldown = 0.0f;
-	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float StunDuration = 0.0f;
-	EElement ElementType = EElement::E_None;
+	EElement ElementType = EElement::E_Neutral;
 	ECharacterType Owner = ECharacterType::E_Umir;
 };

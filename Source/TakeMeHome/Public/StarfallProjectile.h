@@ -34,4 +34,5 @@ public:
 	UParticleSystem *ProjectileContactParticle = nullptr;
 
 	float Force = 1000.0f;
+	float Damage = 0.0f;
 };

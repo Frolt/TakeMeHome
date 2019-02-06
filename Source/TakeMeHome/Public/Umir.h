@@ -41,25 +41,59 @@ public:
 	void LeftMouseButtonReleased();
 	void RightMouseButtonPressed();
 	void RightMouseButtonReleased();
+
+	// Activate action bar
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void CastOffensiveSpell1();
+	void ActivateOffensiveSlot1();
+
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void CastOffensiveSpell2();
+	void ActivateOffensiveSlot2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void CastOffensiveSpell3();
+	void ActivateOffensiveSlot3();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void CastDefensiveSpell();
+	void ActivateDefensiveSlot();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void UsePotion();
+	void ActivatePotionSlot();
 
 	// Others
-	void ShowDecalAtMousePosInWorld();
+	void MoveDecalToMouseHitLocation();
+	void RotateDecalAroundPlayer();
+	void RestoreMovement();
+	void CastOffensiveSpell(EOffensiveSpell SpellKey);
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetManaPercentage() const;
 
-	// Spell/Item utility functions
+	// Cooldown functions
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetDefensiveSlotCooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetDefensiveSlotCooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot1Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot1CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot2Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot2CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot3Cooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetOffensiveSlot3CooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetPotionSlotCooldown() const;
+	UFUNCTION(BlueprintPure, Category = "Cooldown")
+	float GetPotionSlotCooldownPercentage() const;
+
+	// HUD Warnings
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
+	void NotEnoughMana();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
+	void IsOnCooldown();
+
+	// Add/Bind abilities
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void AddDefensiveSpell(EDefensiveSpell DefensiveSpell);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -79,12 +113,19 @@ public:
 
 
 public:
+	// Umir components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent *CameraBoom = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent *FollowCamera = nullptr;
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
-	UDecalComponent *SpellCircle = nullptr;
+	UDecalComponent *Decal = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellCircleMaterial = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellBoxMaterial = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UMaterialInterface *SpellArrowMaterial = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UInventory *Inventory = nullptr;
 
@@ -92,8 +133,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
+	// Active states
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spells")
+	EOffensiveSpell ActivatedSpell = EOffensiveSpell::E_None;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
+	EElement ActiveElement = EElement::E_Neutral;
+	UPROPERTY(BlueprintReadWrite, Category = "Spells")
+	EDecalType ActiveDecal = EDecalType::E_None;
 
-	// Action bar TEST // TODO might make struct later
+	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
@@ -105,6 +153,11 @@ public:
 	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionActive = EPotion::E_None;
+	float LastTimeActivatedDefensiveSpell = 0.0f;
+	float LastTimeActivatedOffensiveSpell1 = 0.0f;
+	float LastTimeActivatedOffensiveSpell2 = 0.0f;
+	float LastTimeActivatedOffensiveSpell3 = 0.0f;
+	float LastTimeActivatedPotion = 0.0f;
 	// ---------------------------------------------------------------------------------------------------------
 
 	// Aquired abilities
@@ -133,18 +186,24 @@ public:
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveManaRegenPerSecond = 1.0f;
+	// TODO not using atm
 	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	float LastTimeTookDamage = 0.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
-	float MaxTargetRange = 1000000.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bShouldLockMouse = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopMovingCamera = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bStopMovement = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bStopZooming = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bIsLeftMouseButtonPressed = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bIsRightMouseButtonPressed = false;
+	// Determines line trace length
+	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
+	float MaxTraceDistance = 100000.0f;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
@@ -154,5 +213,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
 	FVector2D PrevMousePos;
+	FRotator PrevCamRotation;
 
 };

@@ -4,29 +4,29 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "TakeMeHomeGameInstance.h"
+#include "TakeMeHomeEnums.h"
 #include "TimerManager.h"
 
 
 AForcePush::AForcePush()
 {
-	// Enable this actor to tick
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Spell settings
-	ManaCost = 10.0f;
-	Damage = 10.0f;
-	CastTime = 0.0f;
-	Cooldown = 0.0f;
-	StunDuration = 3.0f;
-	ElementType = EElement::E_None;
-	Owner = ECharacterType::E_Umir;
+
 }
 
 void AForcePush::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	// Spell settings
+	auto *ForcePush = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push);
+	Damage = ForcePush->Damage;
+	CastTime = ForcePush->CastTime;
+	StunDuration = ForcePush->StunDuration;
+	ElementType = ForcePush->ElementType;
+	Owner = ECharacterType::E_Umir;
 }
 
 void AForcePush::Tick(float DeltaTime)

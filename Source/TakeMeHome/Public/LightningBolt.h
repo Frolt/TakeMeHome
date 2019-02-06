@@ -20,8 +20,6 @@ class TAKEMEHOME_API ALightningBolt : public ASpellBase
 public:
 	ALightningBolt();
 	virtual void BeginPlay() override;
-	
-	bool TrySetActorLocation();
 	void SpellReady();
 
 public:
@@ -29,10 +27,7 @@ public:
 	USphereComponent *SphereCollision = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Spell setup")
 	UParticleSystem *LightningEffect = nullptr;
-	UPROPERTY(EditAnywhere, Category = "Spell settings")
-	float ChannelTime = 3.0f;
 
 private:
-	bool bWasInterrupted = false;
 	FVector SpawnLocation;
 };

@@ -19,21 +19,35 @@ public:
 	UInventory();
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool AddItem(EItem Item);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool RemoveSingleItem(EItem Item);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool RemoveAllItemsOfType(EItem Item);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	// Add / Remove
+	UFUNCTION(BlueprintCallable, Category = "Utilities")
+	bool AddItems(EItem Item, int32 Quantity);
+	UFUNCTION(BlueprintCallable, Category = "Utilities")
+	bool AddItemsAtIndex(EItem Item, int32 Quantity, int32 Index);
+	UFUNCTION(BlueprintCallable, Category = "Utilities")
+	bool RemoveItems(EItem Item, int32 Quantity);
+	UFUNCTION(BlueprintCallable, Category = "Utilities")
+	bool RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index);
+
+	// Sorting
+	UFUNCTION(BlueprintCallable, Category = "Sorting")
 	void SortByName();
+	UFUNCTION(BlueprintCallable, Category = "Sorting")
+	void SortByQuantity();
+	UFUNCTION(BlueprintCallable, Category = "Sorting")
+	void SortByQuality();
+	UFUNCTION(BlueprintCallable, Category = "Sorting")
+	void SortByValue();
 
 	// Game instance ref (Safe to use since game instance are never destroyed)
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
 	TArray<FItem> Items;
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 	int32 InventorySize = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gold")
+	int32 Gold = 10;
 
 };
