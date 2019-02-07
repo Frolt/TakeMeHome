@@ -88,10 +88,12 @@ public:
 	float GetPotionSlotCooldownPercentage() const;
 
 	// HUD Warnings
-	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void NotEnoughMana();
-	UFUNCTION(BlueprintImplementableEvent, Category = "Casting")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void IsOnCooldown();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
+	void PotionsAreFull();
 
 	// Add/Bind abilities
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -99,7 +101,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void AddOffensiveSpell(EOffensiveSpell OffensiveSpell);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void AddPotion(EPotion Potion);
+	bool AddPotion(EPotion Potion);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	bool RemovePotion(EPotion Potion);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BindDefensiveSpell(EDefensiveSpell DefensiveSpell);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -137,7 +141,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell ActivatedSpell = EOffensiveSpell::E_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EElement ActiveElement = EElement::E_Neutral;
+	EElement ActiveElement = EElement::E_Fire;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDecalType ActiveDecal = EDecalType::E_None;
 

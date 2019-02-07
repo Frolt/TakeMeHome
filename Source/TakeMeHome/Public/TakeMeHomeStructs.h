@@ -123,6 +123,10 @@ struct FPotion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<ASpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 Quantity = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 MaxQuantity = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
 
 };
@@ -143,7 +147,7 @@ struct FItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	int32 Value = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	int32 Quantity = 0;
+	int32 Quantity = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	int32 MaxQuantity = 20;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")

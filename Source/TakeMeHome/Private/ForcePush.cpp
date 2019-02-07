@@ -25,8 +25,7 @@ void AForcePush::BeginPlay()
 	Damage = ForcePush->Damage;
 	CastTime = ForcePush->CastTime;
 	StunDuration = ForcePush->StunDuration;
-	ElementType = ForcePush->ElementType;
-	Owner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::E_Umir;
 }
 
 void AForcePush::Tick(float DeltaTime)

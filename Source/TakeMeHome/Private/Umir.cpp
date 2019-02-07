@@ -635,6 +635,10 @@ void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
 		{
 			SpawnedActor->ElementType = ActiveElement;
 		}
+		else
+		{
+			SpawnedActor->ElementType = Spell->ElementType;
+		}
 	}
 }
 
@@ -738,9 +742,54 @@ void AUmir::AddOffensiveSpell(EOffensiveSpell OffensiveSpell)
 	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(OffensiveSpell));
 }
 
-void AUmir::AddPotion(EPotion Potion)
+bool AUmir::AddPotion(EPotion Potion)
 {
-	AquiredPotions.Add(*GameInstance->Potions.Find(Potion));
+	int32 Index = AquiredPotions.IndexOfByPredicate([Potion](const FPotion &A) {
+		return A.Key == Potion;
+	});
+
+	if (Index == INDEX_NONE)
+	{
+		AquiredPotions.Add(*GameInstance->Potions.Find(Potion));
+		return true;
+	}
+	else
+	{
+		if (AquiredPotions[Index].Quantity < AquiredPotions[Index].MaxQuantity)
+		{
+			AquiredPotions[Index].Quantity++;
+			return true;
+		}
+		else
+		{
+			PotionsAreFull();
+			return false;
+		}
+	}
+}
+
+bool AUmir::RemovePotion(EPotion Potion)
+{
+	int32 Index = AquiredPotions.IndexOfByPredicate([Potion](const FPotion &A) {
+		return A.Key == Potion;
+	});
+
+	if (Index == INDEX_NONE)
+	{
+		return false;
+	}
+	else
+	{
+		if (AquiredPotions[Index].Quantity >= 2)
+		{
+			AquiredPotions[Index].Quantity--;
+		}
+		else
+		{
+			AquiredPotions.RemoveAt(Index);
+		}
+		return true;
+	}
 }
 
 void AUmir::BindDefensiveSpell(EDefensiveSpell DefensiveSpell)

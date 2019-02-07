@@ -25,8 +25,7 @@ void AStarfall::BeginPlay()
 	Damage = Starfall->Damage;
 	CastTime = Starfall->CastTime;
 	StunDuration = Starfall->StunDuration;
-	ElementType = Starfall->ElementType;
-	Owner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::E_Umir;
 
 	// Find first spawn position above the player
 	auto InitLocation = GetActorLocation();

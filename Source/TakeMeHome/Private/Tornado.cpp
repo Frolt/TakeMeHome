@@ -26,8 +26,7 @@ void ATornado::BeginPlay()
 	Damage = Tornado->Damage;
 	CastTime = Tornado->CastTime;
 	StunDuration = Tornado->StunDuration;
-	ElementType = Tornado->ElementType;
-	Owner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::E_Umir;
 
 	// Setup onOverlap event
 	CapsuleCollision->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);

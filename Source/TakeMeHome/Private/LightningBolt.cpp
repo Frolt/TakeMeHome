@@ -26,8 +26,7 @@ void ALightningBolt::BeginPlay()
 	Damage = LightningBolt->Damage;
 	CastTime = LightningBolt->CastTime;
 	StunDuration = LightningBolt->StunDuration;
-	ElementType = LightningBolt->ElementType;
-	Owner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::E_Umir;
 
 	// Set timer for when spell is ready
 	FTimerHandle TimerHandle;

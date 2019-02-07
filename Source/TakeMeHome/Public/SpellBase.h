@@ -16,9 +16,14 @@ protected:
 	ASpellBase();
 
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	float Damage = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	float CastTime = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	float StunDuration = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	EElement ElementType = EElement::E_Neutral;
-	ECharacterType Owner = ECharacterType::E_Umir;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	ECharacterType SpellOwner = ECharacterType::E_Umir;
 };
