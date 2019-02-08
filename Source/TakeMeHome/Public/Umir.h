@@ -141,7 +141,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell ActivatedSpell = EOffensiveSpell::E_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EElement ActiveElement = EElement::E_Fire;
+	EElement ActiveElement = EElement::E_Lightning;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDecalType ActiveDecal = EDecalType::E_None;
 
