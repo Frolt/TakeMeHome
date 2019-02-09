@@ -39,10 +39,8 @@ public:
 	void LookRightRate(float Rate);	// Testing
 	void LookUpRate(float Rate);	// Testing
 	void Zoom(float NormalizedRate);
-	void LeftMouseButtonPressed();
-	void LeftMouseButtonReleased();
-	void RightMouseButtonPressed();
-	void RightMouseButtonReleased();
+	void ActivatePhysical1OrCastSpell();
+	void ActivatePhysical2OrCancel();
 
 	// Activate action bar
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -60,10 +58,13 @@ public:
 	void MoveDecalToMouseHitLocation();
 	void RotateDecalAroundPlayer();
 	void RestoreMovement();
+	void ResetMousePos();
 	void CastOffensiveSpell(EOffensiveSpell SpellKey);
 	void CastDefensiveSpell(EDefensiveSpell SpellKey);
 	void UsePhysicalAttack1();
 	void UsePhysicalAttack2();
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	bool CancelActivatedSpell();
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
@@ -196,11 +197,8 @@ public:
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveManaRegenPerSecond = 1.0f;
-	// TODO not using atm
 	UPROPERTY(BlueprintReadWrite, Category = "Damage")
 	float LastTimeTookDamage = 0.0f;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bShouldLockMouse = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopMovingCamera = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
@@ -208,15 +206,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopZooming = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bIsLeftMouseButtonPressed = false;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bIsRightMouseButtonPressed = false;
+	bool bCanCastSpell = true;
 	// Determines line trace length
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float MaxTraceDistance = 100000.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate = 45.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate = 45.0f;
 
 private:
@@ -226,6 +222,5 @@ private:
 	float MinZoom = 300.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
-	FVector2D PrevMousePos;
 
 };
