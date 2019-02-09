@@ -36,6 +36,8 @@ public:
 	void MoveRight(float NormalizedRate);
 	void LookRight(float NormalizedRate);
 	void LookUp(float NormalizedRate);
+	void LookRightRate(float Rate);	// Testing
+	void LookUpRate(float Rate);	// Testing
 	void Zoom(float NormalizedRate);
 	void LeftMouseButtonPressed();
 	void LeftMouseButtonReleased();
@@ -45,7 +47,6 @@ public:
 	// Activate action bar
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void ActivateOffensiveSlot1();
-
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void ActivateOffensiveSlot2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -60,6 +61,9 @@ public:
 	void RotateDecalAroundPlayer();
 	void RestoreMovement();
 	void CastOffensiveSpell(EOffensiveSpell SpellKey);
+	void CastDefensiveSpell(EDefensiveSpell SpellKey);
+	void UsePhysicalAttack1();
+	void UsePhysicalAttack2();
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
@@ -138,25 +142,27 @@ public:
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
 	// Active states
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell ActivatedSpell = EOffensiveSpell::E_None;
-	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EElement ActiveElement = EElement::E_Lightning;
-	UPROPERTY(BlueprintReadWrite, Category = "Spells")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
+	EOffensiveSpell ActivatedOffensiveSpell = EOffensiveSpell::E_None;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
+	EDefensiveSpell ActivatedDefensiveSpell = EDefensiveSpell::E_None;
+	UPROPERTY(BlueprintReadWrite, Category = "Active State")
+	EElement ActiveElement = EElement::E_Neutral;
+	UPROPERTY(BlueprintReadWrite, Category = "Active State")
 	EDecalType ActiveDecal = EDecalType::E_None;
 
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellActive = EDefensiveSpell::E_None;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::E_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpellActive1 = EOffensiveSpell::E_Tornado;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::E_Tornado;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpellActive2 = EOffensiveSpell::E_Starfall;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::E_Starfall;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpellActive3 = EOffensiveSpell::E_Lightning_Bolt;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::E_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EPotion PotionActive = EPotion::E_None;
+	EPotion PotionBound = EPotion::E_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
 	float LastTimeActivatedOffensiveSpell1 = 0.0f;
 	float LastTimeActivatedOffensiveSpell2 = 0.0f;
@@ -208,6 +214,10 @@ public:
 	// Determines line trace length
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float MaxTraceDistance = 100000.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float BaseTurnRate = 45.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float BaseLookUpRate = 45.0f;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
