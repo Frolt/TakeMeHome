@@ -22,11 +22,11 @@ void ATornado::BeginPlay()
 	if (!ensure(CapsuleCollision)) { return; }
 
 	// Spell settings
-	auto *Tornado = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Tornado);
+	auto *Tornado = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Tornado);
 	Damage = Tornado->Damage;
 	CastTime = Tornado->CastTime;
 	StunDuration = Tornado->StunDuration;
-	SpellOwner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::CT_Umir;
 
 	// Setup onOverlap event
 	CapsuleCollision->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);

@@ -25,5 +25,5 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	EElement ElementType = EElement::E_Neutral;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
-	ECharacterType SpellOwner = ECharacterType::E_Umir;
+	ECharacterType SpellOwner = ECharacterType::CT_Umir;
 };

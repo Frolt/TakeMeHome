@@ -24,7 +24,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TMap<EOffensiveSpell, TSubclassOf<ASpellBase>> OffensiveSpellClasses;
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TMap<ENormalAttack, TSubclassOf<ASpellBase>> NormalAttackClasses;
+	TMap<EPhysicalAttack, TSubclassOf<ASpellBase>> NormalAttackClasses;
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TMap<EPotion, TSubclassOf<ASpellBase>> PotionClasses;
 

@@ -21,11 +21,11 @@ void AForcePush::BeginPlay()
 	Super::BeginPlay();
 
 	// Spell settings
-	auto *ForcePush = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Force_Push);
+	auto *ForcePush = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Force_Push);
 	Damage = ForcePush->Damage;
 	CastTime = ForcePush->CastTime;
 	StunDuration = ForcePush->StunDuration;
-	SpellOwner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::CT_Umir;
 }
 
 void AForcePush::Tick(float DeltaTime)

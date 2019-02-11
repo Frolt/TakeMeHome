@@ -21,11 +21,11 @@ void AStarfall::BeginPlay()
 	Super::BeginPlay();
 
 	// Spell settings
-	auto *Starfall = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Starfall);
+	auto *Starfall = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Starfall);
 	Damage = Starfall->Damage;
 	CastTime = Starfall->CastTime;
 	StunDuration = Starfall->StunDuration;
-	SpellOwner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::CT_Umir;
 
 	// Find first spawn position above the player
 	auto InitLocation = GetActorLocation();

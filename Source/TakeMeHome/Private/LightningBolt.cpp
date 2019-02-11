@@ -22,11 +22,11 @@ void ALightningBolt::BeginPlay()
 	Super::BeginPlay();
 
 	// Spell settings
-	auto *LightningBolt = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::E_Lightning_Bolt);
+	auto *LightningBolt = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Lightning_Bolt);
 	Damage = LightningBolt->Damage;
 	CastTime = LightningBolt->CastTime;
 	StunDuration = LightningBolt->StunDuration;
-	SpellOwner = ECharacterType::E_Umir;
+	SpellOwner = ECharacterType::CT_Umir;
 
 	// Set timer for when spell is ready
 	FTimerHandle TimerHandle;

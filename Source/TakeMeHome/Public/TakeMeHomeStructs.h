@@ -23,7 +23,7 @@ struct FOffensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EOffensiveSpell Key = EOffensiveSpell::E_None;
+	EOffensiveSpell Key = EOffensiveSpell::OS_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	EElement ElementType = EElement::E_Neutral;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -45,7 +45,7 @@ struct FOffensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	bool bMustActivate = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EDecalType DecalType = EDecalType::E_None;
+	EDecalType DecalType = EDecalType::DT_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
 
@@ -61,7 +61,7 @@ struct FDefensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EDefensiveSpell Key = EDefensiveSpell::E_None;
+	EDefensiveSpell Key = EDefensiveSpell::DS_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -75,7 +75,7 @@ struct FDefensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	bool bMustActivate = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EDecalType DecalType = EDecalType::E_None;
+	EDecalType DecalType = EDecalType::DT_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
 
@@ -91,7 +91,7 @@ struct FNormalAttack
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	ENormalAttack Key = ENormalAttack::E_None;
+	EPhysicalAttack Key = EPhysicalAttack::PA_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -117,7 +117,7 @@ struct FPotion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EPotion Key = EPotion::E_None;
+	EPotion Key = EPotion::P_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -141,7 +141,7 @@ struct FItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EItem Key = EItem::E_None;
+	EItem Key = EItem::I_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -151,7 +151,7 @@ struct FItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	int32 MaxQuantity = 20;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	EQuality Quality = EQuality::E_Poor;
+	EQuality Quality = EQuality::Q_Poor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<AActor> ClassRef;
 

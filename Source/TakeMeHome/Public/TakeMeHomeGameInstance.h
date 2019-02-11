@@ -24,7 +24,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EDefensiveSpell, FDefensiveSpell> DefensiveSpells;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
-	TMap<ENormalAttack, FNormalAttack> NormalAttacks;
+	TMap<EPhysicalAttack, FNormalAttack> NormalAttacks;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EPotion, FPotion> Potions;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")

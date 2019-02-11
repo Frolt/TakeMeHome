@@ -26,106 +26,106 @@ enum class EElement : uint8
 UENUM(BlueprintType)
 enum class ECharacterType : uint8
 {
-	E_Umir 				UMETA(DisplayName = "Umir"),
-	E_Verdant 			UMETA(DisplayName = "Verdant"),
-	E_Enemy				UMETA(DisplayName = "Enemy"),
+	CT_Umir 				UMETA(DisplayName = "Umir"),
+	CT_Verdant 			UMETA(DisplayName = "Verdant"),
+	CT_Enemy				UMETA(DisplayName = "Enemy"),
 };
 
 // Defensive spells
 UENUM(BlueprintType)
 enum class EDefensiveSpell : uint8
 {
-	E_None					UMETA(DisplayName = "None"),
-	E_Spirit_Walk 			UMETA(DisplayName = "Spirit Walk"),
-	E_Star_Shield 			UMETA(DisplayName = "Star Shield"),
-	E_Counter_Strike		UMETA(DisplayName = "Counter Strike"),
+	DS_None					UMETA(DisplayName = "None"),
+	DS_Spirit_Walk 			UMETA(DisplayName = "Spirit Walk"),
+	DS_Star_Shield 			UMETA(DisplayName = "Star Shield"),
+	DS_Counter_Strike		UMETA(DisplayName = "Counter Strike"),
 };
 
 // Offensive spells
 UENUM(BlueprintType)
 enum class EOffensiveSpell : uint8
 {
-	E_None					UMETA(DisplayName = "None"),
-	E_Tornado 				UMETA(DisplayName = "Tornado"),
-	E_Starfall 				UMETA(DisplayName = "Starfall"),
-	E_Force_Push			UMETA(DisplayName = "Force Push"),
-	E_Lightning_Bolt		UMETA(DisplayName = "Lightning Bolt"),
+	OS_None					UMETA(DisplayName = "None"),
+	OS_Tornado 				UMETA(DisplayName = "Tornado"),
+	OS_Starfall 				UMETA(DisplayName = "Starfall"),
+	OS_Force_Push			UMETA(DisplayName = "Force Push"),
+	OS_Lightning_Bolt		UMETA(DisplayName = "Lightning Bolt"),
 };
 
 // Potions
 UENUM(BlueprintType)
 enum class EPotion : uint8
 {
-	E_None							UMETA(DisplayName = "None"),
-	E_Healing_Potion 				UMETA(DisplayName = "Healing Potion"),
-	E_Mana_Potion 					UMETA(DisplayName = "Mana Potion"),
-	E_Fire_Elemental_Potion			UMETA(DisplayName = "Fire Elemental Potion"),
-	E_Nature_Elemental_Potion		UMETA(DisplayName = "Nature Elemental Potion"),
-	E_Water_Elemental_Potion		UMETA(DisplayName = "Water Elemental Potion"),
-	E_Earth_Elemental_Potion		UMETA(DisplayName = "Earth Elemental Potion"),
-	E_Lightning_Elemental_Potion	UMETA(DisplayName = "Lightning Elemental Potion"),
+	P_None							UMETA(DisplayName = "None"),
+	P_Healing_Potion 				UMETA(DisplayName = "Healing Potion"),
+	P_Mana_Potion 					UMETA(DisplayName = "Mana Potion"),
+	P_Fire_Elemental_Potion			UMETA(DisplayName = "Fire Elemental Potion"),
+	P_Nature_Elemental_Potion		UMETA(DisplayName = "Nature Elemental Potion"),
+	P_Water_Elemental_Potion		UMETA(DisplayName = "Water Elemental Potion"),
+	P_Earth_Elemental_Potion		UMETA(DisplayName = "Earth Elemental Potion"),
+	P_Lightning_Elemental_Potion	UMETA(DisplayName = "Lightning Elemental Potion"),
 };
 
 // Normal attacks
 UENUM(BlueprintType)
-enum class ENormalAttack : uint8
+enum class EPhysicalAttack : uint8
 {
-	E_None					UMETA(DisplayName = "None"),
-	E_Melee_Attack_1		UMETA(DisplayName = "Melee Attack 1"),
-	E_Melee_Attack_2		UMETA(DisplayName = "Melee Attack 2"),
-	E_Melee_Attack_3		UMETA(DisplayName = "Melee Attack 3"),
+	PA_None					UMETA(DisplayName = "None"),
+	PA_Melee_Attack_1		UMETA(DisplayName = "Melee Attack 1"),
+	PA_Melee_Attack_2		UMETA(DisplayName = "Melee Attack 2"),
+	PA_Melee_Attack_3		UMETA(DisplayName = "Melee Attack 3"),
 };
 
 // Decal types
 UENUM(BlueprintType)
 enum class EDecalType : uint8
 {
-	E_None					UMETA(DisplayName = "None"),
-	E_Spell_Circle			UMETA(DisplayName = "Spell Circle"),
-	E_Arrow  				UMETA(DisplayName = "Arrow"),
-	E_Box_Indicator			UMETA(DisplayName = "Box Indicator"),
+	DT_None					UMETA(DisplayName = "None"),
+	DT_Spell_Circle			UMETA(DisplayName = "Spell Circle"),
+	DT_Arrow  				UMETA(DisplayName = "Arrow"),
+	DT_Box_Indicator			UMETA(DisplayName = "Box Indicator"),
 };
 
 // Decal types
 UENUM(BlueprintType)
 enum class EAbilityType : uint8
 {
-	E_Offensive_Spell		UMETA(DisplayName = "Offensive Spell"),
-	E_Defensive_Spell		UMETA(DisplayName = "Defensive Spell"),
-	E_Normal_Attack 		UMETA(DisplayName = "Normal Attack"),
-	E_Potion				UMETA(DisplayName = "Potion"),
+	AT_Offensive_Spell		UMETA(DisplayName = "Offensive Spell"),
+	AT_Defensive_Spell		UMETA(DisplayName = "Defensive Spell"),
+	AT_Normal_Attack 		UMETA(DisplayName = "Normal Attack"),
+	AT_Potion				UMETA(DisplayName = "Potion"),
 };
 
 // Decal types
 UENUM(BlueprintType)
 enum class EItem : uint8
 {
-	E_None			UMETA(DisplayName = "None"),
-	E_Empty			UMETA(DisplayName = "Empty"),
-	E_Item_1		UMETA(DisplayName = "Item 1"),
-	E_Item_2		UMETA(DisplayName = "Item 2"),
-	E_Item_3		UMETA(DisplayName = "Item 3"),
-	E_Item_4		UMETA(DisplayName = "Item 4"),
+	I_None			UMETA(DisplayName = "None"),
+	I_Empty			UMETA(DisplayName = "Empty"),
+	I_Item_1		UMETA(DisplayName = "Item 1"),
+	I_Item_2		UMETA(DisplayName = "Item 2"),
+	I_Item_3		UMETA(DisplayName = "Item 3"),
+	I_Item_4		UMETA(DisplayName = "Item 4"),
 };
 
 // Decal types
 UENUM(BlueprintType)
 enum class EQuality : uint8
 {
-	E_Poor			UMETA(DisplayName = "Poor"),
-	E_Common		UMETA(DisplayName = "Common"),
-	E_Uncommon		UMETA(DisplayName = "Uncommon"),
-	E_Rare			UMETA(DisplayName = "Rare"),
-	E_Epic			UMETA(DisplayName = "Epic"),
+	Q_Poor			UMETA(DisplayName = "Poor"),
+	Q_Common		UMETA(DisplayName = "Common"),
+	Q_Uncommon		UMETA(DisplayName = "Uncommon"),
+	Q_Rare			UMETA(DisplayName = "Rare"),
+	Q_Epic			UMETA(DisplayName = "Epic"),
 };
 
 // Decal types
 UENUM(BlueprintType)
 enum class ETextWarningLevel : uint8
 {
-	E_Good				UMETA(DisplayName = "Good"),
-	E_Bad				UMETA(DisplayName = "Bad"),
-	E_Indifferent		UMETA(DisplayName = "Indifferent"),
+	TWL_Good			UMETA(DisplayName = "Good"),
+	TWL_Bad				UMETA(DisplayName = "Bad"),
+	TWL_Indifferent		UMETA(DisplayName = "Indifferent"),
 };
 
 // Empty class to show in editor

@@ -69,6 +69,8 @@ public:
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetManaPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Potion")
+	FPotion GetPotion(EPotion Key) const;
 
 	// Cooldown functions
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
@@ -144,26 +146,26 @@ public:
 
 	// Active states
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
-	EOffensiveSpell ActivatedOffensiveSpell = EOffensiveSpell::E_None;
+	EOffensiveSpell ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
-	EDefensiveSpell ActivatedDefensiveSpell = EDefensiveSpell::E_None;
+	EDefensiveSpell ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Active State")
 	EElement ActiveElement = EElement::E_Neutral;
 	UPROPERTY(BlueprintReadWrite, Category = "Active State")
-	EDecalType ActiveDecal = EDecalType::E_None;
+	EDecalType ActiveDecal = EDecalType::DT_None;
 
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::E_None;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::E_Tornado;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Tornado;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::E_Starfall;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Starfall;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::E_Lightning_Bolt;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EPotion PotionBound = EPotion::E_None;
+	EPotion PotionBound = EPotion::P_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
 	float LastTimeActivatedOffensiveSpell1 = 0.0f;
 	float LastTimeActivatedOffensiveSpell2 = 0.0f;
