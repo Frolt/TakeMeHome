@@ -82,7 +82,7 @@ struct FDefensiveSpell
 };
 
 USTRUCT(BlueprintType)
-struct FNormalAttack
+struct FPhysicalAttack
 {
 	GENERATED_BODY()
 

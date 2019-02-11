@@ -14,7 +14,7 @@ class AStarfall;
 class AForcePush;
 class ATornado;
 class ALightningBolt;
-class USpellBook;
+class UAbilities;
 class ASpellBase;
 class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
@@ -36,8 +36,8 @@ public:
 	void MoveRight(float NormalizedRate);
 	void LookRight(float NormalizedRate);
 	void LookUp(float NormalizedRate);
-	void LookRightRate(float Rate);	// Testing
-	void LookUpRate(float Rate);	// Testing
+	void LookRightRate(float Rate);
+	void LookUpRate(float Rate);
 	void Zoom(float NormalizedRate);
 	void ActivatePhysical1OrCastSpell();
 	void ActivatePhysical2OrCancel();
@@ -54,23 +54,27 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void ActivatePotionSlot();
 
-	// Others
+	// Decal functions
 	void MoveDecalToMouseHitLocation();
 	void RotateDecalAroundPlayer();
+
+	// Restore
 	void RestoreMovement();
 	void ResetMousePos();
+
+	// Using abilities
 	void CastOffensiveSpell(EOffensiveSpell SpellKey);
 	void CastDefensiveSpell(EDefensiveSpell SpellKey);
 	void UsePhysicalAttack1();
 	void UsePhysicalAttack2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
+
+	// Health/Mana
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
-	UFUNCTION(BlueprintPure, Category = "Health")
+	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
-	UFUNCTION(BlueprintPure, Category = "Potion")
-	FPotion GetPotion(EPotion Key) const;
 
 	// Cooldown functions
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
@@ -102,15 +106,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void PotionsAreFull();
 
-	// Add/Bind abilities
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void AddDefensiveSpell(EDefensiveSpell DefensiveSpell);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void AddOffensiveSpell(EOffensiveSpell OffensiveSpell);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool AddPotion(EPotion Potion);
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool RemovePotion(EPotion Potion);
+	// Ability binding
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BindDefensiveSpell(EDefensiveSpell DefensiveSpell);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -124,7 +120,7 @@ public:
 
 
 public:
-	// Umir components
+	// Umir's components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent *CameraBoom = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -139,6 +135,8 @@ public:
 	UMaterialInterface *SpellArrowMaterial = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UInventory *Inventory = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	UAbilities *Abilities = nullptr;
 
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
@@ -173,19 +171,6 @@ public:
 	float LastTimeActivatedPotion = 0.0f;
 	// ---------------------------------------------------------------------------------------------------------
 
-	// Aquired abilities
-	// ---------------------------------------------------------------------------------------------------------
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TArray<FOffensiveSpell> AquiredOffensiveSpells;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TArray<FDefensiveSpell> AquiredDefensiveSpells;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TArray<FNormalAttack> AquiredNormalAttacks;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
-	TArray<FPotion> AquiredPotions;
-	// ---------------------------------------------------------------------------------------------------------
-
-
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float MaxHealth = 100.0f;
@@ -209,7 +194,6 @@ public:
 	bool bStopZooming = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanCastSpell = true;
-	// Determines line trace length
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float MaxTraceDistance = 100000.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")

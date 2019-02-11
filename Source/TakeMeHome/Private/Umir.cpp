@@ -16,7 +16,7 @@
 #include "Starfall.h"
 #include "ForcePush.h"
 #include "LightningBolt.h"
-#include "Spellbook.h"
+#include "Abilities.h"
 #include "SpellBase.h"
 #include "TakeMeHomeGameInstance.h"
 #include "Inventory.h"
@@ -63,8 +63,9 @@ AUmir::AUmir()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Create inventory
+	// Create inventory and abilities
 	Inventory = CreateDefaultSubobject<UInventory>(FName("Inventory"));
+	Abilities = CreateDefaultSubobject<UAbilities>(FName("Abilities"));
 }
 
 void AUmir::BeginPlay()
@@ -84,29 +85,29 @@ void AUmir::BeginPlay()
 	Decal->SetDecalMaterial(SpellArrowMaterial);
 
 	// Adding spells
-	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::OS_Tornado));
-	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::OS_Starfall));
-	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::OS_Force_Push));
-	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(EOffensiveSpell::OS_Lightning_Bolt));
+	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Lightning_Bolt);
 
 	// Add normal attacks
-	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(EPhysicalAttack::PA_Melee_Attack_1));
-	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(EPhysicalAttack::PA_Melee_Attack_2));
-	AquiredNormalAttacks.Add(*GameInstance->NormalAttacks.Find(EPhysicalAttack::PA_Melee_Attack_3));
+	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_1);
+	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_2);
+	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_3);
 
 	// Add defensive spells
-	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::DS_Counter_Strike));
-	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::DS_Star_Shield));
-	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(EDefensiveSpell::DS_Spirit_Walk));
+	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
 	// Add potions
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Healing_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Mana_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Fire_Elemental_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Nature_Elemental_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Water_Elemental_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Lightning_Elemental_Potion));
-	AquiredPotions.Add(*GameInstance->Potions.Find(EPotion::P_Earth_Elemental_Potion));
+	Abilities->AddPotion(EPotion::P_Healing_Potion);
+	Abilities->AddPotion(EPotion::P_Mana_Potion);
+	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion);
+	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion);
+	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion);
+	Abilities->AddPotion(EPotion::P_Lightning_Elemental_Potion);
+	Abilities->AddPotion(EPotion::P_Earth_Elemental_Potion);
 
 	// Add items
 	//Inventory->Items.Init(*GameInstance->Items.Find(EItem::E_Empty), 100);
@@ -714,20 +715,6 @@ float AUmir::GetManaPercentage() const
 	return CurrentMana / MaxMana;
 }
 
-FPotion AUmir::GetPotion(EPotion Key) const
-{
-	if (Key != EPotion::P_None)
-	{
-		return *AquiredPotions.FindByPredicate([Key](const FPotion &A) {
-			return A.Key == Key;
-		});
-	}
-	else
-	{
-		return FPotion();
-	}
-}
-
 float AUmir::GetDefensiveSlotCooldown() const
 {
 	if (DefensiveSpellBound == EDefensiveSpell::DS_None)
@@ -806,66 +793,6 @@ float AUmir::GetPotionSlotCooldownPercentage() const
 		return 0.0f;
 	else
 		return GetPotionSlotCooldown() / GameInstance->Potions.Find(PotionBound)->Cooldown;
-}
-
-void AUmir::AddDefensiveSpell(EDefensiveSpell DefensiveSpell)
-{
-	AquiredDefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(DefensiveSpell));
-}
-
-void AUmir::AddOffensiveSpell(EOffensiveSpell OffensiveSpell)
-{
-	AquiredOffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(OffensiveSpell));
-}
-
-bool AUmir::AddPotion(EPotion Potion)
-{
-	int32 Index = AquiredPotions.IndexOfByPredicate([Potion](const FPotion &A) {
-		return A.Key == Potion;
-	});
-
-	if (Index == INDEX_NONE)
-	{
-		AquiredPotions.Add(*GameInstance->Potions.Find(Potion));
-		return true;
-	}
-	else
-	{
-		if (AquiredPotions[Index].Quantity < AquiredPotions[Index].MaxQuantity)
-		{
-			AquiredPotions[Index].Quantity++;
-			return true;
-		}
-		else
-		{
-			PotionsAreFull();
-			return false;
-		}
-	}
-}
-
-bool AUmir::RemovePotion(EPotion Potion)
-{
-	int32 Index = AquiredPotions.IndexOfByPredicate([Potion](const FPotion &A) {
-		return A.Key == Potion;
-	});
-
-	if (Index == INDEX_NONE)
-	{
-		return false;
-	}
-	else
-	{
-		if (AquiredPotions[Index].Quantity >= 2)
-		{
-			AquiredPotions[Index].Quantity--;
-		}
-		else
-		{
-			AquiredPotions.RemoveAt(Index);
-		}
-		return true;
-	}
 }
 
 void AUmir::BindDefensiveSpell(EDefensiveSpell DefensiveSpell)
