@@ -20,6 +20,8 @@ class TAKEMEHOME_API UAbilities : public UActorComponent
 public:	
 	UAbilities();
 	virtual void BeginPlay() override;
+
+	// Add/Remove
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void AddDefensive(EDefensiveSpell DefensiveSpell);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -29,7 +31,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool AddPotion(EPotion Potion);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	bool RemoveDefensive(EDefensiveSpell Key);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	bool RemoveOffensive(EOffensiveSpell Key);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	bool RemovePhysical(EPhysicalAttack Key);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool RemovePotion(EPotion Potion);
+
 	UFUNCTION(BlueprintPure, Category = "Potion")
 	FPotion GetPotion(EPotion Key) const;
 

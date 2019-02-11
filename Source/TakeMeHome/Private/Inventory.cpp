@@ -148,7 +148,7 @@ bool UInventory::RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index)
 void UInventory::SortByName()
 {
 	Items.Sort([](const FItem& A, const FItem& B) {
-		return A.Name.ToString() > B.Name.ToString();
+		return A.Name.ToString() < B.Name.ToString();
 	});
 }
 

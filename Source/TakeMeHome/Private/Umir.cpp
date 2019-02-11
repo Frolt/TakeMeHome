@@ -281,6 +281,7 @@ void AUmir::ActivateOffensiveSlot1()
 
 	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound);
 	if (!ensure(Spell)) return;
+	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
 	{
@@ -322,6 +323,7 @@ void AUmir::ActivateOffensiveSlot2()
 
 	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell2Bound);
 	if (!ensure(Spell)) return;
+	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
 	{
@@ -363,6 +365,7 @@ void AUmir::ActivateOffensiveSlot3()
 
 	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell3Bound);
 	if (!ensure(Spell)) return;
+	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
 	{
@@ -458,6 +461,7 @@ void AUmir::MoveDecalToMouseHitLocation()
 	if (!ensure(Decal)) return;
 	if (ActivatedOffensiveSpell == EOffensiveSpell::OS_None) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("fuck"));
 	// Reset decal scale
 	Decal->RelativeScale3D.Y = 1.0f;
 	Decal->RelativeScale3D.Z = 1.0f;
@@ -530,7 +534,7 @@ void AUmir::RotateDecalAroundPlayer()
 			return;
 		}
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("HEi: %f"), GetWorld()->GetTimeSeconds());
 	// Calculate new decal position/scale/rotation
 	FVector DirectionFromPlayerToHitLocation = (HitResult.Location - GetActorLocation()).GetSafeNormal();
 	DirectionFromPlayerToHitLocation.Z = 0.0f;

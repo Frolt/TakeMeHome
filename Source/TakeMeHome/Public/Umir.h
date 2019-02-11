@@ -59,7 +59,9 @@ public:
 	void RotateDecalAroundPlayer();
 
 	// Restore
+	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void RestoreMovement();
+	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void ResetMousePos();
 
 	// Using abilities
@@ -148,7 +150,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
 	EDefensiveSpell ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Active State")
-	EElement ActiveElement = EElement::E_Neutral;
+	EElement ActiveElement = EElement::E_Fire;
 	UPROPERTY(BlueprintReadWrite, Category = "Active State")
 	EDecalType ActiveDecal = EDecalType::DT_None;
 

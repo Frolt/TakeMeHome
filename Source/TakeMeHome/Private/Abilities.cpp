@@ -65,6 +65,54 @@ bool UAbilities::AddPotion(EPotion Key)
 	}
 }
 
+bool UAbilities::RemoveDefensive(EDefensiveSpell Key)
+{
+	auto Index = DefensiveSpells.IndexOfByPredicate([Key](const FDefensiveSpell &Element) {
+		return Element.Key == Key;
+	});
+	if (Index != INDEX_NONE)
+	{
+		DefensiveSpells.RemoveAt(Index);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UAbilities::RemoveOffensive(EOffensiveSpell Key)
+{
+	auto Index = OffensiveSpells.IndexOfByPredicate([Key](const FOffensiveSpell &Element) {
+		return Element.Key == Key;
+	});
+	if (Index != INDEX_NONE)
+	{
+		OffensiveSpells.RemoveAt(Index);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UAbilities::RemovePhysical(EPhysicalAttack Key)
+{
+	auto Index = PhysicalAttacks.IndexOfByPredicate([Key](const FPhysicalAttack &Element) {
+		return Element.Key == Key;
+	});
+	if (Index != INDEX_NONE)
+	{
+		PhysicalAttacks.RemoveAt(Index);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool UAbilities::RemovePotion(EPotion Key)
 {
 	int32 Index = Potions.IndexOfByPredicate([Key](const FPotion &A) {
