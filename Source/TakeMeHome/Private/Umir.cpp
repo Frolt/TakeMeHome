@@ -72,9 +72,6 @@ void AUmir::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Find game instance
-	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());
-
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
@@ -548,12 +545,6 @@ void AUmir::RotateDecalAroundPlayer()
 
 }
 
-void AUmir::RestoreMovement()
-{
-	bStopMovement = false;
-	bUseControllerRotationYaw = false;
-}
-
 void AUmir::ResetMousePos()
 {
 	if (!GetWorld()->GetFirstPlayerController()->ShouldShowMouseCursor())
@@ -707,16 +698,6 @@ void AUmir::UsePhysicalAttack2()
 {
 	// TODO
 	UE_LOG(LogTemp, Warning, TEXT("Used physical attack 2"));
-}
-
-float AUmir::GetHealthPercentage() const
-{
-	return CurrentHealth / MaxHealth;
-}
-
-float AUmir::GetManaPercentage() const
-{
-	return CurrentMana / MaxMana;
 }
 
 float AUmir::GetDefensiveSlotCooldown() const

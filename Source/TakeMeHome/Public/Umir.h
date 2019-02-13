@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "TakeMeHomeEnums.h"
 #include "TakeMeHomeStructs.h"
 #include "Umir.generated.h"
@@ -21,7 +21,7 @@ class UTakeMeHomeGameInstance;
 class UInventory;
 
 UCLASS()
-class TAKEMEHOME_API AUmir : public ACharacter
+class TAKEMEHOME_API AUmir : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -60,8 +60,6 @@ public:
 
 	// Restore
 	UFUNCTION(BlueprintCallable, Category = "Restore")
-	void RestoreMovement();
-	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void ResetMousePos();
 
 	// Using abilities
@@ -71,12 +69,6 @@ public:
 	void UsePhysicalAttack2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
-
-	// Health/Mana
-	UFUNCTION(BlueprintPure, Category = "Health")
-	float GetHealthPercentage() const;
-	UFUNCTION(BlueprintPure, Category = "Mana")
-	float GetManaPercentage() const;
 
 	// Cooldown functions
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
@@ -140,10 +132,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UAbilities *Abilities = nullptr;
 
-	// Game instance ref (Safe to use since game instance are never destroyed)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
-	UTakeMeHomeGameInstance *GameInstance = nullptr;
-
 	// Active states
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
 	EOffensiveSpell ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
@@ -174,24 +162,8 @@ public:
 	// ---------------------------------------------------------------------------------------------------------
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxHealth = 100.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float CurrentHealth;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxMana = 100.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float CurrentMana;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float PassiveHealthRegenPerSecond = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float PassiveManaRegenPerSecond = 1.0f;
-	UPROPERTY(BlueprintReadWrite, Category = "Damage")
-	float LastTimeTookDamage = 0.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopMovingCamera = false;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bStopMovement = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bStopZooming = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
