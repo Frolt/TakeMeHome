@@ -32,6 +32,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// Input methods
+	void StartJumping();
 	void MoveForward(float NormalizedRate);
 	void MoveRight(float NormalizedRate);
 	void LookRight(float NormalizedRate);
@@ -57,6 +58,11 @@ public:
 	// Decal functions
 	void MoveDecalToMouseHitLocation();
 	void RotateDecalAroundPlayer();
+	void ResetDecalSize(float Radius = 256.0f);
+
+	// Death event
+	UFUNCTION()
+	void OnDeath();
 
 	// Restore
 	UFUNCTION(BlueprintCallable, Category = "Restore")
@@ -92,13 +98,19 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
 	float GetPotionSlotCooldownPercentage() const;
 
-	// HUD Warnings
+	// HUD functions
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void NotEnoughMana();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void IsOnCooldown();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void PotionsAreFull();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
+	void CastingBarActivated();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
+	void CastingBarInterrupted();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
+	void CastingBarSucceded();
 
 	// Ability binding
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -112,6 +124,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BindPotion(EPotion Potion);
 
+	// Casting/interrupt
+	virtual void StartCasting(float CastDuration) override;
+	virtual bool InterruptCasting() override;
+	virtual void CastSuccesfull() override;
+	UFUNCTION(BlueprintPure, Category = "Casting")
+	float GetCastingPercentage() const;
 
 public:
 	// Umir's components
@@ -163,11 +181,9 @@ public:
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bStopMovingCamera = false;
+	bool bCanMoveCamera = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bStopZooming = false;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bCanCastSpell = true;
+	bool bCanZoom = true;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float MaxTraceDistance = 100000.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")

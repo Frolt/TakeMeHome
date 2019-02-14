@@ -33,7 +33,7 @@ void UAbilities::AddOffensive(EOffensiveSpell OffensiveSpell)
 
 void UAbilities::AddPhysical(EPhysicalAttack PhysicalAttack)
 {
-	PhysicalAttacks.Add(*GameInstance->NormalAttacks.Find(PhysicalAttack));
+	PhysicalAttacks.Add(*GameInstance->PhysicalAttacks.Find(PhysicalAttack));
 }
 
 bool UAbilities::AddPotion(EPotion Key)

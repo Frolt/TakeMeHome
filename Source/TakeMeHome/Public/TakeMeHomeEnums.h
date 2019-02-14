@@ -66,7 +66,7 @@ enum class EPotion : uint8
 	P_Lightning_Elemental_Potion	UMETA(DisplayName = "Lightning Elemental Potion"),
 };
 
-// Normal attacks
+// Physical attacks
 UENUM(BlueprintType)
 enum class EPhysicalAttack : uint8
 {
@@ -92,7 +92,7 @@ enum class EAbilityType : uint8
 {
 	AT_Offensive_Spell		UMETA(DisplayName = "Offensive Spell"),
 	AT_Defensive_Spell		UMETA(DisplayName = "Defensive Spell"),
-	AT_Normal_Attack 		UMETA(DisplayName = "Normal Attack"),
+	AT_Physical_Attack 		UMETA(DisplayName = "Physical Attack"),
 	AT_Potion				UMETA(DisplayName = "Potion"),
 };
 

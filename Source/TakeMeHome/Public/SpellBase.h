@@ -7,6 +7,7 @@
 #include "TakeMeHomeEnums.h"
 #include "SpellBase.generated.h"
 
+
 UCLASS()
 class TAKEMEHOME_API ASpellBase : public AActor
 {
@@ -25,5 +26,5 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	EElement ElementType = EElement::E_Neutral;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
-	ECharacterType SpellOwner = ECharacterType::CT_Umir;
+	AController *SpellOwner = nullptr;
 };

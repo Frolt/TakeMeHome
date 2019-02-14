@@ -8,6 +8,9 @@
 
 class UTakeMeHomeGameInstance;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCastingFinishedDelegate, bool, bWasSuccessful);
+
 UCLASS()
 class TAKEMEHOME_API ABaseCharacter : public ACharacter
 {
@@ -17,19 +20,49 @@ public:
 	ABaseCharacter();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+	// Damage events
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	// Death events
+	UFUNCTION()
+	void OnNPCDeath();
 
 	// Health/Mana
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
+
+	// Stuns
+	UFUNCTION(BlueprintImplementableEvent, Category = "Tornado")
+	void LiftUpInAir(AActor *ActorToSpin, float LiftHeight, float LiftDuration);
+
+	// Restrictions
+	UFUNCTION(BlueprintCallable, Category = "Casting")
+	virtual void StartCasting(float CastDuration);
+	UFUNCTION(BlueprintCallable, Category = "Casting")
+	virtual bool InterruptCasting();
+	UFUNCTION(BlueprintCallable, Category = "Casting")
+	virtual void CastSuccesfull();
+
 	UFUNCTION(BlueprintCallable, Category = "Restore")
-	void RestoreMovement();
+	void LockCharacter();
+	UFUNCTION(BlueprintCallable, Category = "Restore")
+	void RestoreCharacter();
 
 public:
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
+
+	// Delegates
+	FOnDeathDelegate OnDeathDelegate;
+	FOnCastingFinishedDelegate OnCastingStatusChange;
+
+	// Timer handles
+	FTimerHandle CastTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float MaxHealth = 100.0f;
@@ -43,9 +76,17 @@ public:
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveManaRegenPerSecond = 1.0f;
-	UPROPERTY(BlueprintReadWrite, Category = "Damage")
-	float LastTimeTookDamage = 0.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float TimeCastingBegan = 0.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	float TimeCastingEnds = 0.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
-	bool bStopMovement = false;
+	bool bCanMove = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bIsDead = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	bool bIsCasting = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bCanUseSpell = true;
 
 };

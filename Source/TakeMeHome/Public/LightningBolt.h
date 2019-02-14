@@ -20,7 +20,8 @@ class TAKEMEHOME_API ALightningBolt : public ASpellBase
 public:
 	ALightningBolt();
 	virtual void BeginPlay() override;
-	void SpellReady();
+	UFUNCTION()
+	void CastingStatusChanged(bool bSucceeded);
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell settings")

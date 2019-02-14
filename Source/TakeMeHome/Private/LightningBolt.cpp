@@ -26,40 +26,38 @@ void ALightningBolt::BeginPlay()
 	Damage = LightningBolt->Damage;
 	CastTime = LightningBolt->CastTime;
 	StunDuration = LightningBolt->StunDuration;
-	SpellOwner = ECharacterType::CT_Umir;
+	SphereCollision->SetSphereRadius(LightningBolt->DecalRadius);
 
-	// Set timer for when spell is ready
-	FTimerHandle TimerHandle;
-	if (CastTime > 0.0f)
+	// Subscribe to casting status
+	auto BaseChar = Cast<ABaseCharacter>(SpellOwner->GetPawn());
+	if (BaseChar)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &ALightningBolt::SpellReady, CastTime);
+		BaseChar->OnCastingStatusChange.AddDynamic(this, &ALightningBolt::CastingStatusChanged);
 	}
 }
 
-void ALightningBolt::SpellReady()
+void ALightningBolt::CastingStatusChanged(bool bSucceeded)
 {
-	if (!ensure(SphereCollision)) { return; }
+	if (!ensure(SphereCollision)) return;
 
-	// Finds out if Umir was interrupted
-	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-	if (Umir)
+	if (bSucceeded)
 	{
-		if ((GetWorld()->GetTimeSeconds() - Umir->LastTimeTookDamage) > CastTime)
+		// Get all overlapping characters
+		TArray<AActor *> ActorsHit;
+		SphereCollision->GetOverlappingActors(ActorsHit, TSubclassOf<ABaseCharacter>());
+
+		for (auto element : ActorsHit)
 		{
-			// Cast spell if Umir was not interrupted
-			// Get all actors hit
-			TArray<AActor *> ActorsHit;
-			SphereCollision->GetOverlappingActors(ActorsHit);
-
-			// TODO damage all enemies hit
-			for (auto element : ActorsHit)
-			{
-			}
-
-			// Spawn particle effect
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LightningEffect, GetActorLocation());
+			element->TakeDamage(Damage, FDamageEvent(), SpellOwner, this);
 		}
-	}
 
+		// Spawn particle effect
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LightningEffect, GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Casting failed"));
+
+	}
 	Destroy();
 }

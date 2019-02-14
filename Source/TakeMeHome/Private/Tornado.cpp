@@ -19,16 +19,16 @@ void ATornado::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!ensure(CapsuleCollision)) { return; }
+	if (!ensure(CapsuleCollision)) return;
+	if (!ensure(SpellOwner)) return;
 
 	// Spell settings
 	auto *Tornado = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Tornado);
 	Damage = Tornado->Damage;
 	CastTime = Tornado->CastTime;
 	StunDuration = Tornado->StunDuration;
-	SpellOwner = ECharacterType::CT_Umir;
 
-	// Setup onOverlap event
+	// Setup OnOverlap event
 	CapsuleCollision->OnComponentBeginOverlap.AddDynamic(this, &ATornado::OnOverlap);
 
 	// Set duration timer
@@ -85,7 +85,7 @@ void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActo
 	GetWorldTimerManager().SetTimer(TimerHandle, TimerDel, StunDuration, false);
 
 	// Do movement with blueprint timeline
-	SpinActor(OtherActor, NewPos.Z, StunDuration);
+	//SpinActor(OtherActor, NewPos.Z, StunDuration);
 }
 
 void ATornado::DurationExpired()
