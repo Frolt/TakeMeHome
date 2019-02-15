@@ -44,14 +44,16 @@ void AStarfall::BeginPlay()
 
 void AStarfall::SpawnProjectile()
 {
+	if (!ensure(StarfallProjectileBP)) return;
+
 	if (Index + 1 < SpawnLocations.Num())
 	{
-		auto Projectile = GetWorld()->SpawnActor<AStarfallProjectile>(StarfallProjectileBP, SpawnLocations[Index++], GetActorRotation() + ProjectileRotation);
-		if (Projectile)
-		{
-			Projectile->Force = ProjectileSpeed;
-			Projectile->Damage = Damage;
-		}
+		FTransform SpawnTransform(GetActorRotation() + ProjectileRotation, SpawnLocations[Index++]);
+		auto Projectile = GetWorld()->SpawnActorDeferred<AStarfallProjectile>(StarfallProjectileBP, SpawnTransform);
+		Projectile->Force = ProjectileSpeed;
+		Projectile->Damage = Damage;
+		Projectile->AbilityOwner = AbilityOwner;
+		Projectile->FinishSpawning(SpawnTransform);
 
 		if (Index == SpawnLocations.Num())
 		{

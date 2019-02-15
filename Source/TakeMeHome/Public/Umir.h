@@ -71,8 +71,6 @@ public:
 	// Using abilities
 	void CastOffensiveSpell(EOffensiveSpell SpellKey);
 	void CastDefensiveSpell(EDefensiveSpell SpellKey);
-	void UsePhysicalAttack1();
-	void UsePhysicalAttack2();
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
 
@@ -156,8 +154,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
 	EDefensiveSpell ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Active State")
-	EElement ActiveElement = EElement::E_Fire;
-	UPROPERTY(BlueprintReadWrite, Category = "Active State")
 	EDecalType ActiveDecal = EDecalType::DT_None;
 
 	// Action bar
@@ -171,7 +167,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EPotion PotionBound = EPotion::P_None;
+	EPotion PotionBound = EPotion::P_Healing_Potion;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
 	float LastTimeActivatedOffensiveSpell1 = 0.0f;
 	float LastTimeActivatedOffensiveSpell2 = 0.0f;

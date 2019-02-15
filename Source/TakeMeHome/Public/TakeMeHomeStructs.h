@@ -8,6 +8,7 @@
 #include "TakeMeHomeStructs.generated.h"
 
 class ASpellBase;
+class APotionBase;
 
 /**
  * Contains all the structs for items and abilities
@@ -121,7 +122,7 @@ struct FPotion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TSubclassOf<ASpellBase> ClassRef;
+	TSubclassOf<APotionBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	int32 Quantity = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")

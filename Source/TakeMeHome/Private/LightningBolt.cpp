@@ -29,10 +29,9 @@ void ALightningBolt::BeginPlay()
 	SphereCollision->SetSphereRadius(LightningBolt->DecalRadius);
 
 	// Subscribe to casting status
-	auto BaseChar = Cast<ABaseCharacter>(SpellOwner->GetPawn());
-	if (BaseChar)
+	if (AbilityOwner)
 	{
-		BaseChar->OnCastingStatusChange.AddDynamic(this, &ALightningBolt::CastingStatusChanged);
+		AbilityOwner->OnCastingStatusChange.AddDynamic(this, &ALightningBolt::CastingStatusChanged);
 	}
 }
 
@@ -48,16 +47,11 @@ void ALightningBolt::CastingStatusChanged(bool bSucceeded)
 
 		for (auto element : ActorsHit)
 		{
-			element->TakeDamage(Damage, FDamageEvent(), SpellOwner, this);
+			element->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
 		}
 
 		// Spawn particle effect
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LightningEffect, GetActorLocation());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Casting failed"));
-
 	}
 	Destroy();
 }

@@ -78,10 +78,6 @@ void AUmir::BeginPlay()
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
-	// Testing stuff
-	Decal->Activate();
-	Decal->SetDecalMaterial(SpellArrowMaterial);
-
 	// Adding spells
 	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
@@ -119,8 +115,7 @@ void AUmir::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!ensure(Decal)) { return; }
-
+	if (!ensure(Decal)) return;
 
 	// Activate correct decal type
 	switch (ActiveDecal)
@@ -267,7 +262,7 @@ void AUmir::ActivatePhysical1OrCastSpell()
 	}
 	else
 	{
-		UsePhysicalAttack1();
+		UsePhysicalAttack(EPhysicalAttack::PA_Melee_Attack_1);
 	}
 }
 
@@ -277,7 +272,7 @@ void AUmir::ActivatePhysical2OrCancel()
 
 	if (!bDidCancel)
 	{
-		UsePhysicalAttack2();
+		UsePhysicalAttack(EPhysicalAttack::PA_Melee_Attack_2);
 	}
 }
 
@@ -455,14 +450,18 @@ void AUmir::ActivatePotionSlot()
 {
 	UE_LOG(LogTemp, Warning, TEXT("activate potion slot"));
 
-	// Check if on cooldown or spell is not bound
+	// Check if allowed to use potion
 	if (PotionBound == EPotion::P_None) return;
 	if (!FMath::IsNearlyEqual(GetPotionSlotCooldown(), 0.0f)) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	LastTimeActivatedPotion = GetWorld()->GetTimeSeconds();
-	// TODO
-	UE_LOG(LogTemp, Warning, TEXT("Using potion"));
+	// Set cooldown and remove potion
+	if (Abilities->RemovePotion(PotionBound))
+	{
+		LastTimeActivatedPotion = GetWorld()->GetTimeSeconds();
+		UsePotion(PotionBound);
+		PotionBound = EPotion::P_None;
+	}
 }
 
 void AUmir::MoveDecalToMouseHitLocation()
@@ -662,10 +661,7 @@ void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
 		// Spawning spell deferred to allow initializing construction values
 		FTransform SpawnTransform(SpawnRotation, SpawnLocation);
 		auto SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
-		SpawnedActor->SpellOwner = GetWorld()->GetFirstPlayerController();
-		SpawnedActor->FinishSpawning(SpawnTransform);
-
-
+		SpawnedActor->AbilityOwner = this;
 		// Set spell element according to Umir's active element
 		if (Spell->ElementType == EElement::E_Neutral)
 		{
@@ -675,6 +671,10 @@ void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
 		{
 			SpawnedActor->ElementType = Spell->ElementType;
 		}
+		// Finished initialization
+		SpawnedActor->FinishSpawning(SpawnTransform);
+
+
 	}
 }
 
@@ -714,18 +714,6 @@ void AUmir::CastDefensiveSpell(EDefensiveSpell SpellKey)
 
 	// TODO
 	UE_LOG(LogTemp, Warning, TEXT("Cast Defensive spell"));
-}
-
-void AUmir::UsePhysicalAttack1()
-{
-	// TODO
-	UE_LOG(LogTemp, Warning, TEXT("Used physical attack 1"));
-}
-
-void AUmir::UsePhysicalAttack2()
-{
-	// TODO
-	UE_LOG(LogTemp, Warning, TEXT("Used physical attack 2"));
 }
 
 float AUmir::GetDefensiveSlotCooldown() const

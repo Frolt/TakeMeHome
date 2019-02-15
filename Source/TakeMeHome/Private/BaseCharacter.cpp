@@ -4,6 +4,7 @@
 #include "TakeMeHomeGameInstance.h"
 #include "Engine/World.h"
 #include "Public/TimerManager.h"
+#include "PotionBase.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -35,9 +36,12 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	// Interrupt casting
-	InterruptCasting();
+	if (Damage > 0.0f)
+		InterruptCasting();
 
-	// Take damage
+	// TODO consider adding sound/particle/animation when taking damage or healing
+
+	// Take damage/heal
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
 
 	// Check if died
@@ -54,6 +58,21 @@ void ABaseCharacter::OnNPCDeath()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s died (NPC)"), *GetName());
 	DetachFromControllerPendingDestroy();
+}
+
+void ABaseCharacter::Heal(float Amount)
+{
+	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.0f, MaxHealth);
+}
+
+void ABaseCharacter::DrainMana(float Amount)
+{
+	CurrentMana = FMath::Clamp(CurrentMana - Amount, 0.0f, MaxMana);
+}
+
+void ABaseCharacter::RestoreMana(float Amount)
+{
+	CurrentMana = FMath::Clamp(CurrentMana + Amount, 0.0f, MaxMana);
 }
 
 float ABaseCharacter::GetHealthPercentage() const
@@ -111,5 +130,38 @@ void ABaseCharacter::RestoreCharacter()
 	bCanMove = true;
 	bCanUseSpell = true;
 	bUseControllerRotationYaw = false;
-	
+}
+
+void ABaseCharacter::UsePotion(EPotion Key)
+{
+	if (!ensure(Key != EPotion::P_None)) return;
+
+	auto *Potion = GameInstance->Potions.Find(Key);
+
+	UE_LOG(LogTemp, Warning, TEXT("Potion is valid"));
+	// Spawning spell deferred to allow initializing construction values
+	auto SpawnedActor = GetWorld()->SpawnActorDeferred<APotionBase>(Potion->ClassRef, GetActorTransform());
+	SpawnedActor->AbilityOwner = this;
+	SpawnedActor->FinishSpawning(GetActorTransform());
+}
+
+void ABaseCharacter::UseDefensiveSpell(EDefensiveSpell Key)
+{
+	if (!ensure(Key != EDefensiveSpell::DS_None)) return;
+
+	// TODO give all characters the ability to use defensive spells
+}
+
+void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell Key)
+{
+	if (!ensure(Key != EOffensiveSpell::OS_None)) return;
+
+	// TODO give all characters the ability to use offensive spells
+}
+
+void ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
+{
+	if (!ensure(Key == EPhysicalAttack::PA_None)) return;
+
+	// TODO
 }

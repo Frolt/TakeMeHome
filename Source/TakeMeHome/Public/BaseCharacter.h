@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "TakeMeHomeEnums.h"
 #include "BaseCharacter.generated.h"
 
 class UTakeMeHomeGameInstance;
@@ -22,24 +23,24 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	// Damage events
+	// Events
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	// Death events
 	UFUNCTION()
 	void OnNPCDeath();
 
 	// Health/Mana
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void Heal(float Amount);
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	void DrainMana(float Amount);
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	void RestoreMana(float Amount);
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
 
-	// Stuns
-	UFUNCTION(BlueprintImplementableEvent, Category = "Tornado")
-	void LiftUpInAir(AActor *ActorToSpin, float LiftHeight, float LiftDuration);
-
-	// Restrictions
+	// Casting
 	UFUNCTION(BlueprintCallable, Category = "Casting")
 	virtual void StartCasting(float CastDuration);
 	UFUNCTION(BlueprintCallable, Category = "Casting")
@@ -47,23 +48,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Casting")
 	virtual void CastSuccesfull();
 
+	// Locking
 	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void LockCharacter();
 	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void RestoreCharacter();
+
+	// Abilities
+	void UsePotion(EPotion Key);
+	void UseDefensiveSpell(EDefensiveSpell Key);
+	void UseOffensiveSpell(EOffensiveSpell Key);
+	void UsePhysicalAttack(EPhysicalAttack Key);
 
 public:
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
-	// Delegates
+	// Delegates'
+	UPROPERTY(BlueprintAssignable, Category = "Delegates")
 	FOnDeathDelegate OnDeathDelegate;
 	FOnCastingFinishedDelegate OnCastingStatusChange;
 
 	// Timer handles
 	FTimerHandle CastTimerHandle;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Element")
+	EElement ActiveElement = EElement::E_Fire;
+	UPROPERTY(BlueprintReadWrite, Category = "Element")
+	EElement ElementType = EElement::E_Fire;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float MaxHealth = 100.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")

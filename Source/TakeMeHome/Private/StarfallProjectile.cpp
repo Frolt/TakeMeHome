@@ -4,6 +4,7 @@
 #include "Gameframework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "BaseCharacter.h"
 
 
 AStarfallProjectile::AStarfallProjectile()
@@ -18,7 +19,8 @@ void AStarfallProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!ensure(SphereCollision)) { return; }
+	if (!ensure(SphereCollision)) return;
+	ActorsToIgnore.Add(AbilityOwner);
 
 	// Setup onOverlap event
 	SphereCollision->SetGenerateOverlapEvents(true);
@@ -31,10 +33,19 @@ void AStarfallProjectile::BeginPlay()
 
 void AStarfallProjectile::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!ensure(ProjectileContactParticle)) return;
+
 	// Spawn particle effect
-	if (ProjectileContactParticle)
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ProjectileContactParticle, GetActorLocation(), FRotator::ZeroRotator, true);
+
+	// Apply damage to enemies hit
+	if (OtherActor->IsA<ABaseCharacter>())
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ProjectileContactParticle, GetActorLocation(), FRotator::ZeroRotator, true);
+		if (!ActorsToIgnore.Contains(OtherActor))
+		{
+			ActorsToIgnore.Add(OtherActor);
+			OtherActor->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
+		}
 	}
 
 	Destroy();

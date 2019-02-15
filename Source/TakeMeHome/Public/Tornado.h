@@ -8,6 +8,7 @@
 
 class UCapsuleComponent;
 class UPrimitiveComponent;
+class ABaseCharacter;
 
 /**
  * Tornado spell
@@ -24,11 +25,11 @@ public:
 
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void PutDown(UPrimitiveComponent *OtherComponent, bool bHadPhysics);
 	void MoveAlongGround(float DeltaTime);
 	void DurationExpired();
 	void DestroyActor();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Lift actor")
+	void LiftPawn(ABaseCharacter *CharacterToLift, float LiftHeight, float Duration, float SpinRate);
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
@@ -43,5 +44,8 @@ private:
 	float Speed = 1000.0f;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float LiftHeight = 500.0f;
+	UPROPERTY(EditAnywhere, Category = "Spell settings")
+	float SpinRate = 500.0f;
 	bool bCanMove = true;
+	TArray<AActor *> ActorsToIgnore;
 };

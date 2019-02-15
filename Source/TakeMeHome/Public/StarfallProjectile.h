@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "AbilityBase.h"
 #include "StarfallProjectile.generated.h"
 
 class UProjectileMovementComponent;
@@ -14,7 +14,7 @@ class USphereComponent;
  * Launches a projectile in the chosen direction. Deals damage on begin overlap event
  */
 UCLASS()
-class TAKEMEHOME_API AStarfallProjectile : public AActor
+class TAKEMEHOME_API AStarfallProjectile : public AAbilityBase
 {
 	GENERATED_BODY()
 	
@@ -35,4 +35,5 @@ public:
 
 	float Force = 1000.0f;
 	float Damage = 0.0f;
+	TArray<AActor *> ActorsToIgnore;
 };

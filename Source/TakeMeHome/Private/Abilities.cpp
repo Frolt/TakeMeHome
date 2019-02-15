@@ -123,27 +123,27 @@ bool UAbilities::RemovePotion(EPotion Key)
 	{
 		return false;
 	}
+	else if (Potions[Index].Quantity > 1)
+	{
+		Potions[Index].Quantity--;
+		return true;
+	}
 	else
 	{
-		if (Potions[Index].Quantity >= 2)
-		{
-			Potions[Index].Quantity--;
-		}
-		else
-		{
-			Potions.RemoveAt(Index);
-		}
+		Potions.RemoveAt(Index);
 		return true;
 	}
 }
 
 FPotion UAbilities::GetPotion(EPotion Key) const
 {
-	if (Key != EPotion::P_None)
+	auto *PotionPtr = Potions.FindByPredicate([Key](const FPotion &A) {
+		return A.Key == Key;
+	});
+
+	if (auto lol = PotionPtr)
 	{
-		return *Potions.FindByPredicate([Key](const FPotion &A) {
-			return A.Key == Key;
-		});
+		return *PotionPtr;
 	}
 	else
 	{
