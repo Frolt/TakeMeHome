@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+#include "TakeMeHomeEnums.h"
 #include "Enemy.generated.h"
 
 
@@ -15,4 +16,8 @@ class TAKEMEHOME_API AEnemy : public ABaseCharacter
 public:
 	AEnemy();
 	virtual void BeginPlay() override;
+
+public:
+	// Abilities
+	EPhysicalAttack MeleeAttack = EPhysicalAttack::PA_Enemy_Attack;
 };

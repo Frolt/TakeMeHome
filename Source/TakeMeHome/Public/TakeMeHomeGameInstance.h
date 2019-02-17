@@ -15,6 +15,13 @@ UCLASS()
 class TAKEMEHOME_API UTakeMeHomeGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+public:
+	// Getters
+	FDefensiveSpell *GetDefensiveSpell(EDefensiveSpell Key);
+	FOffensiveSpell *GetOffensiveSpell(EOffensiveSpell Key);
+	FPhysicalAttack *GetPhysicalAttack(EPhysicalAttack Key);
+	FPotion *GetPotion(EPotion Key);
 	
 public:
 	// All abilites and spells

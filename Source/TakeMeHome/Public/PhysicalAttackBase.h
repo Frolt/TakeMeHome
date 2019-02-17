@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "AbilityBase.h"
 #include "PhysicalAttackBase.generated.h"
 
 UCLASS()
-class TAKEMEHOME_API APhysicalAttackBase : public AActor
+class TAKEMEHOME_API APhysicalAttackBase : public AAbilityBase
 {
 	GENERATED_BODY()
 	
@@ -15,12 +15,12 @@ public:
 	APhysicalAttackBase();
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	UPROPERTY(BlueprintReadWrite, Category = "Spell Properties")
 	float Damage = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
-	float CastTime = 0.0f;
+	float LockTime = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	float Delay = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	float StunDuration = 0.0f;
-	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
-	AController *AbilityOwner = nullptr;
 };

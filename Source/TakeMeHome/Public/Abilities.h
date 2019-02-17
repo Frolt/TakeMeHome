@@ -40,11 +40,10 @@ public:
 	bool RemovePotion(EPotion Potion);
 
 	UFUNCTION(BlueprintPure, Category = "Potion")
-	FPotion GetPotion(EPotion Key) const;
+	int32 GetPotionsLeft(EPotion Key) const;
 
 
 public:
-
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;

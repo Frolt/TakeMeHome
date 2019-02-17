@@ -8,8 +8,12 @@
 #include "BaseCharacter.generated.h"
 
 class UTakeMeHomeGameInstance;
+class UParticleSystem;
+class UParticleSystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInterruptLockDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCounterStrikeActivate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCastingFinishedDelegate, bool, bWasSuccessful);
 
 UCLASS()
@@ -39,6 +43,10 @@ public:
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Mana")
+	float GetHealth() const;
+	UFUNCTION(BlueprintPure, Category = "Mana")
+	float GetMana() const;
 
 	// Casting
 	UFUNCTION(BlueprintCallable, Category = "Casting")
@@ -49,57 +57,93 @@ public:
 	virtual void CastSuccesfull();
 
 	// Locking
-	UFUNCTION(BlueprintCallable, Category = "Restore")
-	void LockCharacter();
-	UFUNCTION(BlueprintCallable, Category = "Restore")
-	void RestoreCharacter();
+	UFUNCTION(BlueprintCallable, Category = "Lock")
+	void LockCharacter(float LockDuration);
+	UFUNCTION(BlueprintCallable, Category = "Lock")
+	void UnlockCharacter();
+	UFUNCTION(BlueprintCallable, Category = "Lock")
+	void InterruptLock();
+
+	// Stunning
+	UFUNCTION(BlueprintCallable, Category = "Stun")
+	void Stun(float StunDuration, bool OverrideStun = true);
+	UFUNCTION(BlueprintCallable, Category = "Stun")
+	void InterruptStun();
 
 	// Abilities
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void UsePotion(EPotion Key);
-	void UseDefensiveSpell(EDefensiveSpell Key);
-	void UseOffensiveSpell(EOffensiveSpell Key);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	virtual void UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void UsePhysicalAttack(EPhysicalAttack Key);
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void BroadcastCounterStrike();
 
 public:
 	// Game instance ref (Safe to use since game instance are never destroyed)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
+	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
+	// Particles
+	UPROPERTY(Category = "Particles", VisibleAnywhere, BlueprintReadOnly)
+	UParticleSystemComponent *StunParticle = nullptr;
+	UPROPERTY(Category = "Particles", VisibleAnywhere, BlueprintReadOnly)
+	UParticleSystemComponent *CastParticle = nullptr;
+
 	// Delegates'
-	UPROPERTY(BlueprintAssignable, Category = "Delegates")
+	UPROPERTY(BlueprintAssignable)
 	FOnDeathDelegate OnDeathDelegate;
+	UPROPERTY(BlueprintAssignable)
 	FOnCastingFinishedDelegate OnCastingStatusChange;
+	UPROPERTY(BlueprintAssignable)
+	FOnInterruptLockDelegate OnLockInterrupted;
+	UPROPERTY(BlueprintAssignable)
+	FOnCounterStrikeActivate OnCounterStrikeActivated;
 
 	// Timer handles
 	FTimerHandle CastTimerHandle;
+	FTimerHandle LockTimerHandle;
+	FTimerHandle StunTimerHandle;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
 	EElement ActiveElement = EElement::E_Fire;
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
 	EElement ElementType = EElement::E_Fire;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxHealth = 100.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float CurrentHealth;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxMana = 100.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float CurrentMana;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveManaRegenPerSecond = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float TimeCastingBegan = 0.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float TimeCastingEnds = 0.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanMove = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bIsDead = false;
-	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
-	bool bIsCasting = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanUseSpell = true;
+	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	bool bIsCasting = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	bool bIsLocked = false;
+	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	bool bIsStunned = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bCounterStrikeActive = false;
 
+protected:
+	// Health/Mana
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float MaxHealth = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float CurrentHealth;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float MaxMana = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float CurrentMana;
+	// Casting
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float TimeCastingBegan = 0.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float TimeCastingEnds = 0.0f;
 };

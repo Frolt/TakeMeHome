@@ -26,10 +26,6 @@ void ATornado::BeginPlay()
 	if (!ensure(AbilityOwner)) return;
 
 	// Spell settings
-	auto *Tornado = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Tornado);
-	Damage = Tornado->Damage;
-	CastTime = Tornado->CastTime;
-	StunDuration = Tornado->StunDuration;
 	ActorsToIgnore.Add(AbilityOwner);
 
 	// Setup OnOverlap event
@@ -62,7 +58,8 @@ void ATornado::MoveAlongGround(float DeltaTime)
 	// Set actor location to ground
 	if (bFoundGround)
 	{
-		SetActorLocation(HitResult.Location + GetActorForwardVector() * Speed * DeltaTime);
+		GroundLocation = HitResult.Location;
+		SetActorLocation(GroundLocation + GetActorForwardVector() * Speed * DeltaTime);
 	}
 	else
 	{
@@ -79,7 +76,7 @@ void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActo
 		{
 			ActorsToIgnore.Add(OtherActor);
 			OtherActor->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
-			LiftPawn(Cast<ABaseCharacter>(OtherActor), LiftHeight, StunDuration, SpinRate);
+			LiftPawn(Cast<ABaseCharacter>(OtherActor), LiftHeight, StunDuration, SpinRate, GroundLocation);
 		}
 	}
 }

@@ -27,7 +27,7 @@ UENUM(BlueprintType)
 enum class ECharacterType : uint8
 {
 	CT_Umir 				UMETA(DisplayName = "Umir"),
-	CT_Verdant 			UMETA(DisplayName = "Verdant"),
+	CT_Verdant 				UMETA(DisplayName = "Verdant"),
 	CT_Enemy				UMETA(DisplayName = "Enemy"),
 };
 
@@ -47,7 +47,7 @@ enum class EOffensiveSpell : uint8
 {
 	OS_None					UMETA(DisplayName = "None"),
 	OS_Tornado 				UMETA(DisplayName = "Tornado"),
-	OS_Starfall 				UMETA(DisplayName = "Starfall"),
+	OS_Starfall 			UMETA(DisplayName = "Starfall"),
 	OS_Force_Push			UMETA(DisplayName = "Force Push"),
 	OS_Lightning_Bolt		UMETA(DisplayName = "Lightning Bolt"),
 };
@@ -71,9 +71,9 @@ UENUM(BlueprintType)
 enum class EPhysicalAttack : uint8
 {
 	PA_None					UMETA(DisplayName = "None"),
-	PA_Melee_Attack_1		UMETA(DisplayName = "Melee Attack 1"),
-	PA_Melee_Attack_2		UMETA(DisplayName = "Melee Attack 2"),
-	PA_Melee_Attack_3		UMETA(DisplayName = "Melee Attack 3"),
+	PA_Fast_Attack			UMETA(DisplayName = "Fast Attack"),
+	PA_Slow_Attack			UMETA(DisplayName = "Slow Attack"),
+	PA_Enemy_Attack			UMETA(DisplayName = "Enemy Attack"),
 };
 
 // Decal types
@@ -83,7 +83,7 @@ enum class EDecalType : uint8
 	DT_None					UMETA(DisplayName = "None"),
 	DT_Spell_Circle			UMETA(DisplayName = "Spell Circle"),
 	DT_Arrow  				UMETA(DisplayName = "Arrow"),
-	DT_Box_Indicator			UMETA(DisplayName = "Box Indicator"),
+	DT_Box_Indicator		UMETA(DisplayName = "Box Indicator"),
 };
 
 // Decal types

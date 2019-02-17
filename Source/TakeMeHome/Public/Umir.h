@@ -20,6 +20,7 @@ class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
 class UInventory;
 
+
 UCLASS()
 class TAKEMEHOME_API AUmir : public ABaseCharacter
 {
@@ -40,8 +41,8 @@ public:
 	void LookRightRate(float Rate);
 	void LookUpRate(float Rate);
 	void Zoom(float NormalizedRate);
-	void ActivatePhysical1OrCastSpell();
-	void ActivatePhysical2OrCancel();
+	void UseFastAttackOrCastSpell();
+	void UseSlowAttackOrCancel();
 
 	// Activate action bar
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -69,8 +70,8 @@ public:
 	void ResetMousePos();
 
 	// Using abilities
-	void CastOffensiveSpell(EOffensiveSpell SpellKey);
-	void CastDefensiveSpell(EDefensiveSpell SpellKey);
+	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
+	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform) override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
 
@@ -159,9 +160,9 @@ public:
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_None;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Counter_Strike;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Tornado;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Starfall;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")

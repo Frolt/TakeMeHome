@@ -8,6 +8,7 @@
 
 class AStaticMeshActor;
 class AStarfallProjectile;
+class UParticleSystem;
 
 /**
  * 
@@ -39,9 +40,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float SpawnTimeInterval = 0.2f;
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
-	FRotator ProjectileRotation = FRotator(-80.0f, 0.0f, 0.0f);
-	UPROPERTY(EditAnywhere, Category = "Spell settings")
 	float ProjectileSpeed = 1000.0f;
+	UPROPERTY(EditAnywhere, Category = "Spell settings")
+	FRotator ProjectileRotation = FRotator(-80.0f, 0.0f, 0.0f);
+	UPROPERTY(EditDefaultsOnly, Category = "Spell settings")
+	UParticleSystem *SpellMarker = nullptr;
 
 	int32 Index = 0.0f;
 	TArray<FVector> SpawnLocations;

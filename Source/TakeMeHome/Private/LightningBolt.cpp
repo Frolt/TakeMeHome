@@ -22,11 +22,8 @@ void ALightningBolt::BeginPlay()
 	Super::BeginPlay();
 
 	// Spell settings
-	auto *LightningBolt = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Lightning_Bolt);
-	Damage = LightningBolt->Damage;
-	CastTime = LightningBolt->CastTime;
-	StunDuration = LightningBolt->StunDuration;
-	SphereCollision->SetSphereRadius(LightningBolt->DecalRadius);
+	if (!ensure(SphereCollision)) return;
+	SphereCollision->SetSphereRadius(DecalRadius);
 
 	// Subscribe to casting status
 	if (AbilityOwner)
@@ -47,6 +44,7 @@ void ALightningBolt::CastingStatusChanged(bool bSucceeded)
 
 		for (auto element : ActorsHit)
 		{
+			if (element == AbilityOwner) continue;
 			element->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
 		}
 

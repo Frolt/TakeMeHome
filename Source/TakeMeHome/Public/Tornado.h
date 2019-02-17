@@ -29,7 +29,7 @@ public:
 	void DurationExpired();
 	void DestroyActor();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Lift actor")
-	void LiftPawn(ABaseCharacter *CharacterToLift, float LiftHeight, float Duration, float SpinRate);
+	void LiftPawn(ABaseCharacter *CharacterToLift, float LiftHeight, float Duration, float SpinRate, FVector GroundLocation);
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
@@ -48,4 +48,5 @@ private:
 	float SpinRate = 500.0f;
 	bool bCanMove = true;
 	TArray<AActor *> ActorsToIgnore;
+	FVector GroundLocation;
 };

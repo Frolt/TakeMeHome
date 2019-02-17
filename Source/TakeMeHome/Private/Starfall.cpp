@@ -7,6 +7,7 @@
 #include "StarfallProjectile.h"
 #include "TakeMeHomeGameInstance.h"
 #include "TakeMeHomeEnums.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AStarfall::AStarfall()
@@ -19,12 +20,6 @@ AStarfall::AStarfall()
 void AStarfall::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Spell settings
-	auto *Starfall = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Starfall);
-	Damage = Starfall->Damage;
-	CastTime = Starfall->CastTime;
-	StunDuration = Starfall->StunDuration;
 
 	// Find first spawn position above the player
 	auto InitLocation = GetActorLocation();
@@ -45,6 +40,7 @@ void AStarfall::BeginPlay()
 void AStarfall::SpawnProjectile()
 {
 	if (!ensure(StarfallProjectileBP)) return;
+	if (!ensure(SpellMarker)) return;
 
 	if (Index + 1 < SpawnLocations.Num())
 	{
@@ -61,5 +57,12 @@ void AStarfall::SpawnProjectile()
 			GetWorldTimerManager().ClearAllTimersForObject(this);
 			Destroy();
 		}
+
+		// Spawn spell marker particle
+		auto EndTrace = SpawnLocations[Index - 1];
+		EndTrace.Z -= 100000.0f;
+		FHitResult HitResult;
+		GetWorld()->LineTraceSingleByChannel(HitResult, SpawnLocations[Index - 1], EndTrace, ECC_WorldStatic);
+		auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SpellMarker, HitResult.Location);
 	}
 }

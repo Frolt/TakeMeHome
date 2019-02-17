@@ -7,6 +7,8 @@
 #include "TakeMeHomeGameInstance.h"
 #include "TakeMeHomeEnums.h"
 #include "TimerManager.h"
+#include "BaseCharacter.h"
+#include "Umir.h"
 
 
 AForcePush::AForcePush()
@@ -20,60 +22,44 @@ void AForcePush::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Spell settings
-	auto *ForcePush = Cast<UTakeMeHomeGameInstance>(GetGameInstance())->OffensiveSpells.Find(EOffensiveSpell::OS_Force_Push);
-	Damage = ForcePush->Damage;
-	CastTime = ForcePush->CastTime;
-	StunDuration = ForcePush->StunDuration;
+	// Subscribe to casting status
+	AbilityOwner->OnCastingStatusChange.AddDynamic(this, &AForcePush::InterruptEvent);
 }
 
 void AForcePush::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!ensure(BoxCollision)) { return; }
-
-	// Finds the X extent of the collision box
-	MaxRange = BoxCollision->GetScaledBoxExtent().X * 2.0f;
-
-	// Scans the collision box for actor and applies force
-	PushAllOverlappingActors(MaxRange);
+	// Push actors inside the collision box
+	PushOverlappingActors();
 }
 
-void AForcePush::PushAllOverlappingActors(float MaxRange)
+void AForcePush::PushOverlappingActors()
 {
-	if (!ensure(BoxCollision)) { return; }
+	if (!ensure(BoxCollision)) return;
 
 	// Finds all overlapping primitive components
-	TArray<UPrimitiveComponent *> OverlappingActors;
-	BoxCollision->GetOverlappingComponents(OverlappingActors);
+	TArray<AActor *> OverlappingActors;
+	BoxCollision->GetOverlappingActors(OverlappingActors, TSubclassOf<AActor>());
 
 	// Calculates and applies force to all actors
 	for (auto element : OverlappingActors)
 	{
-		auto SpellForward = GetActorForwardVector();
-		auto OtherDir = element->GetComponentLocation() - GetActorLocation();
+		if (element == AbilityOwner) continue;
 
-		// Project vector to object along player forward vector
-		auto ProjDir = FVector::VectorPlaneProject(OtherDir, GetActorRightVector());
-		auto Length = ProjDir.Size();
-		if (Length < MaxRange)
+		if (element->IsRootComponentMovable())
 		{
-			// Force strength from -1 to 1
-			auto NormalizedForceRate = ((Length / MaxRange) - 1.0f) * -1.0f;
-			auto ForceVector = SpellForward * Force * NormalizedForceRate;
-
-			// TODO push pawns aswell as physics objects
-			if (element->IsSimulatingPhysics())
+			auto SpellForward = GetActorForwardVector();
+			element->AddActorWorldOffset(SpellForward * PushSpeed);
+			if (element->IsA<ABaseCharacter>())
 			{
-				element->AddForce(ForceVector);
+				Cast<ABaseCharacter>(element)->Stun(0.5f, false);
 			}
 		}
 	}
-	// Spawn particle effect
-	auto SpawnRotation = GetActorRotation();
-	SpawnRotation.Pitch -= 90.0f;
-	auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ForcePushEffect, GetActorLocation(), SpawnRotation, true);
+}
 
+void AForcePush::InterruptEvent(bool bWasInterrupted)
+{
 	Destroy();
 }

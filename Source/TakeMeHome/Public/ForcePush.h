@@ -7,7 +7,7 @@
 #include "ForcePush.generated.h"
 
 class UBoxComponent;
-class UParticleSystem;
+class UParticleSystemComponent;
 
 /**
  * Spell that pushes away objects/enemies
@@ -22,16 +22,17 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	void PushAllOverlappingActors(float MaxRange);
+	UFUNCTION()
+	void InterruptEvent(bool bWasInterrupted);
+	void PushOverlappingActors();
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
 	UBoxComponent *BoxCollision = nullptr;
-	UPROPERTY(EditAnywhere, Category = "Spell setup")
-	UParticleSystem *ForcePushEffect;
+	UPROPERTY(BlueprintReadWrite, Category = "Spell setup")
+	UParticleSystemComponent *ForcePushEffect;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
-	float Force = 100000000.0f;
-	float MaxRange = 0.0f;
+	float PushSpeed = 10.0f;
 };

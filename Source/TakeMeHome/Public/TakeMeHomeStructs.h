@@ -9,6 +9,8 @@
 
 class ASpellBase;
 class APotionBase;
+class APhysicalAttackBase;
+class ADefensiveSpellBase;
 
 /**
  * Contains all the structs for items and abilities
@@ -66,11 +68,11 @@ struct FDefensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TSubclassOf<ASpellBase> ClassRef;
+	TSubclassOf<ADefensiveSpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Damage = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float CastTime = 0.0f;
+	float LockTime = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -96,13 +98,13 @@ struct FPhysicalAttack
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TSubclassOf<ASpellBase> ClassRef;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float Cooldown = 0.0f;
+	TSubclassOf<APhysicalAttackBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Damage = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float CastTime = 0.0f;
+	float LockTime = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float Delay = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float StunDuration = 0.0f;
 

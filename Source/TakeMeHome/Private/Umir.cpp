@@ -21,6 +21,7 @@
 #include "TakeMeHomeGameInstance.h"
 #include "Inventory.h"
 #include "Public/TimerManager.h"
+#include "DefensiveSpellBase.h"
 
 
 AUmir::AUmir()
@@ -85,9 +86,8 @@ void AUmir::BeginPlay()
 	Abilities->AddOffensive(EOffensiveSpell::OS_Lightning_Bolt);
 
 	// Add physical attacks
-	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_1);
-	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_2);
-	Abilities->AddPhysical(EPhysicalAttack::PA_Melee_Attack_3);
+	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
+	Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
 	// Add defensive spells
 	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
@@ -145,8 +145,8 @@ void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponen
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AUmir::StartJumping);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("Physical1/ActivatedSpell", IE_Pressed, this, &AUmir::ActivatePhysical1OrCastSpell);
-	PlayerInputComponent->BindAction("Physical2/CancelSpell", IE_Pressed, this, &AUmir::ActivatePhysical2OrCancel);
+	PlayerInputComponent->BindAction("Physical1/ActivatedSpell", IE_Pressed, this, &AUmir::UseFastAttackOrCastSpell);
+	PlayerInputComponent->BindAction("Physical2/CancelSpell", IE_Pressed, this, &AUmir::UseSlowAttackOrCancel);
 	PlayerInputComponent->BindAction("ActivateOffensiveSpell1", IE_Pressed, this, &AUmir::ActivateOffensiveSlot1);
 	PlayerInputComponent->BindAction("ActivateOffensiveSpell2", IE_Pressed, this, &AUmir::ActivateOffensiveSlot2);
 	PlayerInputComponent->BindAction("ActivateOffensiveSpell3", IE_Pressed, this, &AUmir::ActivateOffensiveSlot3);
@@ -244,35 +244,38 @@ void AUmir::Zoom(float NormalizedRate)
 	}
 }
 
-void AUmir::ActivatePhysical1OrCastSpell()
+void AUmir::UseFastAttackOrCastSpell()
 {
 	// Cast activated offensive spell
 	if (ActivatedOffensiveSpell != EOffensiveSpell::OS_None)
 	{
-		CastOffensiveSpell(ActivatedOffensiveSpell);
+		UseOffensiveSpell(ActivatedOffensiveSpell, FTransform());
 		ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
 		ActiveDecal = EDecalType::DT_None;
 	}
 	// Cast activated defensive spell
 	else if (ActivatedDefensiveSpell != EDefensiveSpell::DS_None)
 	{
-		CastDefensiveSpell(ActivatedDefensiveSpell);
+		UseDefensiveSpell(ActivatedDefensiveSpell, FTransform());
 		ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
 		ActiveDecal = EDecalType::DT_None;
 	}
+	// Else use fast physical attack
 	else
 	{
-		UsePhysicalAttack(EPhysicalAttack::PA_Melee_Attack_1);
+		UsePhysicalAttack(EPhysicalAttack::PA_Fast_Attack);
 	}
 }
 
-void AUmir::ActivatePhysical2OrCancel()
+void AUmir::UseSlowAttackOrCancel()
 {
+	// Cancel spell
 	bool bDidCancel = CancelActivatedSpell();
 
+	// Else use slow physical attack
 	if (!bDidCancel)
 	{
-		UsePhysicalAttack(EPhysicalAttack::PA_Melee_Attack_2);
+		UsePhysicalAttack(EPhysicalAttack::PA_Slow_Attack);
 	}
 }
 
@@ -280,11 +283,13 @@ void AUmir::ActivateOffensiveSlot1()
 {
 	// Check if on cooldown or spell is not bound
 	if (OffensiveSpell1Bound == EOffensiveSpell::OS_None) return;
-	if (!FMath::IsNearlyEqual(GetOffensiveSlot1Cooldown(), 0.0f)) { IsOnCooldown(); return; }
+	if (!FMath::IsNearlyZero(GetOffensiveSlot1Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound);
+	auto *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound);
 	if (!ensure(Spell)) return;
+
+	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
@@ -292,6 +297,7 @@ void AUmir::ActivateOffensiveSlot1()
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell1Bound;
 		ResetMousePos();
+
 		switch (Spell->DecalType)
 		{
 		case EDecalType::DT_Spell_Circle:
@@ -314,7 +320,7 @@ void AUmir::ActivateOffensiveSlot1()
 	else
 	{
 		LastTimeActivatedOffensiveSpell1 = GetWorld()->GetTimeSeconds();
-		CastOffensiveSpell(OffensiveSpell1Bound);
+		UseOffensiveSpell(OffensiveSpell1Bound, FTransform());
 	}
 }
 
@@ -322,11 +328,13 @@ void AUmir::ActivateOffensiveSlot2()
 {
 	// Check if on cooldown or spell is not bound
 	if (OffensiveSpell2Bound == EOffensiveSpell::OS_None) return;
-	if (!FMath::IsNearlyEqual(GetOffensiveSlot2Cooldown(), 0.0f)) { IsOnCooldown(); return; }
+	if (!FMath::IsNearlyZero(GetOffensiveSlot2Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
 	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell2Bound);
 	if (!ensure(Spell)) return;
+
+	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
@@ -334,6 +342,7 @@ void AUmir::ActivateOffensiveSlot2()
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell2Bound;
 		ResetMousePos();
+
 		switch (Spell->DecalType)
 		{
 		case EDecalType::DT_Spell_Circle:
@@ -356,7 +365,7 @@ void AUmir::ActivateOffensiveSlot2()
 	else
 	{
 		LastTimeActivatedOffensiveSpell2 = GetWorld()->GetTimeSeconds();
-		CastOffensiveSpell(OffensiveSpell2Bound);
+		UseOffensiveSpell(OffensiveSpell2Bound, FTransform());
 	}
 }
 
@@ -364,11 +373,13 @@ void AUmir::ActivateOffensiveSlot3()
 {
 	// Check if on cooldown or spell is not bound
 	if (OffensiveSpell3Bound == EOffensiveSpell::OS_None) return;
-	if (!FMath::IsNearlyEqual(GetOffensiveSlot3Cooldown(), 0.0f)) { IsOnCooldown(); return; }
+	if (!FMath::IsNearlyZero(GetOffensiveSlot3Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
 	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell3Bound);
 	if (!ensure(Spell)) return;
+
+	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
 
 	if (Spell->bMustActivate)
@@ -376,6 +387,7 @@ void AUmir::ActivateOffensiveSlot3()
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell3Bound;
 		ResetMousePos();
+
 		switch (Spell->DecalType)
 		{
 		case EDecalType::DT_Spell_Circle:
@@ -398,7 +410,7 @@ void AUmir::ActivateOffensiveSlot3()
 	else
 	{
 		LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
-		CastOffensiveSpell(OffensiveSpell3Bound);
+		UseOffensiveSpell(OffensiveSpell3Bound, FTransform());
 	}
 }
 
@@ -408,7 +420,7 @@ void AUmir::ActivateDefensiveSlot()
 
 	// Check if on cooldown or spell is not bound
 	if (DefensiveSpellBound == EDefensiveSpell::DS_None) return;
-	if (!FMath::IsNearlyEqual(GetDefensiveSlotCooldown(), 0.0f)) { IsOnCooldown(); return; }
+	if (!FMath::IsNearlyZero(GetDefensiveSlotCooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
 	FDefensiveSpell *Spell = GameInstance->DefensiveSpells.Find(DefensiveSpellBound);
@@ -441,18 +453,15 @@ void AUmir::ActivateDefensiveSlot()
 	}
 	else
 	{
-		LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
-		CastDefensiveSpell(DefensiveSpellBound);
+		UseDefensiveSpell(DefensiveSpellBound, FTransform());
 	}
 }
 
 void AUmir::ActivatePotionSlot()
 {
-	UE_LOG(LogTemp, Warning, TEXT("activate potion slot"));
-
 	// Check if allowed to use potion
 	if (PotionBound == EPotion::P_None) return;
-	if (!FMath::IsNearlyEqual(GetPotionSlotCooldown(), 0.0f)) { IsOnCooldown(); return; }
+	if (!FMath::IsNearlyZero(GetPotionSlotCooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
 	// Set cooldown and remove potion
@@ -460,7 +469,6 @@ void AUmir::ActivatePotionSlot()
 	{
 		LastTimeActivatedPotion = GetWorld()->GetTimeSeconds();
 		UsePotion(PotionBound);
-		PotionBound = EPotion::P_None;
 	}
 }
 
@@ -514,7 +522,6 @@ void AUmir::MoveDecalToMouseHitLocation()
 	{
 		Decal->SetWorldLocationAndRotation(HitResult.Location, FRotator(-90.0f, 0.0f, 0.0f));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Test"));
 }
 
 void AUmir::RotateDecalAroundPlayer()
@@ -605,115 +612,102 @@ bool AUmir::CancelActivatedSpell()
 	}
 }
 
-void AUmir::CastOffensiveSpell(EOffensiveSpell SpellKey)
+void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 {
-	if (SpellKey == EOffensiveSpell::OS_None) return;
+	if (Key == EOffensiveSpell::OS_None) return;
 
-	// TODO restore function?
+	// Disable mouse
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	bCanMoveCamera = true;
 
-	auto *Spell = GameInstance->OffensiveSpells.Find(SpellKey);
+	// Get offensive spell
+	auto *Spell = GameInstance->OffensiveSpells.Find(Key);
+	if (!ensure(Spell)) return;
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost)
 	{
 		NotEnoughMana();
 		CancelActivatedSpell();
+		return;
 	}
-	else
-	{
-		CurrentMana -= Spell->ManaCost;
 
-		// Set cooldown
-		if (SpellKey == OffensiveSpell1Bound)
-		{
-			LastTimeActivatedOffensiveSpell1 = GetWorld()->GetTimeSeconds();
-		}
-		else if (SpellKey == OffensiveSpell2Bound)
-		{
-			LastTimeActivatedOffensiveSpell2 = GetWorld()->GetTimeSeconds();
-		}
-		else if (SpellKey == OffensiveSpell3Bound)
-		{
-			LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
-		}
-
-		// Find correct spawn location/rotation
-		FVector SpawnLocation = GetActorLocation();
-		FRotator SpawnRotation = GetActorRotation();
-		if (Spell->DecalType == EDecalType::DT_Spell_Circle)
-		{
-			SpawnLocation = Decal->GetComponentLocation();
-		}
-		else if (Spell->DecalType == EDecalType::DT_Arrow)
-		{
-			// TODO find decal arrow direction
-			SpawnRotation = (-Decal->GetRightVector()).Rotation();
-		}
-
-		// Check for cast time
-		if (Spell->CastTime > 0.00001f)
-		{
-			StartCasting(Spell->CastTime);
-		}
-
-		// Spawning spell deferred to allow initializing construction values
-		FTransform SpawnTransform(SpawnRotation, SpawnLocation);
-		auto SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
-		SpawnedActor->AbilityOwner = this;
-		// Set spell element according to Umir's active element
-		if (Spell->ElementType == EElement::E_Neutral)
-		{
-			SpawnedActor->ElementType = ActiveElement;
-		}
-		else
-		{
-			SpawnedActor->ElementType = Spell->ElementType;
-		}
-		// Finished initialization
-		SpawnedActor->FinishSpawning(SpawnTransform);
-
-
-	}
-}
-
-void AUmir::CastDefensiveSpell(EDefensiveSpell SpellKey)
-{
-	if (SpellKey == EDefensiveSpell::DS_None) return;
-
-	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	bCanMoveCamera = false;
-
-	auto *Spell = GameInstance->DefensiveSpells.Find(SpellKey);
+	// Drain mana
+	DrainMana(Spell->ManaCost);
 
 	// Set cooldown
-	if (SpellKey == DefensiveSpellBound)
+	if (Key == OffensiveSpell1Bound)
 	{
-		LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
+		LastTimeActivatedOffensiveSpell1 = GetWorld()->GetTimeSeconds();
 	}
+	else if (Key == OffensiveSpell2Bound)
+	{
+		LastTimeActivatedOffensiveSpell2 = GetWorld()->GetTimeSeconds();
+	}
+	else if (Key == OffensiveSpell3Bound)
+	{
+		LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
+	}
+
+	// Find correct spawn location/rotation
+	SpawnTransform.SetLocation(GetActorLocation());
+	SpawnTransform.SetRotation(GetActorRotation().Quaternion());
+	if (Spell->DecalType == EDecalType::DT_Spell_Circle)
+	{
+		SpawnTransform.SetLocation(Decal->GetComponentLocation());
+	}
+	else if (Spell->DecalType == EDecalType::DT_Arrow)
+	{
+		// TODO find decal arrow direction
+		SpawnTransform.SetRotation((-Decal->GetRightVector()).Rotation().Quaternion());
+	}
+
 	// Check for cast time
-	if (Spell->CastTime > 0.00001f)
+	if (Spell->CastTime > 0.01f)
 	{
 		StartCasting(Spell->CastTime);
 	}
 
-	// Find correct spawn location/rotation
-	FVector SpawnLocation = GetActorLocation();
-	FRotator SpawnRotation = GetActorRotation();
+	// Spawning offensive spell
+	auto SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
+	SpawnedActor->AbilityOwner = this;
+	SpawnedActor->Damage = Spell->Damage;
+	SpawnedActor->CastTime = Spell->CastTime;
+	SpawnedActor->StunDuration = Spell->StunDuration;
+	SpawnedActor->DecalRadius = Spell->DecalRadius;
+	SpawnedActor->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
+	SpawnedActor->FinishSpawning(SpawnTransform);
+}
+
+void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
+{
+	if (Key == EDefensiveSpell::DS_None) return;
+
+	// Disable mouse
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	bCanMoveCamera = true;
+
+	// Set cooldown
+	LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
+
+	// Find defensive spell
+	auto *Spell = GameInstance->DefensiveSpells.Find(Key);
+	if (!ensure(Spell)) return;
+
+	// Find spawn transform
+	SpawnTransform.SetLocation(GetActorLocation());
+	SpawnTransform.SetRotation(GetActorRotation().Quaternion());
 	if (Spell->DecalType == EDecalType::DT_Spell_Circle)
 	{
-		SpawnLocation = Decal->GetComponentLocation();
+		SpawnTransform.SetLocation(Decal->GetComponentLocation());
 	}
 	else if (Spell->DecalType == EDecalType::DT_Arrow)
 	{
-		SpawnRotation = (-Decal->GetRightVector()).Rotation();
+		SpawnTransform.SetRotation((-Decal->GetRightVector()).Rotation().Quaternion());
 	}
-	auto SpawnedActor = GetWorld()->SpawnActor<ASpellBase>(Spell->ClassRef, SpawnLocation, SpawnRotation);
 
-
-	// TODO
-	UE_LOG(LogTemp, Warning, TEXT("Cast Defensive spell"));
+	// Call the base version
+	Super::UseDefensiveSpell(Key, SpawnTransform);
 }
 
 float AUmir::GetDefensiveSlotCooldown() const

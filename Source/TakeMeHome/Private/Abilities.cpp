@@ -135,18 +135,18 @@ bool UAbilities::RemovePotion(EPotion Key)
 	}
 }
 
-FPotion UAbilities::GetPotion(EPotion Key) const
+int32 UAbilities::GetPotionsLeft(EPotion Key) const
 {
-	auto *PotionPtr = Potions.FindByPredicate([Key](const FPotion &A) {
+	auto PotionPtr = Potions.FindByPredicate([Key](const FPotion &A) {
 		return A.Key == Key;
 	});
 
-	if (auto lol = PotionPtr)
+	if (PotionPtr)
 	{
-		return *PotionPtr;
+		return PotionPtr->Quantity;
 	}
 	else
 	{
-		return FPotion();
+		return 0;
 	}
 }
