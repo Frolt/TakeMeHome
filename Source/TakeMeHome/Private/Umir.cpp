@@ -104,7 +104,6 @@ void AUmir::BeginPlay()
 	Abilities->AddPotion(EPotion::P_Earth_Elemental_Potion);
 
 	// Add items
-	//Inventory->Items.Init(*GameInstance->Items.Find(EItem::E_Empty), 100);
 	Inventory->AddItems(EItem::I_Item_1, 2);
 	Inventory->AddItems(EItem::I_Item_2, 14);
 	Inventory->AddItems(EItem::I_Item_3, 35);
@@ -250,6 +249,8 @@ void AUmir::UseFastAttackOrCastSpell()
 	if (ActivatedOffensiveSpell != EOffensiveSpell::OS_None)
 	{
 		UseOffensiveSpell(ActivatedOffensiveSpell, FTransform());
+		OnRemoveHighlight.Broadcast(false);
+
 		ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
 		ActiveDecal = EDecalType::DT_None;
 	}
@@ -257,6 +258,7 @@ void AUmir::UseFastAttackOrCastSpell()
 	else if (ActivatedDefensiveSpell != EDefensiveSpell::DS_None)
 	{
 		UseDefensiveSpell(ActivatedDefensiveSpell, FTransform());
+		OnRemoveHighlight.Broadcast(false);
 		ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
 		ActiveDecal = EDecalType::DT_None;
 	}
@@ -276,6 +278,7 @@ void AUmir::UseSlowAttackOrCancel()
 	if (!bDidCancel)
 	{
 		UsePhysicalAttack(EPhysicalAttack::PA_Slow_Attack);
+		OnRemoveHighlight.Broadcast(false);
 	}
 }
 
@@ -286,8 +289,10 @@ void AUmir::ActivateOffensiveSlot1()
 	if (!FMath::IsNearlyZero(GetOffensiveSlot1Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	auto *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound);
-	if (!ensure(Spell)) return;
+	auto *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell1Bound);
+
+	// Restore action bar hightlight
+	OnRemoveHighlight.Broadcast(false);
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -316,10 +321,11 @@ void AUmir::ActivateOffensiveSlot1()
 			UE_LOG(LogTemp, Warning, TEXT("Spell has no valid decal type"));
 			break;
 		}
+		OnOffensive1Cast.Broadcast(false);
 	}
 	else
 	{
-		LastTimeActivatedOffensiveSpell1 = GetWorld()->GetTimeSeconds();
+		OnOffensive1Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell1Bound, FTransform());
 	}
 }
@@ -331,8 +337,10 @@ void AUmir::ActivateOffensiveSlot2()
 	if (!FMath::IsNearlyZero(GetOffensiveSlot2Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell2Bound);
-	if (!ensure(Spell)) return;
+	FOffensiveSpell *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell2Bound);
+
+	// Restore action bar hightlight
+	OnRemoveHighlight.Broadcast(false);
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -361,10 +369,11 @@ void AUmir::ActivateOffensiveSlot2()
 			UE_LOG(LogTemp, Warning, TEXT("Spell has no valid decal type"));
 			break;
 		}
+		OnOffensive2Cast.Broadcast(false);
 	}
 	else
 	{
-		LastTimeActivatedOffensiveSpell2 = GetWorld()->GetTimeSeconds();
+		OnOffensive2Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell2Bound, FTransform());
 	}
 }
@@ -376,8 +385,10 @@ void AUmir::ActivateOffensiveSlot3()
 	if (!FMath::IsNearlyZero(GetOffensiveSlot3Cooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	FOffensiveSpell *Spell = GameInstance->OffensiveSpells.Find(OffensiveSpell3Bound);
-	if (!ensure(Spell)) return;
+	FOffensiveSpell *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell3Bound);
+
+	// Restore action bar hightlight
+	OnRemoveHighlight.Broadcast(false);
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -406,10 +417,11 @@ void AUmir::ActivateOffensiveSlot3()
 			UE_LOG(LogTemp, Warning, TEXT("Spell has no valid decal type"));
 			break;
 		}
+		OnOffensive3Cast.Broadcast(false);
 	}
 	else
 	{
-		LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
+		OnOffensive3Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell3Bound, FTransform());
 	}
 }
@@ -423,8 +435,10 @@ void AUmir::ActivateDefensiveSlot()
 	if (!FMath::IsNearlyZero(GetDefensiveSlotCooldown())) { IsOnCooldown(); return; }
 	if (!bCanUseSpell) return;
 
-	FDefensiveSpell *Spell = GameInstance->DefensiveSpells.Find(DefensiveSpellBound);
-	if (!ensure(Spell)) return;
+	FDefensiveSpell *Spell = GameInstance->GetDefensiveSpell(DefensiveSpellBound);
+
+	// Restore action bar hightlight
+	OnRemoveHighlight.Broadcast(false);
 
 	if (Spell->bMustActivate)
 	{
@@ -450,9 +464,11 @@ void AUmir::ActivateDefensiveSlot()
 			UE_LOG(LogTemp, Warning, TEXT("Spell has no valid decal type"));
 			break;
 		}
+		OnDefensiveCast.Broadcast(false);
 	}
 	else
 	{
+		OnDefensiveCast.Broadcast(true);
 		UseDefensiveSpell(DefensiveSpellBound, FTransform());
 	}
 }
@@ -467,6 +483,8 @@ void AUmir::ActivatePotionSlot()
 	// Set cooldown and remove potion
 	if (Abilities->RemovePotion(PotionBound))
 	{
+		OnRemoveHighlight.Broadcast(true);
+		OnPotionCast.Broadcast(true);
 		LastTimeActivatedPotion = GetWorld()->GetTimeSeconds();
 		UsePotion(PotionBound);
 	}
@@ -478,7 +496,7 @@ void AUmir::MoveDecalToMouseHitLocation()
 	if (ActivatedOffensiveSpell == EOffensiveSpell::OS_None) return;
 
 	// Get spell
-	auto Spell = GameInstance->OffensiveSpells.Find(ActivatedOffensiveSpell);
+	auto Spell = GameInstance->GetOffensiveSpell(ActivatedOffensiveSpell);
 
 	ResetDecalSize(Spell->DecalRadius);
 
@@ -621,8 +639,7 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 	bCanMoveCamera = true;
 
 	// Get offensive spell
-	auto *Spell = GameInstance->OffensiveSpells.Find(Key);
-	if (!ensure(Spell)) return;
+	auto *Spell = GameInstance->GetOffensiveSpell(Key);
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost)
@@ -675,7 +692,7 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 	SpawnedActor->CastTime = Spell->CastTime;
 	SpawnedActor->StunDuration = Spell->StunDuration;
 	SpawnedActor->DecalRadius = Spell->DecalRadius;
-	SpawnedActor->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
+	Spell->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
 	SpawnedActor->FinishSpawning(SpawnTransform);
 }
 
@@ -691,8 +708,7 @@ void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
 	LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
 
 	// Find defensive spell
-	auto *Spell = GameInstance->DefensiveSpells.Find(Key);
-	if (!ensure(Spell)) return;
+	auto *Spell = GameInstance->GetDefensiveSpell(Key);
 
 	// Find spawn transform
 	SpawnTransform.SetLocation(GetActorLocation());
@@ -715,7 +731,7 @@ float AUmir::GetDefensiveSlotCooldown() const
 	if (DefensiveSpellBound == EDefensiveSpell::DS_None)
 		return 0.0f;
 	else
-		return FMath::Max(GameInstance->DefensiveSpells.Find(DefensiveSpellBound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedDefensiveSpell), 0.0f);
+		return FMath::Max(GameInstance->GetDefensiveSpell(DefensiveSpellBound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedDefensiveSpell), 0.0f);
 }
 
 float AUmir::GetDefensiveSlotCooldownPercentage() const
@@ -723,7 +739,7 @@ float AUmir::GetDefensiveSlotCooldownPercentage() const
 	if (DefensiveSpellBound == EDefensiveSpell::DS_None)
 		return 0.0f;
 	else
-		return GetDefensiveSlotCooldown() / GameInstance->DefensiveSpells.Find(DefensiveSpellBound)->Cooldown;
+		return GetDefensiveSlotCooldown() / GameInstance->GetDefensiveSpell(DefensiveSpellBound)->Cooldown;
 }
 
 float AUmir::GetOffensiveSlot1Cooldown() const
@@ -731,7 +747,7 @@ float AUmir::GetOffensiveSlot1Cooldown() const
 	if (OffensiveSpell1Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return FMath::Max(GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell1), 0.0f);
+		return FMath::Max(GameInstance->GetOffensiveSpell(OffensiveSpell1Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell1), 0.0f);
 }
 
 float AUmir::GetOffensiveSlot1CooldownPercentage() const
@@ -739,7 +755,7 @@ float AUmir::GetOffensiveSlot1CooldownPercentage() const
 	if (OffensiveSpell1Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return GetOffensiveSlot1Cooldown() / GameInstance->OffensiveSpells.Find(OffensiveSpell1Bound)->Cooldown;
+		return GetOffensiveSlot1Cooldown() / GameInstance->GetOffensiveSpell(OffensiveSpell1Bound)->Cooldown;
 }
 
 float AUmir::GetOffensiveSlot2Cooldown() const
@@ -747,7 +763,7 @@ float AUmir::GetOffensiveSlot2Cooldown() const
 	if (OffensiveSpell2Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return FMath::Max(GameInstance->OffensiveSpells.Find(OffensiveSpell2Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell2), 0.0f);
+		return FMath::Max(GameInstance->GetOffensiveSpell(OffensiveSpell2Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell2), 0.0f);
 }
 
 float AUmir::GetOffensiveSlot2CooldownPercentage() const
@@ -755,7 +771,7 @@ float AUmir::GetOffensiveSlot2CooldownPercentage() const
 	if (OffensiveSpell2Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return GetOffensiveSlot2Cooldown() / GameInstance->OffensiveSpells.Find(OffensiveSpell2Bound)->Cooldown;
+		return GetOffensiveSlot2Cooldown() / GameInstance->GetOffensiveSpell(OffensiveSpell2Bound)->Cooldown;
 }
 
 float AUmir::GetOffensiveSlot3Cooldown() const
@@ -763,7 +779,7 @@ float AUmir::GetOffensiveSlot3Cooldown() const
 	if (OffensiveSpell3Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return FMath::Max(GameInstance->OffensiveSpells.Find(OffensiveSpell3Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell3), 0.0f);
+		return FMath::Max(GameInstance->GetOffensiveSpell(OffensiveSpell3Bound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedOffensiveSpell3), 0.0f);
 }
 
 float AUmir::GetOffensiveSlot3CooldownPercentage() const
@@ -771,7 +787,7 @@ float AUmir::GetOffensiveSlot3CooldownPercentage() const
 	if (OffensiveSpell3Bound == EOffensiveSpell::OS_None)
 		return 0.0f;
 	else
-		return GetOffensiveSlot3Cooldown() / GameInstance->OffensiveSpells.Find(OffensiveSpell3Bound)->Cooldown;
+		return GetOffensiveSlot3Cooldown() / GameInstance->GetOffensiveSpell(OffensiveSpell3Bound)->Cooldown;
 }
 
 float AUmir::GetPotionSlotCooldown() const
@@ -779,7 +795,7 @@ float AUmir::GetPotionSlotCooldown() const
 	if (PotionBound == EPotion::P_None)
 		return 0.0f;
 	else
-		return FMath::Max(GameInstance->Potions.Find(PotionBound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedPotion), 0.0f);
+		return FMath::Max(GameInstance->GetPotion(PotionBound)->Cooldown - (GetWorld()->GetTimeSeconds() - LastTimeActivatedPotion), 0.0f);
 }
 
 float AUmir::GetPotionSlotCooldownPercentage() const
@@ -787,7 +803,7 @@ float AUmir::GetPotionSlotCooldownPercentage() const
 	if (PotionBound == EPotion::P_None)
 		return 0.0f;
 	else
-		return GetPotionSlotCooldown() / GameInstance->Potions.Find(PotionBound)->Cooldown;
+		return GetPotionSlotCooldown() / GameInstance->GetPotion(PotionBound)->Cooldown;
 }
 
 void AUmir::BindDefensiveSpell(EDefensiveSpell DefensiveSpell)

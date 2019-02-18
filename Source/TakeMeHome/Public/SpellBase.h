@@ -15,6 +15,7 @@ class TAKEMEHOME_API ASpellBase : public AAbilityBase
 
 public:
 	ASpellBase();
+	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
@@ -27,4 +28,5 @@ public:
 	float DecalRadius = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	EElement ElementType = EElement::E_Neutral;
+	FDamageEvent DamageEvent;
 };

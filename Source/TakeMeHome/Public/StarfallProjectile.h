@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilityBase.h"
+#include "TakeMeHomeEnums.h"
 #include "StarfallProjectile.generated.h"
 
 class UProjectileMovementComponent;
@@ -33,7 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spell setup")
 	UParticleSystem *ProjectileContactParticle = nullptr;
 
-	float Force = 1000.0f;
 	float Damage = 0.0f;
+	FVector LaunchVelocity;
 	TArray<AActor *> ActorsToIgnore;
+	EElement ElementType;
+	FDamageEvent DamageEvent;
 };

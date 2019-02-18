@@ -45,7 +45,7 @@ void ALightningBolt::CastingStatusChanged(bool bSucceeded)
 		for (auto element : ActorsHit)
 		{
 			if (element == AbilityOwner) continue;
-			element->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
+			element->TakeDamage(Damage, DamageEvent, AbilityOwner->GetController(), this);
 		}
 
 		// Spawn particle effect

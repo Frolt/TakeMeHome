@@ -20,6 +20,7 @@ class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
 class UInventory;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityUsed, bool, bWasInstaCast);
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ABaseCharacter
@@ -149,6 +150,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UAbilities *Abilities = nullptr;
 
+	// Delegates
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnDefensiveCast;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnOffensive1Cast;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnOffensive2Cast;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnOffensive3Cast;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnPotionCast;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAbilityUsed OnRemoveHighlight;
+
 	// Active states
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
 	EOffensiveSpell ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
@@ -160,7 +175,7 @@ public:
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Counter_Strike;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")

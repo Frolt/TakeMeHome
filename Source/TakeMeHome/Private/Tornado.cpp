@@ -75,7 +75,9 @@ void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActo
 		if (!ActorsToIgnore.Contains(OtherActor))
 		{
 			ActorsToIgnore.Add(OtherActor);
-			OtherActor->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
+			OtherActor->TakeDamage(Damage, DamageEvent, AbilityOwner->GetController(), this);
+			if (ElementType == EElement::E_Fire)
+				UE_LOG(LogTemp, Warning, TEXT("ElementType: Fire"));
 			LiftPawn(Cast<ABaseCharacter>(OtherActor), LiftHeight, StunDuration, SpinRate, GroundLocation);
 		}
 	}

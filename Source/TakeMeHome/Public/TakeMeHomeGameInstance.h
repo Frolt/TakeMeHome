@@ -22,10 +22,10 @@ public:
 	FOffensiveSpell *GetOffensiveSpell(EOffensiveSpell Key);
 	FPhysicalAttack *GetPhysicalAttack(EPhysicalAttack Key);
 	FPotion *GetPotion(EPotion Key);
+	FItem *GetItem(EItem Key);
 	
 public:
-	// All abilites and spells
-	// -------------------------------------------------------------------------------------
+	// Abilites 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EOffensiveSpell, FOffensiveSpell> OffensiveSpells;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
@@ -34,10 +34,21 @@ public:
 	TMap<EPhysicalAttack, FPhysicalAttack> PhysicalAttacks;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EPotion, FPotion> Potions;
+
+	// Items
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
 	TMap<EItem, FItem> Items;
-	// -------------------------------------------------------------------------------------
 
-	// All items
-	// TODO
+	// Damage type class refs
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> FireDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> NatureDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> WaterDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> EarthDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> LightningDamage;
+
 };

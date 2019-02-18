@@ -27,7 +27,7 @@ bool UInventory::AddItems(EItem Item, int32 Quantity)
 	// ------------------------------------------------------------------------------------
 	int32 MaxItemsCanHold = 0;
 	int32 NumOfEmpty = InventorySize - Items.Num();
-	int32 MaxQuantity = GameInstance->Items.Find(Item)->MaxQuantity;
+	int32 MaxQuantity = GameInstance->GetItem(Item)->MaxQuantity;
 	for (auto &Element : Items)
 	{
 		if (Element.Key == Item)
@@ -67,13 +67,13 @@ bool UInventory::AddItems(EItem Item, int32 Quantity)
 	{
 		if (Quantity <= MaxQuantity)
 		{
-			int32 NewItem = Items.Add(*GameInstance->Items.Find(Item));
+			int32 NewItem = Items.Add(*GameInstance->GetItem(Item));
 			Items[NewItem].Quantity = Quantity;
 			return true;
 		}
 		else
 		{
-			int32 NewItem = Items.Add(*GameInstance->Items.Find(Item));
+			int32 NewItem = Items.Add(*GameInstance->GetItem(Item));
 			Items[NewItem].Quantity = MaxQuantity;
 			Quantity -= MaxQuantity;
 		}

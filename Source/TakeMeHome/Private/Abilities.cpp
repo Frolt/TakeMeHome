@@ -23,17 +23,17 @@ void UAbilities::BeginPlay()
 
 void UAbilities::AddDefensive(EDefensiveSpell DefensiveSpell)
 {
-	DefensiveSpells.Add(*GameInstance->DefensiveSpells.Find(DefensiveSpell));
+	DefensiveSpells.Add(*GameInstance->GetDefensiveSpell(DefensiveSpell));
 }
 
 void UAbilities::AddOffensive(EOffensiveSpell OffensiveSpell)
 {
-	OffensiveSpells.Add(*GameInstance->OffensiveSpells.Find(OffensiveSpell));
+	OffensiveSpells.Add(*GameInstance->GetOffensiveSpell(OffensiveSpell));
 }
 
 void UAbilities::AddPhysical(EPhysicalAttack PhysicalAttack)
 {
-	PhysicalAttacks.Add(*GameInstance->PhysicalAttacks.Find(PhysicalAttack));
+	PhysicalAttacks.Add(*GameInstance->GetPhysicalAttack(PhysicalAttack));
 }
 
 bool UAbilities::AddPotion(EPotion Key)
@@ -44,7 +44,7 @@ bool UAbilities::AddPotion(EPotion Key)
 
 	if (Index == INDEX_NONE)
 	{
-		Potions.Add(*GameInstance->Potions.Find(Key));
+		Potions.Add(*GameInstance->GetPotion(Key));
 		return true;
 	}
 	else

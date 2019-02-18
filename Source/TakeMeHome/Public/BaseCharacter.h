@@ -28,7 +28,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	// Events
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
+
 	UFUNCTION()
 	void OnNPCDeath();
 
@@ -114,22 +115,24 @@ public:
 	EElement ElementType = EElement::E_Fire;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveHealthRegenPerSecond = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mana")
 	float PassiveManaRegenPerSecond = 1.0f;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanMove = true;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadWrite, Category = "Death")
 	bool bIsDead = false;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanUseSpell = true;
-	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")
 	bool bIsCasting = false;
-	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")
 	bool bIsLocked = false;
-	UPROPERTY(BlueprintReadOnly, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")
 	bool bIsStunned = false;
-	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	UPROPERTY(BlueprintReadWrite, Category = "Counter Strike")
 	bool bCounterStrikeActive = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Direction")
+	FVector PlayerDirection;
 
 protected:
 	// Health/Mana
@@ -137,13 +140,11 @@ protected:
 	float MaxHealth = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float CurrentHealth;
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	UPROPERTY(EditDefaultsOnly, Category = "Mana")
 	float MaxMana = 100.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	UPROPERTY(EditDefaultsOnly, Category = "Mana")
 	float CurrentMana;
 	// Casting
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float TimeCastingBegan = 0.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float TimeCastingEnds = 0.0f;
 };

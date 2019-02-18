@@ -48,7 +48,7 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
 {
 	// Interrupt lock and casting
 	if (Damage > 0.0f)
@@ -57,12 +57,33 @@ float ABaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damage
 		InterruptCasting();
 	}
 
+	if (DamageEvent.DamageTypeClass == GameInstance->FireDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took fire damage"));
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->WaterDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took water damage"));
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->NatureDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took nature damage"));
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->EarthDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took earth damage"));
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->LightningDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took lightning damage"));
+	}
+
 	// TODO consider adding sound/particle/animation when taking damage or healing
 
 	// Take damage/heal
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
 
-	// Check if died
+	// Check if character died
 	if (FMath::IsNearlyEqual(CurrentHealth, 0.0f))
 	{
 		bIsDead = true;
@@ -116,7 +137,7 @@ float ABaseCharacter::GetMana() const
 
 void ABaseCharacter::StartCasting(float CastDuration)
 {
-	if (ensure(FMath::IsNearlyZero(CastDuration))) return;
+	if (ensureMsgf(FMath::IsNearlyZero(CastDuration), TEXT("CastDuration: %f"), CastDuration)) return;
 
 	TimeCastingBegan = GetWorld()->GetTimeSeconds();
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
@@ -193,7 +214,7 @@ void ABaseCharacter::InterruptLock()
 
 void ABaseCharacter::Stun(float StunDuration, bool OverrideStun)
 {
-	if (ensure(FMath::IsNearlyZero(StunDuration))) return;
+	if (ensureMsgf(FMath::IsNearlyZero(StunDuration), TEXT("StunDuration: %f"), StunDuration)) return;
 
 	// Override previous stun
 	if (bIsStunned)
@@ -232,8 +253,7 @@ void ABaseCharacter::UsePotion(EPotion Key)
 	if (!ensure(Key != EPotion::P_None)) return;
 	if (!bCanUseSpell) return;
 
-	auto *Potion = GameInstance->Potions.Find(Key);
-	if (!ensure(Potion)) return;
+	auto *Potion = GameInstance->GetPotion(Key);
 
 	// Spawn potion
 	auto SpawnedActor = GetWorld()->SpawnActorDeferred<APotionBase>(Potion->ClassRef, GetActorTransform());
@@ -246,8 +266,7 @@ void ABaseCharacter::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTran
 	if (!ensure(Key != EDefensiveSpell::DS_None)) return;
 	if (!bCanUseSpell) return;
 
-	auto *Spell = GameInstance->DefensiveSpells.Find(Key);
-	if (!ensure(Spell)) return;
+	auto *Spell = GameInstance->GetDefensiveSpell(Key);
 
 	// Spawn defensive spell
 	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<ADefensiveSpellBase>(Spell->ClassRef, SpawnTransform);
@@ -262,8 +281,7 @@ void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTran
 	if (!ensure(Key != EOffensiveSpell::OS_None)) return;
 	if (!bCanUseSpell) return;
 
-	auto *Spell = GameInstance->OffensiveSpells.Find(Key);
-	if (!ensure(Spell)) return;
+	auto *Spell = GameInstance->GetOffensiveSpell(Key);
 
 	// Spawn offensive spell
 	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
@@ -281,8 +299,7 @@ void ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 	if (!ensure(Key != EPhysicalAttack::PA_None)) return;
 	if (!bCanUseSpell) return;
 	
-	auto *PhysicalAttack = GameInstance->PhysicalAttacks.Find(Key);
-	if (!ensure(PhysicalAttack)) return;
+	auto *PhysicalAttack = GameInstance->GetPhysicalAttack(Key);
 
 	// Spawn physical attack
 	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<APhysicalAttackBase>(PhysicalAttack->ClassRef, GetActorTransform());

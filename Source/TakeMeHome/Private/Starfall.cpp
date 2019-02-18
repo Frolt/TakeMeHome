@@ -8,6 +8,7 @@
 #include "TakeMeHomeGameInstance.h"
 #include "TakeMeHomeEnums.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 
 AStarfall::AStarfall()
@@ -21,15 +22,59 @@ void AStarfall::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Find first spawn position above the player
+	// Find spawn locations
 	auto InitLocation = GetActorLocation();
 	InitLocation.Z += SpawnHeight;
 	auto ForwardVector = GetActorForwardVector();
 	SpawnLocations.SetNum(NumOfProjectiles);
-
 	for (int32 i = 0; i < NumOfProjectiles; i++)
 	{
 		SpawnLocations[i] = InitLocation + (SpawnDelta * ForwardVector * i);
+	}
+
+	// Find landing locations
+	LandingLocations.SetNum(NumOfProjectiles);
+	for (int32 i = 0; i < NumOfProjectiles; i++)
+	{
+		// Linetrace down with offset
+		auto StartPos = SpawnLocations[i] + (ForwardVector * LandingForwardOffset);
+		auto EndPos = StartPos + (-FVector::UpVector * 100000.0f);
+		FHitResult HitResult;
+		GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_WorldStatic);
+		LandingLocations[i] = HitResult.Location;
+	}
+
+	// Add spawn location offset
+	bool bAlterate = true;
+	for (auto &element : SpawnLocations)
+	{
+		if (bAlterate)
+		{
+			element += GetActorRightVector() * SpawnSideOffset;
+			bAlterate = false;
+		}
+		else
+		{
+			element = element + (-GetActorRightVector() * SpawnSideOffset);
+			bAlterate = true;
+		}
+	}
+
+	// Find the projectiles launch velocity
+	LaunchVelocities.SetNum(NumOfProjectiles);
+	for (int32 i = 0; i < NumOfProjectiles; i++)
+	{
+		UGameplayStatics::SuggestProjectileVelocity(
+			this, 
+			LaunchVelocities[i], 
+			SpawnLocations[i], 
+			LandingLocations[i], 
+			ProjectileSpeed, 
+			false, 
+			0.0f, 
+			0.0f, 
+			ESuggestProjVelocityTraceOption::DoNotTrace
+		);
 	}
 
 	// Fire timer based on SpawnTimeInterval
@@ -42,27 +87,41 @@ void AStarfall::SpawnProjectile()
 	if (!ensure(StarfallProjectileBP)) return;
 	if (!ensure(SpellMarker)) return;
 
-	if (Index + 1 < SpawnLocations.Num())
+	if (Index < SpawnLocations.Num())
 	{
-		FTransform SpawnTransform(GetActorRotation() + ProjectileRotation, SpawnLocations[Index++]);
+		// Spawn projectile
+		auto Rot = GetActorRotation();
+		Rot.Pitch -= 180.0f;
+		FTransform SpawnTransform(FRotator::ZeroRotator, SpawnLocations[Index]);
 		auto Projectile = GetWorld()->SpawnActorDeferred<AStarfallProjectile>(StarfallProjectileBP, SpawnTransform);
-		Projectile->Force = ProjectileSpeed;
-		Projectile->Damage = Damage;
 		Projectile->AbilityOwner = AbilityOwner;
+		Projectile->Damage = Damage;
+		Projectile->ElementType = ElementType;
+		Projectile->DamageEvent = DamageEvent;
+		Projectile->LaunchVelocity = LaunchVelocities[Index];
 		Projectile->FinishSpawning(SpawnTransform);
 
-		if (Index == SpawnLocations.Num())
-		{
-			// Done spawning projectiles
-			GetWorldTimerManager().ClearAllTimersForObject(this);
-			Destroy();
-		}
-
 		// Spawn spell marker particle
-		auto EndTrace = SpawnLocations[Index - 1];
-		EndTrace.Z -= 100000.0f;
-		FHitResult HitResult;
-		GetWorld()->LineTraceSingleByChannel(HitResult, SpawnLocations[Index - 1], EndTrace, ECC_WorldStatic);
-		auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SpellMarker, HitResult.Location);
+		auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SpellMarker, LandingLocations[Index]);
+		FTimerDelegate TimerDel;
+		FTimerHandle TimerHandle;
+		//TimerDel.BindUFunction(this, FName("DestroySpellMark"), 1, 2);
+		TimerDel.BindLambda([SpawnedParticle]() {
+			SpawnedParticle->DestroyComponent();
+		});
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDel, 2.0f, false);
+		Index++;
 	}
+	else
+	{
+		// Done spawning projectiles
+		GetWorldTimerManager().ClearAllTimersForObject(this);
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AStarfall::DestroyEvent, 5.0f, false);
+	}
+}
+
+void AStarfall::DestroyEvent()
+{
+	Destroy();
 }

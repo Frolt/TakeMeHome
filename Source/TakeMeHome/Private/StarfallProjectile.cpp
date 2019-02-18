@@ -19,6 +19,7 @@ void AStarfallProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Setup
 	if (!ensure(SphereCollision)) return;
 	ActorsToIgnore.Add(AbilityOwner);
 
@@ -27,7 +28,7 @@ void AStarfallProjectile::BeginPlay()
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AStarfallProjectile::OnOverlap);
 
 	// Launch projectile
-	ProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * Force);
+	ProjectileMovement->SetVelocityInLocalSpace(LaunchVelocity);
 	ProjectileMovement->Activate();
 }
 
@@ -44,9 +45,10 @@ void AStarfallProjectile::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor
 		if (!ActorsToIgnore.Contains(OtherActor))
 		{
 			ActorsToIgnore.Add(OtherActor);
-			OtherActor->TakeDamage(Damage, FDamageEvent(), AbilityOwner->GetController(), this);
+			OtherActor->TakeDamage(Damage, DamageEvent, AbilityOwner->GetController(), this);
 		}
+		return;
 	}
-
+	
 	Destroy();
 }

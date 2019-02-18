@@ -26,3 +26,9 @@ FPotion *UTakeMeHomeGameInstance::GetPotion(EPotion Key)
 	checkf(Key != EPotion::P_None, TEXT("POTION IS NOT CREATED IN GAME INSTANCE"));
 	return Potions.Find(Key);
 }
+
+FItem * UTakeMeHomeGameInstance::GetItem(EItem Key)
+{
+	checkf(Key != EItem::I_None, TEXT("ITEM IS NOT CREATED IN GAME INSTANCE"));
+	return Items.Find(Key);
+}

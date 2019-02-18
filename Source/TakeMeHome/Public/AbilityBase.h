@@ -7,6 +7,7 @@
 #include "AbilityBase.generated.h"
 
 class ABaseCharacter;
+class UTakeMeHomeGameInstance;
 
 UCLASS()
 class TAKEMEHOME_API AAbilityBase : public AActor
@@ -15,8 +16,11 @@ class TAKEMEHOME_API AAbilityBase : public AActor
 	
 public:	
 	AAbilityBase();
+	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Setup", meta = (ExposeOnSpawn = true))
-	ABaseCharacter *AbilityOwner = nullptr;
+	ABaseCharacter *AbilityOwner = nullptr;	
+	UPROPERTY(BlueprintReadWrite, Category = "Setup", meta = (ExposeOnSpawn = true))
+	UTakeMeHomeGameInstance *GameInstance = nullptr;
 };
