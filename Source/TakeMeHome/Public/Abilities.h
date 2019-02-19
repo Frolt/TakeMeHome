@@ -8,7 +8,7 @@
 #include "TakeMeHomeStructs.h"
 #include "Abilities.generated.h"
 
-class ASpellBase;
+class AOffensiveSpellBase;
 class UTakeMeHomeGameInstance;
 
 

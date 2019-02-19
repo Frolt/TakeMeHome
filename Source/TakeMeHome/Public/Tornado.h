@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "Tornado.generated.h"
 
 class UCapsuleComponent;
@@ -14,7 +14,7 @@ class ABaseCharacter;
  * Tornado spell
  */
 UCLASS()
-class TAKEMEHOME_API ATornado : public ASpellBase
+class TAKEMEHOME_API ATornado : public AOffensiveSpellBase
 {
 	GENERATED_BODY()
 	

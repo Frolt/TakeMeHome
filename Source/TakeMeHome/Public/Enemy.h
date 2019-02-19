@@ -17,6 +17,8 @@ public:
 	AEnemy();
 	virtual void BeginPlay() override;
 
+	void SetMaterialAccordingToElement();
+
 public:
 	// Abilities
 	EPhysicalAttack MeleeAttack = EPhysicalAttack::PA_Enemy_Attack;

@@ -17,7 +17,7 @@
 #include "ForcePush.h"
 #include "LightningBolt.h"
 #include "Abilities.h"
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "TakeMeHomeGameInstance.h"
 #include "Inventory.h"
 #include "Public/TimerManager.h"
@@ -249,18 +249,13 @@ void AUmir::UseFastAttackOrCastSpell()
 	if (ActivatedOffensiveSpell != EOffensiveSpell::OS_None)
 	{
 		UseOffensiveSpell(ActivatedOffensiveSpell, FTransform());
-		OnRemoveHighlight.Broadcast(false);
-
-		ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
-		ActiveDecal = EDecalType::DT_None;
+		CancelActivatedSpell();
 	}
 	// Cast activated defensive spell
 	else if (ActivatedDefensiveSpell != EDefensiveSpell::DS_None)
 	{
 		UseDefensiveSpell(ActivatedDefensiveSpell, FTransform());
-		OnRemoveHighlight.Broadcast(false);
-		ActivatedDefensiveSpell = EDefensiveSpell::DS_None;
-		ActiveDecal = EDecalType::DT_None;
+		CancelActivatedSpell();
 	}
 	// Else use fast physical attack
 	else
@@ -278,7 +273,6 @@ void AUmir::UseSlowAttackOrCancel()
 	if (!bDidCancel)
 	{
 		UsePhysicalAttack(EPhysicalAttack::PA_Slow_Attack);
-		OnRemoveHighlight.Broadcast(false);
 	}
 }
 
@@ -604,17 +598,26 @@ void AUmir::ResetMousePos()
 	auto PC = GetWorld()->GetFirstPlayerController();
 	if (!PC->ShouldShowMouseCursor())
 	{
-		FVector2D ViewportSize;
-		GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
-		GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+		// May add timer to reset mouse pos
+		//FVector2D ViewportSize;
+		//GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
+		//GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
 	}
+	PC->SetInputMode(FInputModeGameAndUI().SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways));
 	PC->bShowMouseCursor = true;
-	PC->SetInputMode(FInputModeGameOnly().SetConsumeCaptureMouseDown(false));
 	bCanMoveCamera = false;
 }
 
 bool AUmir::CancelActivatedSpell()
 {
+	// Remove action bare highlight
+	OnRemoveHighlight.Broadcast(false);
+
+	// Set input mode game only
+	auto PC = GetWorld()->GetFirstPlayerController();
+	if (PC)	PC->SetInputMode(FInputModeGameOnly());
+
+	// Cancel spell if one is activated
 	if (ActivatedOffensiveSpell != EOffensiveSpell::OS_None || ActivatedDefensiveSpell != EDefensiveSpell::DS_None)
 	{
 		ActivatedOffensiveSpell = EOffensiveSpell::OS_None;
@@ -686,7 +689,7 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 	}
 
 	// Spawning offensive spell
-	auto SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
+	auto SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = Spell->Damage;
 	SpawnedActor->CastTime = Spell->CastTime;

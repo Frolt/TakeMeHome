@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "TakeMeHomeGameInstance.h"
 
 
-ASpellBase::ASpellBase()
+AOffensiveSpellBase::AOffensiveSpellBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-void ASpellBase::BeginPlay()
+void AOffensiveSpellBase::BeginPlay()
 {
 	Super::BeginPlay();
 

@@ -27,25 +27,27 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	// Events
+	// Damage
 	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
+	float GetDamageMultiplier(const FDamageEvent &DamageEvent);
 
+	// Death event
 	UFUNCTION()
 	void OnNPCDeath();
 
 	// Health/Mana
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void Heal(float Amount);
-	UFUNCTION(BlueprintCallable, Category = "Mana")
-	void DrainMana(float Amount);
-	UFUNCTION(BlueprintCallable, Category = "Mana")
-	void RestoreMana(float Amount);
+	void Heal(float Amount, bool bSpawnParticle = false);
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetHealth() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	void RestoreMana(float Amount, bool bShowParticle = false);
+	UFUNCTION(BlueprintCallable, Category = "Mana")
+	void DrainMana(float Amount);
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
-	UFUNCTION(BlueprintPure, Category = "Mana")
-	float GetHealth() const;
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetMana() const;
 
@@ -111,7 +113,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
 	EElement ActiveElement = EElement::E_Fire;
-	UPROPERTY(BlueprintReadWrite, Category = "Element")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Element")
 	EElement ElementType = EElement::E_Fire;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveHealthRegenPerSecond = 1.0f;

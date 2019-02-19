@@ -1,17 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BaseCharacter.h"
-#include "TakeMeHomeGameInstance.h"
 #include "Engine/World.h"
 #include "Public/TimerManager.h"
-#include "PotionBase.h"
-#include "DefensiveSpellBase.h"
-#include "PhysicalAttackBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "SpellBase.h"
+#include "Components/CapsuleComponent.h"
+#include "TakeMeHomeGameInstance.h"
+#include "PotionBase.h"
+#include "DefensiveSpellBase.h"
+#include "PhysicalAttackBase.h"
+#include "OffensiveSpellBase.h"
+#include "Components/WidgetComponent.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -34,6 +36,10 @@ void ABaseCharacter::BeginPlay()
 	
 	// Find game instance
 	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());	
+
+	// Set particles
+	StunParticle->SetTemplate(GameInstance->StunParticle);
+	CastParticle->SetTemplate(GameInstance->CastingParticle);
 }
 
 void ABaseCharacter::Tick(float DeltaSeconds)
@@ -57,31 +63,23 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 		InterruptCasting();
 	}
 
-	if (DamageEvent.DamageTypeClass == GameInstance->FireDamage)
+	// Take damage/heal
+	float DamageMultiplier = GetDamageMultiplier(DamageEvent);
+	if (DamageMultiplier > 1.1f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took fire damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Super effective!"))
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->WaterDamage)
+	else if (DamageMultiplier < 0.9f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took water damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Not very effective"))
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->NatureDamage)
+	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took nature damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Normal damage"))
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->EarthDamage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Took earth damage"));
-	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->LightningDamage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Took lightning damage"));
-	}
+	CurrentHealth = FMath::Clamp(CurrentHealth - Damage * DamageMultiplier, 0.0f, MaxHealth);
 
 	// TODO consider adding sound/particle/animation when taking damage or healing
-
-	// Take damage/heal
-	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
 
 	// Check if character died
 	if (FMath::IsNearlyEqual(CurrentHealth, 0.0f))
@@ -93,16 +91,60 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 	return Damage;
 }
 
+float ABaseCharacter::GetDamageMultiplier(const FDamageEvent &DamageEvent)
+{
+	if (DamageEvent.DamageTypeClass == GameInstance->FireDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took fire damage"));
+
+		if (ElementType == EElement::E_Fire) return 0.5f;
+		if (ElementType == EElement::E_Nature) return 2.0f;
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->WaterDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took water damage"));
+
+		if (ElementType == EElement::E_Water) return 0.5f;
+		if (ElementType == EElement::E_Fire) return 2.0f;
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->NatureDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took nature damage"));
+
+		if (ElementType == EElement::E_Nature) return 0.5f;
+		if (ElementType == EElement::E_Earth) return 2.0f;
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->EarthDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took earth damage"));
+
+		if (ElementType == EElement::E_Earth) return 0.5f;
+		if (ElementType == EElement::E_Lightning) return 2.0f;
+	}
+	else if (DamageEvent.DamageTypeClass == GameInstance->LightningDamage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Took lightning damage"));
+
+		if (ElementType == EElement::E_Lightning) return 0.5f;
+		if (ElementType == EElement::E_Water) return 2.0f;
+	}
+	return 1.0f;
+}
+
 void ABaseCharacter::OnNPCDeath()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s died (NPC)"), *GetName());
 	GetMesh()->SetSimulatePhysics(true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	DetachFromControllerPendingDestroy();
 }
 
-void ABaseCharacter::Heal(float Amount)
+void ABaseCharacter::Heal(float Amount, bool bSpawnParticle)
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.0f, MaxHealth);
+
+	if (bSpawnParticle)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GameInstance->HealingParticle, CastParticle->GetComponentTransform());
 }
 
 void ABaseCharacter::DrainMana(float Amount)
@@ -110,9 +152,12 @@ void ABaseCharacter::DrainMana(float Amount)
 	CurrentMana = FMath::Clamp(CurrentMana - Amount, 0.0f, MaxMana);
 }
 
-void ABaseCharacter::RestoreMana(float Amount)
+void ABaseCharacter::RestoreMana(float Amount, bool bSpawnParticle)
 {
 	CurrentMana = FMath::Clamp(CurrentMana + Amount, 0.0f, MaxMana);
+
+	if (bSpawnParticle)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GameInstance->ManaParticle, CastParticle->GetComponentTransform());
 }
 
 float ABaseCharacter::GetHealthPercentage() const
@@ -137,7 +182,7 @@ float ABaseCharacter::GetMana() const
 
 void ABaseCharacter::StartCasting(float CastDuration)
 {
-	if (ensureMsgf(FMath::IsNearlyZero(CastDuration), TEXT("CastDuration: %f"), CastDuration)) return;
+	if (!ensureMsgf(!FMath::IsNearlyZero(CastDuration), TEXT("CastDuration: %f"), CastDuration)) return;
 
 	TimeCastingBegan = GetWorld()->GetTimeSeconds();
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
@@ -188,7 +233,7 @@ void ABaseCharacter::CastSuccesfull()
 
 void ABaseCharacter::LockCharacter(float LockDuration)
 {
-	if (ensureMsgf(FMath::IsNearlyZero(LockDuration), TEXT("LockDuration: %f"), LockDuration)) return;
+	if (!ensureMsgf(!FMath::IsNearlyZero(LockDuration), TEXT("LockDuration: %f"), LockDuration)) return;
 
 	bCanMove = false;
 	bCanUseSpell = false;
@@ -214,7 +259,7 @@ void ABaseCharacter::InterruptLock()
 
 void ABaseCharacter::Stun(float StunDuration, bool OverrideStun)
 {
-	if (ensureMsgf(FMath::IsNearlyZero(StunDuration), TEXT("StunDuration: %f"), StunDuration)) return;
+	if (!ensureMsgf(!FMath::IsNearlyZero(StunDuration), TEXT("StunDuration: %f"), StunDuration)) return;
 
 	// Override previous stun
 	if (bIsStunned)
@@ -258,6 +303,7 @@ void ABaseCharacter::UsePotion(EPotion Key)
 	// Spawn potion
 	auto SpawnedActor = GetWorld()->SpawnActorDeferred<APotionBase>(Potion->ClassRef, GetActorTransform());
 	SpawnedActor->AbilityOwner = this;
+	SpawnedActor->LockTime = Potion->LockTime;
 	SpawnedActor->FinishSpawning(GetActorTransform());
 }
 
@@ -284,7 +330,7 @@ void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTran
 	auto *Spell = GameInstance->GetOffensiveSpell(Key);
 
 	// Spawn offensive spell
-	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<ASpellBase>(Spell->ClassRef, SpawnTransform);
+	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = Spell->Damage;
 	SpawnedActor->CastTime = Spell->CastTime;

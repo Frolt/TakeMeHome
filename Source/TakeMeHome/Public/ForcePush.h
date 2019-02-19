@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "ForcePush.generated.h"
 
 class UBoxComponent;
@@ -13,7 +13,7 @@ class UParticleSystemComponent;
  * Spell that pushes away objects/enemies
  */
 UCLASS()
-class TAKEMEHOME_API AForcePush : public ASpellBase
+class TAKEMEHOME_API AForcePush : public AOffensiveSpellBase
 {
 	GENERATED_BODY()
 

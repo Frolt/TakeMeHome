@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "Starfall.generated.h"
 
 class AStaticMeshActor;
@@ -15,7 +15,7 @@ class UParticleSystemComponent;
  * 
  */
 UCLASS()
-class TAKEMEHOME_API AStarfall : public ASpellBase
+class TAKEMEHOME_API AStarfall : public AOffensiveSpellBase
 {
 	GENERATED_BODY()
 	

@@ -15,7 +15,7 @@ class AForcePush;
 class ATornado;
 class ALightningBolt;
 class UAbilities;
-class ASpellBase;
+class AOffensiveSpellBase;
 class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
 class UInventory;

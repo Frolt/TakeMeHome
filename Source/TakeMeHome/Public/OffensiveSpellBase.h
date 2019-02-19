@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "AbilityBase.h"
 #include "TakeMeHomeEnums.h"
-#include "SpellBase.generated.h"
+#include "OffensiveSpellBase.generated.h"
 
 
 UCLASS()
-class TAKEMEHOME_API ASpellBase : public AAbilityBase
+class TAKEMEHOME_API AOffensiveSpellBase : public AAbilityBase
 {
 	GENERATED_BODY()
 
 public:
-	ASpellBase();
+	AOffensiveSpellBase();
 	virtual void BeginPlay() override;
 
 public:

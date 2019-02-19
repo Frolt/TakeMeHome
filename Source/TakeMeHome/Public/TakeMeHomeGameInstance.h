@@ -8,6 +8,9 @@
 #include "TakeMeHomeStructs.h"
 #include "TakeMeHomeGameInstance.generated.h"
 
+class UParticleSystemComponent;
+class UParticleSystem;
+
 /**
  * 
  */
@@ -51,4 +54,61 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
 	TSubclassOf<UDamageType> LightningDamage;
 
+	// Character particle effects
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem *StunParticle = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem *CastingParticle= nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem *HealingParticle = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem *ManaParticle = nullptr;
+
+	// Colors
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Colors")
+	FLinearColor DefensiveColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Colors")
+	FLinearColor OffensiveColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Colors")
+	FLinearColor PhysicalColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Colors")
+	FLinearColor PotionColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Colors")
+	FLinearColor HealthColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Colors")
+	FLinearColor ManaColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor NeutralColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor FireColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor WaterColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor NatureColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor EarthColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
+	FLinearColor LightningColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
+	FLinearColor PoorColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
+	FLinearColor CommonColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
+	FLinearColor UncommonColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
+	FLinearColor RareColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
+	FLinearColor EpicColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Message Colors")
+	FLinearColor BadColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Message Colors")
+	FLinearColor IndifferentColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD Message Colors")
+	FLinearColor GoodColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
+	FLinearColor NotVeryEffectiveColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
+	FLinearColor NormalColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
+	FLinearColor SuperEffectiveColor;
 };

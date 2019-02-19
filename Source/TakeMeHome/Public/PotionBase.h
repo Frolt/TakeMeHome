@@ -15,4 +15,6 @@ class TAKEMEHOME_API APotionBase : public AAbilityBase
 	
 public:	
 	APotionBase();
+	UPROPERTY(BlueprintReadOnly, Category = "Setup")
+	float LockTime = 0.0f;
 };

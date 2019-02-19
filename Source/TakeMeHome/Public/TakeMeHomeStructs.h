@@ -7,7 +7,7 @@
 #include "Engine/UserDefinedStruct.h"
 #include "TakeMeHomeStructs.generated.h"
 
-class ASpellBase;
+class AOffensiveSpellBase;
 class APotionBase;
 class APhysicalAttackBase;
 class ADefensiveSpellBase;
@@ -32,7 +32,7 @@ struct FOffensiveSpell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FText Description;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TSubclassOf<ASpellBase> ClassRef;
+	TSubclassOf<AOffensiveSpellBase> ClassRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Damage = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
@@ -131,6 +131,8 @@ struct FPotion
 	int32 MaxQuantity = 20;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Cooldown = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float LockTime = 0.0f;
 
 };
 

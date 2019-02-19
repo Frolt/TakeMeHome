@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SpellBase.h"
+#include "OffensiveSpellBase.h"
 #include "LightningBolt.generated.h"
 
 class USphereComponent;
@@ -13,7 +13,7 @@ class UParticleSystem;
  * Striking target area with a lightning bolt after channeling is successful
  */
 UCLASS()
-class TAKEMEHOME_API ALightningBolt : public ASpellBase
+class TAKEMEHOME_API ALightningBolt : public AOffensiveSpellBase
 {
 	GENERATED_BODY()
 		
