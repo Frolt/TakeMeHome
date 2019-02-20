@@ -50,7 +50,7 @@ void AForcePush::PushOverlappingActors()
 		if (element->IsRootComponentMovable())
 		{
 			auto SpellForward = GetActorForwardVector();
-			element->AddActorWorldOffset(SpellForward * PushSpeed);
+			element->AddActorWorldOffset(SpellForward * PushSpeed * GetWorld()->GetDeltaSeconds());
 			if (element->IsA<ABaseCharacter>())
 			{
 				Cast<ABaseCharacter>(element)->Stun(0.5f, false);

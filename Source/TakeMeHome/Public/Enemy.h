@@ -16,6 +16,9 @@ class TAKEMEHOME_API AEnemy : public ABaseCharacter
 public:
 	AEnemy();
 	virtual void BeginPlay() override;
+	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat Text")
+	void SpawnCombatText(float Damage, float FontScale, FLinearColor Color);
 
 	void SetMaterialAccordingToElement();
 

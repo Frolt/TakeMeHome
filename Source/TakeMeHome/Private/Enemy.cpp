@@ -23,6 +23,31 @@ void AEnemy::BeginPlay()
 	SetMaterialAccordingToElement();
 }
 
+float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
+{
+	float DamageMultiplier = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	float Size;
+	FLinearColor Color;
+	if (DamageMultiplier > 1.1f)
+	{
+		Size = 2.0f;
+		Color = GameInstance->SuperEffectiveColor;
+	}
+	else if (DamageMultiplier < 0.9f)
+	{
+		Size = 0.5f;
+		Color = GameInstance->NotVeryEffectiveColor;
+	}
+	else
+	{
+		Size = 1.0f;
+		Color = GameInstance->NormalColor;
+	}
+	SpawnCombatText(Damage * DamageMultiplier, Size, Color);
+
+	return Damage;
+}
+
 void AEnemy::SetMaterialAccordingToElement()
 {
 	FVector ElementColor;

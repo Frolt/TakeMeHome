@@ -13,7 +13,6 @@
 #include "DefensiveSpellBase.h"
 #include "PhysicalAttackBase.h"
 #include "OffensiveSpellBase.h"
-#include "Components/WidgetComponent.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -88,7 +87,7 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 		OnDeathDelegate.Broadcast();
 	}
 
-	return Damage;
+	return DamageMultiplier;
 }
 
 float ABaseCharacter::GetDamageMultiplier(const FDamageEvent &DamageEvent)
@@ -139,12 +138,15 @@ void ABaseCharacter::OnNPCDeath()
 	DetachFromControllerPendingDestroy();
 }
 
-void ABaseCharacter::Heal(float Amount, bool bSpawnParticle)
+void ABaseCharacter::Heal(float Amount, bool bIsPassive)
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.0f, MaxHealth);
 
-	if (bSpawnParticle)
+	if (!bIsPassive)
+	{
+		SpawnHealthManaText(Amount, 1.0f, GameInstance->HealColor);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GameInstance->HealingParticle, CastParticle->GetComponentTransform());
+	}
 }
 
 void ABaseCharacter::DrainMana(float Amount)
@@ -152,12 +154,15 @@ void ABaseCharacter::DrainMana(float Amount)
 	CurrentMana = FMath::Clamp(CurrentMana - Amount, 0.0f, MaxMana);
 }
 
-void ABaseCharacter::RestoreMana(float Amount, bool bSpawnParticle)
+void ABaseCharacter::RestoreMana(float Amount, bool bIsPassive)
 {
 	CurrentMana = FMath::Clamp(CurrentMana + Amount, 0.0f, MaxMana);
 
-	if (bSpawnParticle)
+	if (!bIsPassive)
+	{
+		SpawnHealthManaText(Amount, 1.0f, GameInstance->ManaColor);
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GameInstance->ManaParticle, CastParticle->GetComponentTransform());
+	}
 }
 
 float ABaseCharacter::GetHealthPercentage() const

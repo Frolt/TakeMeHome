@@ -34,5 +34,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Spell settings")
-	float PushSpeed = 10.0f;
+	float PushSpeed = 500.0f;
 };

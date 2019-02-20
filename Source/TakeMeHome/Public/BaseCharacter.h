@@ -37,19 +37,21 @@ public:
 
 	// Health/Mana
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	void Heal(float Amount, bool bSpawnParticle = false);
+	void Heal(float Amount, bool bIsPassive = true);
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealth() const;
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercentage() const;
 	UFUNCTION(BlueprintCallable, Category = "Mana")
-	void RestoreMana(float Amount, bool bShowParticle = false);
+	void RestoreMana(float Amount, bool bIsPassive = true);
 	UFUNCTION(BlueprintCallable, Category = "Mana")
 	void DrainMana(float Amount);
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetManaPercentage() const;
 	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetMana() const;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Healing")
+	void SpawnHealthManaText(float Damage, float FontScale, FLinearColor Color);
 
 	// Casting
 	UFUNCTION(BlueprintCallable, Category = "Casting")

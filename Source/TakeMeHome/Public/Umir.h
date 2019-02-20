@@ -66,15 +66,13 @@ public:
 	UFUNCTION()
 	void OnDeath();
 
-	// Restore
-	UFUNCTION(BlueprintCallable, Category = "Restore")
-	void ResetMousePos();
-
 	// Using abilities
 	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
 	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform) override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
+	UFUNCTION(BlueprintCallable, Category = "Restore")
+	void ResetMousePos();
 
 	// Cooldown functions
 	UFUNCTION(BlueprintPure, Category = "Cooldown")

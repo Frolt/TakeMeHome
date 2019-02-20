@@ -53,6 +53,8 @@ public:
 	TSubclassOf<UDamageType> EarthDamage;
 	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
 	TSubclassOf<UDamageType> LightningDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
+	TSubclassOf<UDamageType> PhysicalDamage;
 
 	// Character particle effects
 	UPROPERTY(EditDefaultsOnly, Category = "Particles")
@@ -111,4 +113,6 @@ public:
 	FLinearColor NormalColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
 	FLinearColor SuperEffectiveColor;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
+	FLinearColor HealColor;
 };
