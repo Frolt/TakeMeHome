@@ -45,7 +45,7 @@ void AStarfallProjectile::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor
 		if (!ActorsToIgnore.Contains(OtherActor))
 		{
 			ActorsToIgnore.Add(OtherActor);
-			OtherActor->TakeDamage(Damage, DamageEvent, AbilityOwner->GetController(), this);
+			OtherActor->TakeDamage(Damage, FDamageEvent(DamageType), AbilityOwner->GetController(), this);
 		}
 		return;
 	}

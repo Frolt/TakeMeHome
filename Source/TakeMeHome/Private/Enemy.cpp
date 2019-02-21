@@ -4,11 +4,13 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TakeMeHomeGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
 
 }
 
@@ -17,7 +19,7 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	// Subscribe to death event
-	OnDeathDelegate.AddUniqueDynamic(this, &ABaseCharacter::OnNPCDeath);
+	OnDeathDelegate.AddUniqueDynamic(this, &ABaseCharacter::OnDeath);
 
 	// Set material
 	SetMaterialAccordingToElement();
@@ -46,6 +48,15 @@ float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AControl
 	SpawnCombatText(Damage * DamageMultiplier, Size, Color);
 
 	return Damage;
+}
+
+void AEnemy::OnDeath()
+{
+	DetachFromControllerPendingDestroy();
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetCapsuleComponent()->SetCollisionProfileName(FName("NoCollision"));
+	DeathEvent();
 }
 
 void AEnemy::SetMaterialAccordingToElement()

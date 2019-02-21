@@ -50,6 +50,8 @@ enum class EOffensiveSpell : uint8
 	OS_Starfall 			UMETA(DisplayName = "Starfall"),
 	OS_Force_Push			UMETA(DisplayName = "Force Push"),
 	OS_Lightning_Bolt		UMETA(DisplayName = "Lightning Bolt"),
+	OS_Vaccum				UMETA(DisplayName = "Vaccum"),
+	OS_Death_Plant			UMETA(DisplayName = "Death Plant"),
 };
 
 // Potions

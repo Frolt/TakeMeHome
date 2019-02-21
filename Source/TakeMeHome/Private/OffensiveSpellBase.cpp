@@ -20,19 +20,19 @@ void AOffensiveSpellBase::BeginPlay()
 		// TODO remove NEUTRAL condition
 		break;
 	case EElement::E_Fire:
-		DamageEvent.DamageTypeClass = GameInstance->FireDamage;
+		DamageType = GameInstance->FireDamage;
 		break;
 	case EElement::E_Nature:
-		DamageEvent.DamageTypeClass = GameInstance->NatureDamage;
+		DamageType = GameInstance->NatureDamage;
 		break;
 	case EElement::E_Water:
-		DamageEvent.DamageTypeClass = GameInstance->WaterDamage;
+		DamageType = GameInstance->WaterDamage;
 		break;
 	case EElement::E_Earth:
-		DamageEvent.DamageTypeClass = GameInstance->EarthDamage;
+		DamageType = GameInstance->EarthDamage;
 		break;
 	case EElement::E_Lightning:
-		DamageEvent.DamageTypeClass = GameInstance->LightningDamage;
+		DamageType = GameInstance->LightningDamage;
 		break;
 	}
 }

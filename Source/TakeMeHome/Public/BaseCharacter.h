@@ -29,11 +29,11 @@ public:
 
 	// Damage
 	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
-	float GetDamageMultiplier(const FDamageEvent &DamageEvent);
+	float GetDamageMultiplier(TSubclassOf<UDamageType> DamageType);
 
 	// Death event
 	UFUNCTION()
-	void OnNPCDeath();
+	virtual void OnDeath();
 
 	// Health/Mana
 	UFUNCTION(BlueprintCallable, Category = "Health")
@@ -71,7 +71,7 @@ public:
 
 	// Stunning
 	UFUNCTION(BlueprintCallable, Category = "Stun")
-	void Stun(float StunDuration, bool OverrideStun = true);
+	virtual void Stun(float StunDuration, bool OverrideStun = true);
 	UFUNCTION(BlueprintCallable, Category = "Stun")
 	void InterruptStun();
 
@@ -81,7 +81,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	virtual void UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform);
+	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void UsePhysicalAttack(EPhysicalAttack Key);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")

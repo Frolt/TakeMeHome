@@ -21,6 +21,7 @@ class UTakeMeHomeGameInstance;
 class UInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityUsed, bool, bWasInstaCast);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRemoveHighlight);
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ABaseCharacter
@@ -63,8 +64,11 @@ public:
 	void ResetDecalSize(float Radius = 256.0f);
 
 	// Death event
-	UFUNCTION()
-	void OnDeath();
+	virtual void OnDeath() override;
+	UFUNCTION(BlueprintCallable, Category = "Respawn")
+	void Respawn();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Death Camera")
+	void PlayDeathCamera();
 
 	// Using abilities
 	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
@@ -72,6 +76,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
 	UFUNCTION(BlueprintCallable, Category = "Restore")
+	void EnterCastMode();
+
 	void ResetMousePos();
 
 	// Cooldown functions
@@ -102,7 +108,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void IsOnCooldown();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
-	void PotionsAreFull();
+	void PotionsAreFull();	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
+	void NoMorePotions();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
+	void NeedToBeOnGround();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
 	void CastingBarActivated();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
@@ -122,10 +132,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BindPotion(EPotion Potion);
 
-	// Casting/interrupt
+	// Casting/interrupt/stun
 	virtual void StartCasting(float CastDuration) override;
 	virtual bool InterruptCasting() override;
 	virtual void CastSuccesfull() override;
+	virtual void Stun(float StunDuration, bool OverrideStun) override;
 	UFUNCTION(BlueprintPure, Category = "Casting")
 	float GetCastingPercentage() const;
 
@@ -160,7 +171,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FOnAbilityUsed OnPotionCast;
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
-	FOnAbilityUsed OnRemoveHighlight;
+	FOnRemoveHighlight OnRemoveHighlight;
+
+	// Timers
+	FTimerHandle ResetMouseTimer;
 
 	// Active states
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Active State")
@@ -175,9 +189,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Death_Plant;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Starfall;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Vaccum;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Lightning_Bolt;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
@@ -208,5 +222,6 @@ private:
 	float MinZoom = 300.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
+	bool bShouldResetMouse = false;
 
 };

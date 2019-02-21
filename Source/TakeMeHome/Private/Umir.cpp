@@ -79,11 +79,13 @@ void AUmir::BeginPlay()
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
-	// Adding spells
+	// Add offensive spells
 	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Lightning_Bolt);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
 
 	// Add physical attacks
 	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
@@ -249,13 +251,11 @@ void AUmir::UseFastAttackOrCastSpell()
 	if (ActivatedOffensiveSpell != EOffensiveSpell::OS_None)
 	{
 		UseOffensiveSpell(ActivatedOffensiveSpell, FTransform());
-		CancelActivatedSpell();
 	}
 	// Cast activated defensive spell
 	else if (ActivatedDefensiveSpell != EDefensiveSpell::DS_None)
 	{
 		UseDefensiveSpell(ActivatedDefensiveSpell, FTransform());
-		CancelActivatedSpell();
 	}
 	// Else use fast physical attack
 	else
@@ -286,7 +286,7 @@ void AUmir::ActivateOffensiveSlot1()
 	auto *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell1Bound);
 
 	// Restore action bar hightlight
-	OnRemoveHighlight.Broadcast(false);
+	OnRemoveHighlight.Broadcast();
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -295,7 +295,7 @@ void AUmir::ActivateOffensiveSlot1()
 	{
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell1Bound;
-		ResetMousePos();
+		EnterCastMode();
 
 		switch (Spell->DecalType)
 		{
@@ -322,6 +322,15 @@ void AUmir::ActivateOffensiveSlot1()
 		OnOffensive1Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell1Bound, FTransform());
 	}
+
+	// Reset mouse pos if timer is up
+	if (bShouldResetMouse)
+	{
+		bShouldResetMouse = false;
+		FVector2D ViewportSize;
+		GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
+		GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+	}
 }
 
 void AUmir::ActivateOffensiveSlot2()
@@ -334,7 +343,7 @@ void AUmir::ActivateOffensiveSlot2()
 	FOffensiveSpell *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell2Bound);
 
 	// Restore action bar hightlight
-	OnRemoveHighlight.Broadcast(false);
+	OnRemoveHighlight.Broadcast();
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -343,7 +352,7 @@ void AUmir::ActivateOffensiveSlot2()
 	{
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell2Bound;
-		ResetMousePos();
+		EnterCastMode();
 
 		switch (Spell->DecalType)
 		{
@@ -370,6 +379,15 @@ void AUmir::ActivateOffensiveSlot2()
 		OnOffensive2Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell2Bound, FTransform());
 	}
+
+	// Reset mouse pos if timer is up
+	if (bShouldResetMouse)
+	{
+		bShouldResetMouse = false;
+		FVector2D ViewportSize;
+		GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
+		GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+	}
 }
 
 void AUmir::ActivateOffensiveSlot3()
@@ -382,7 +400,7 @@ void AUmir::ActivateOffensiveSlot3()
 	FOffensiveSpell *Spell = GameInstance->GetOffensiveSpell(OffensiveSpell3Bound);
 
 	// Restore action bar hightlight
-	OnRemoveHighlight.Broadcast(false);
+	OnRemoveHighlight.Broadcast();
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost) { NotEnoughMana(); return; }
@@ -391,7 +409,7 @@ void AUmir::ActivateOffensiveSlot3()
 	{
 		// Activate spell
 		ActivatedOffensiveSpell = OffensiveSpell3Bound;
-		ResetMousePos();
+		EnterCastMode();
 
 		switch (Spell->DecalType)
 		{
@@ -418,6 +436,15 @@ void AUmir::ActivateOffensiveSlot3()
 		OnOffensive3Cast.Broadcast(true);
 		UseOffensiveSpell(OffensiveSpell3Bound, FTransform());
 	}
+
+	// Reset mouse pos if timer is up
+	if (bShouldResetMouse)
+	{
+		bShouldResetMouse = false;
+		FVector2D ViewportSize;
+		GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
+		GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+	}
 }
 
 void AUmir::ActivateDefensiveSlot()
@@ -432,13 +459,13 @@ void AUmir::ActivateDefensiveSlot()
 	FDefensiveSpell *Spell = GameInstance->GetDefensiveSpell(DefensiveSpellBound);
 
 	// Restore action bar hightlight
-	OnRemoveHighlight.Broadcast(false);
+	OnRemoveHighlight.Broadcast();
 
 	if (Spell->bMustActivate)
 	{
 		// Activate spell
 		ActivatedDefensiveSpell = DefensiveSpellBound;
-		ResetMousePos();
+		EnterCastMode();
 
 		switch (Spell->DecalType)
 		{
@@ -465,6 +492,16 @@ void AUmir::ActivateDefensiveSlot()
 		OnDefensiveCast.Broadcast(true);
 		UseDefensiveSpell(DefensiveSpellBound, FTransform());
 	}
+	auto PC = GetWorld()->GetFirstPlayerController();
+
+	// Reset mouse pos if timer is up
+	if (bShouldResetMouse)
+	{
+		bShouldResetMouse = false;
+		FVector2D ViewportSize;
+		GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
+		GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+	}
 }
 
 void AUmir::ActivatePotionSlot()
@@ -477,10 +514,14 @@ void AUmir::ActivatePotionSlot()
 	// Set cooldown and remove potion
 	if (Abilities->RemovePotion(PotionBound))
 	{
-		OnRemoveHighlight.Broadcast(true);
+		OnRemoveHighlight.Broadcast();
 		OnPotionCast.Broadcast(true);
 		LastTimeActivatedPotion = GetWorld()->GetTimeSeconds();
 		UsePotion(PotionBound);
+	}
+	else
+	{
+		NoMorePotions();
 	}
 }
 
@@ -590,28 +631,57 @@ void AUmir::ResetDecalSize(float Radius)
 void AUmir::OnDeath()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s died (Umir)"), *GetName());
-	GetWorld()->GetFirstPlayerController()->StartSpectatingOnly();
+	//GetWorld()->GetFirstPlayerController()->StartSpectatingOnly();
+	bCanMoveCamera = false;
+	bCanMove = false;
+	bCanZoom = false;
+	bCanBeDamaged = false;
+	bIsDead = true;
+	bCanUseSpell = false;
+
+	PlayDeathCamera();
 }
 
-void AUmir::ResetMousePos()
+void AUmir::Respawn()
+{
+	bCanMoveCamera = true;
+	bCanMove = true;
+	bCanZoom = true;
+	bCanBeDamaged = true;
+	bIsDead = false;
+	bCanUseSpell = true;
+	CurrentHealth = MaxHealth;
+	CurrentMana = MaxMana;
+	// TODO teleport Umir to last checkpoint/shrine
+	CameraBoom->bUsePawnControlRotation = true;
+	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	GetMesh()->SetSimulatePhysics(false);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetActorLocation(FVector(0.0f, 0.0f, 500.0f));
+}
+
+void AUmir::EnterCastMode()
 {
 	auto PC = GetWorld()->GetFirstPlayerController();
-	if (!PC->ShouldShowMouseCursor())
-	{
-		// May add timer to reset mouse pos
-		//FVector2D ViewportSize;
-		//GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
-		//GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
-	}
 	PC->SetInputMode(FInputModeGameAndUI().SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways));
 	PC->bShowMouseCursor = true;
 	bCanMoveCamera = false;
 }
 
+void AUmir::ResetMousePos()
+{
+	bShouldResetMouse = true;
+}
+
 bool AUmir::CancelActivatedSpell()
 {
-	// Remove action bare highlight
-	OnRemoveHighlight.Broadcast(false);
+	// Remove action bar highlight
+	OnRemoveHighlight.Broadcast();
+
+	// Set mouse reset timer
+	GetWorldTimerManager().ClearTimer(ResetMouseTimer);
+	GetWorldTimerManager().SetTimer(ResetMouseTimer, this, &AUmir::ResetMousePos, 2.0f);
 
 	// Set input mode game only
 	auto PC = GetWorld()->GetFirstPlayerController();
@@ -636,10 +706,7 @@ bool AUmir::CancelActivatedSpell()
 void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 {
 	if (Key == EOffensiveSpell::OS_None) return;
-
-	// Disable mouse
-	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	bCanMoveCamera = true;
+	if (!bCanUseSpell) { CancelActivatedSpell(); return; }
 
 	// Get offensive spell
 	auto *Spell = GameInstance->GetOffensiveSpell(Key);
@@ -651,6 +718,37 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 		CancelActivatedSpell();
 		return;
 	}
+
+	// Check if casting is possible
+	if (Spell->CastTime > 0.1f && GetMovementComponent()->IsFalling())
+	{
+		NeedToBeOnGround();
+		return;
+	}
+
+	// Find correct spawn location/rotation
+	SpawnTransform.SetLocation(GetActorLocation());
+	SpawnTransform.SetRotation(GetActorRotation().Quaternion());
+	if (Spell->DecalType == EDecalType::DT_Spell_Circle)
+	{
+		SpawnTransform.SetLocation(Decal->GetComponentLocation());
+	}
+	else if (Spell->DecalType == EDecalType::DT_Arrow)
+	{
+		SpawnTransform.SetRotation((-Decal->GetRightVector()).Rotation().Quaternion());
+	}
+
+	Super::UseOffensiveSpell(Key, SpawnTransform);
+
+	// Start casting
+	if (Spell->CastTime > 0.1f)
+	{
+		StartCasting(Spell->CastTime);
+	}
+
+	// Disable mouse
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	bCanMoveCamera = true;
 
 	// Drain mana
 	DrainMana(Spell->ManaCost);
@@ -669,46 +767,14 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 		LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
 	}
 
-	// Find correct spawn location/rotation
-	SpawnTransform.SetLocation(GetActorLocation());
-	SpawnTransform.SetRotation(GetActorRotation().Quaternion());
-	if (Spell->DecalType == EDecalType::DT_Spell_Circle)
-	{
-		SpawnTransform.SetLocation(Decal->GetComponentLocation());
-	}
-	else if (Spell->DecalType == EDecalType::DT_Arrow)
-	{
-		// TODO find decal arrow direction
-		SpawnTransform.SetRotation((-Decal->GetRightVector()).Rotation().Quaternion());
-	}
-
-	// Check for cast time
-	if (Spell->CastTime > 0.01f)
-	{
-		StartCasting(Spell->CastTime);
-	}
-
-	// Spawning offensive spell
-	auto SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
-	SpawnedActor->AbilityOwner = this;
-	SpawnedActor->Damage = Spell->Damage;
-	SpawnedActor->CastTime = Spell->CastTime;
-	SpawnedActor->StunDuration = Spell->StunDuration;
-	SpawnedActor->DecalRadius = Spell->DecalRadius;
-	Spell->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
-	SpawnedActor->FinishSpawning(SpawnTransform);
+	// Cancel spell
+	CancelActivatedSpell();
 }
 
 void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
 {
 	if (Key == EDefensiveSpell::DS_None) return;
-
-	// Disable mouse
-	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	bCanMoveCamera = true;
-
-	// Set cooldown
-	LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
+	if (!bCanUseSpell) { CancelActivatedSpell(); return; }
 
 	// Find defensive spell
 	auto *Spell = GameInstance->GetDefensiveSpell(Key);
@@ -727,6 +793,16 @@ void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
 
 	// Call the base version
 	Super::UseDefensiveSpell(Key, SpawnTransform);
+
+	// Disable mouse
+	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	bCanMoveCamera = true;
+
+	// Set cooldown
+	LastTimeActivatedDefensiveSpell = GetWorld()->GetTimeSeconds();
+
+	// Cancel spell
+	CancelActivatedSpell();
 }
 
 float AUmir::GetDefensiveSlotCooldown() const
@@ -860,6 +936,13 @@ void AUmir::CastSuccesfull()
 
 	// Umir also needs to handle casting bar
 	CastingBarSucceded();
+}
+
+void AUmir::Stun(float StunDuration, bool OverrideStun)
+{
+	Super::Stun(StunDuration, OverrideStun);
+
+	CancelActivatedSpell();
 }
 
 float AUmir::GetCastingPercentage() const

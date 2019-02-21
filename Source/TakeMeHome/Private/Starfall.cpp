@@ -97,7 +97,7 @@ void AStarfall::SpawnProjectile()
 		Projectile->AbilityOwner = AbilityOwner;
 		Projectile->Damage = Damage;
 		Projectile->ElementType = ElementType;
-		Projectile->DamageEvent = DamageEvent;
+		Projectile->DamageType = DamageType;
 		Projectile->LaunchVelocity = LaunchVelocities[Index];
 		Projectile->FinishSpawning(SpawnTransform);
 

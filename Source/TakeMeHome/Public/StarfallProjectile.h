@@ -38,5 +38,5 @@ public:
 	FVector LaunchVelocity;
 	TArray<AActor *> ActorsToIgnore;
 	EElement ElementType;
-	FDamageEvent DamageEvent;
+	TSubclassOf<UDamageType> DamageType;
 };

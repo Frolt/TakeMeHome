@@ -28,5 +28,6 @@ public:
 	float DecalRadius = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	EElement ElementType = EElement::E_Neutral;
-	FDamageEvent DamageEvent;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	TSubclassOf<UDamageType> DamageType;
 };

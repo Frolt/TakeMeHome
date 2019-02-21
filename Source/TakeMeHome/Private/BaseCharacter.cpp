@@ -55,6 +55,9 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 
 float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
 {
+	// Check if dead
+	if (bIsDead) return Damage;
+
 	// Interrupt lock and casting
 	if (Damage > 0.0f)
 	{
@@ -63,25 +66,13 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 	}
 
 	// Take damage/heal
-	float DamageMultiplier = GetDamageMultiplier(DamageEvent);
-	if (DamageMultiplier > 1.1f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Super effective!"))
-	}
-	else if (DamageMultiplier < 0.9f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not very effective"))
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Normal damage"))
-	}
+	float DamageMultiplier = GetDamageMultiplier(DamageEvent.DamageTypeClass);
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage * DamageMultiplier, 0.0f, MaxHealth);
 
 	// TODO consider adding sound/particle/animation when taking damage or healing
 
 	// Check if character died
-	if (FMath::IsNearlyEqual(CurrentHealth, 0.0f))
+	if (FMath::IsNearlyZero(CurrentHealth))
 	{
 		bIsDead = true;
 		OnDeathDelegate.Broadcast();
@@ -90,37 +81,37 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 	return DamageMultiplier;
 }
 
-float ABaseCharacter::GetDamageMultiplier(const FDamageEvent &DamageEvent)
+float ABaseCharacter::GetDamageMultiplier(TSubclassOf<UDamageType> DamageType)
 {
-	if (DamageEvent.DamageTypeClass == GameInstance->FireDamage)
+	if (DamageType == GameInstance->FireDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Took fire damage"));
 
 		if (ElementType == EElement::E_Fire) return 0.5f;
 		if (ElementType == EElement::E_Nature) return 2.0f;
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->WaterDamage)
+	else if (DamageType == GameInstance->WaterDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Took water damage"));
 
 		if (ElementType == EElement::E_Water) return 0.5f;
 		if (ElementType == EElement::E_Fire) return 2.0f;
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->NatureDamage)
+	else if (DamageType == GameInstance->NatureDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Took nature damage"));
 
 		if (ElementType == EElement::E_Nature) return 0.5f;
 		if (ElementType == EElement::E_Earth) return 2.0f;
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->EarthDamage)
+	else if (DamageType == GameInstance->EarthDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Took earth damage"));
 
 		if (ElementType == EElement::E_Earth) return 0.5f;
 		if (ElementType == EElement::E_Lightning) return 2.0f;
 	}
-	else if (DamageEvent.DamageTypeClass == GameInstance->LightningDamage)
+	else if (DamageType == GameInstance->LightningDamage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Took lightning damage"));
 
@@ -130,12 +121,9 @@ float ABaseCharacter::GetDamageMultiplier(const FDamageEvent &DamageEvent)
 	return 1.0f;
 }
 
-void ABaseCharacter::OnNPCDeath()
+void ABaseCharacter::OnDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s died (NPC)"), *GetName());
-	GetMesh()->SetSimulatePhysics(true);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	DetachFromControllerPendingDestroy();
+
 }
 
 void ABaseCharacter::Heal(float Amount, bool bIsPassive)
@@ -327,21 +315,21 @@ void ABaseCharacter::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTran
 	SpawnedActor->FinishSpawning(SpawnTransform);
 }
 
-void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
+void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform)
 {
-	if (!ensure(Key != EOffensiveSpell::OS_None)) return;
+	if (!ensure(SpellKey != EOffensiveSpell::OS_None)) return;
 	if (!bCanUseSpell) return;
 
-	auto *Spell = GameInstance->GetOffensiveSpell(Key);
+	auto *Spell = GameInstance->GetOffensiveSpell(SpellKey);
 
-	// Spawn offensive spell
-	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
+	// Spawning offensive spell
+	auto SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = Spell->Damage;
 	SpawnedActor->CastTime = Spell->CastTime;
 	SpawnedActor->StunDuration = Spell->StunDuration;
 	SpawnedActor->DecalRadius = Spell->DecalRadius;
-	SpawnedActor->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
+	Spell->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
 	SpawnedActor->FinishSpawning(SpawnTransform);
 }
 
