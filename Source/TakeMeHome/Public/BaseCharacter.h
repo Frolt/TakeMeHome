@@ -71,7 +71,7 @@ public:
 
 	// Stunning
 	UFUNCTION(BlueprintCallable, Category = "Stun")
-	virtual void Stun(float StunDuration, bool OverrideStun = true);
+	virtual void Stun(float StunDuration);
 	UFUNCTION(BlueprintCallable, Category = "Stun")
 	void InterruptStun();
 
@@ -123,10 +123,12 @@ public:
 	float PassiveManaRegenPerSecond = 1.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanMove = true;
-	UPROPERTY(BlueprintReadWrite, Category = "Death")
-	bool bIsDead = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanUseSpell = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
+	bool bCanTakeDamage = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Death")
+	bool bIsDead = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")
 	bool bIsCasting = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")

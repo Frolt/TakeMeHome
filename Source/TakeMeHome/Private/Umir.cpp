@@ -642,25 +642,6 @@ void AUmir::OnDeath()
 	PlayDeathCamera();
 }
 
-void AUmir::Respawn()
-{
-	bCanMoveCamera = true;
-	bCanMove = true;
-	bCanZoom = true;
-	bCanBeDamaged = true;
-	bIsDead = false;
-	bCanUseSpell = true;
-	CurrentHealth = MaxHealth;
-	CurrentMana = MaxMana;
-	// TODO teleport Umir to last checkpoint/shrine
-	CameraBoom->bUsePawnControlRotation = true;
-	GetWorld()->GetFirstPlayerController()->SetInputMode(FInputModeGameOnly());
-	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-	GetMesh()->SetSimulatePhysics(false);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetActorLocation(FVector(0.0f, 0.0f, 500.0f));
-}
-
 void AUmir::EnterCastMode()
 {
 	auto PC = GetWorld()->GetFirstPlayerController();
@@ -914,7 +895,6 @@ void AUmir::StartCasting(float CastDuration)
 {
 	Super::StartCasting(CastDuration);
 
-	// Umir also needs to handle casting bar
 	CastingBarActivated();
 }
 
@@ -922,7 +902,6 @@ bool AUmir::InterruptCasting()
 {
 	bool bWasCasting = Super::InterruptCasting();
 
-	// Umir also needs to handle casting bar
 	if (bWasCasting)
 	{
 		CastingBarInterrupted();
@@ -934,13 +913,12 @@ void AUmir::CastSuccesfull()
 {
 	Super::CastSuccesfull();
 
-	// Umir also needs to handle casting bar
 	CastingBarSucceded();
 }
 
-void AUmir::Stun(float StunDuration, bool OverrideStun)
+void AUmir::Stun(float StunDuration)
 {
-	Super::Stun(StunDuration, OverrideStun);
+	Super::Stun(StunDuration);
 
 	CancelActivatedSpell();
 }

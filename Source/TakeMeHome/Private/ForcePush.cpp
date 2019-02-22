@@ -53,7 +53,7 @@ void AForcePush::PushOverlappingActors()
 			element->AddActorWorldOffset(SpellForward * PushSpeed * GetWorld()->GetDeltaSeconds());
 			if (element->IsA<ABaseCharacter>())
 			{
-				Cast<ABaseCharacter>(element)->Stun(0.5f, false);
+				Cast<ABaseCharacter>(element)->Stun(StunDuration);
 			}
 		}
 	}

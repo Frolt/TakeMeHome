@@ -32,7 +32,7 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// Find game instance
 	GameInstance = Cast<UTakeMeHomeGameInstance>(GetGameInstance());	
 
@@ -57,6 +57,7 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 {
 	// Check if dead
 	if (bIsDead) return Damage;
+	if (!bCanBeDamaged) return 0.0f;
 
 	// Interrupt lock and casting
 	if (Damage > 0.0f)
@@ -85,36 +86,26 @@ float ABaseCharacter::GetDamageMultiplier(TSubclassOf<UDamageType> DamageType)
 {
 	if (DamageType == GameInstance->FireDamage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took fire damage"));
-
 		if (ElementType == EElement::E_Fire) return 0.5f;
 		if (ElementType == EElement::E_Nature) return 2.0f;
 	}
 	else if (DamageType == GameInstance->WaterDamage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took water damage"));
-
 		if (ElementType == EElement::E_Water) return 0.5f;
 		if (ElementType == EElement::E_Fire) return 2.0f;
 	}
 	else if (DamageType == GameInstance->NatureDamage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took nature damage"));
-
 		if (ElementType == EElement::E_Nature) return 0.5f;
 		if (ElementType == EElement::E_Earth) return 2.0f;
 	}
 	else if (DamageType == GameInstance->EarthDamage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took earth damage"));
-
 		if (ElementType == EElement::E_Earth) return 0.5f;
 		if (ElementType == EElement::E_Lightning) return 2.0f;
 	}
 	else if (DamageType == GameInstance->LightningDamage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took lightning damage"));
-
 		if (ElementType == EElement::E_Lightning) return 0.5f;
 		if (ElementType == EElement::E_Water) return 2.0f;
 	}
@@ -231,16 +222,16 @@ void ABaseCharacter::LockCharacter(float LockDuration)
 	bCanMove = false;
 	bCanUseSpell = false;
 	bIsLocked = true;
-	bUseControllerRotationYaw = false;
 	GetWorldTimerManager().SetTimer(LockTimerHandle, this, &ABaseCharacter::UnlockCharacter, LockDuration);
 }
 
 void ABaseCharacter::UnlockCharacter()
 {
+	if (bIsStunned) return;
+
 	bCanMove = true;
 	bCanUseSpell = true;
 	bIsLocked = false;
-	bUseControllerRotationYaw = false;
 	GetWorldTimerManager().ClearTimer(LockTimerHandle);
 }
 
@@ -250,30 +241,27 @@ void ABaseCharacter::InterruptLock()
 	OnLockInterrupted.Broadcast();
 }
 
-void ABaseCharacter::Stun(float StunDuration, bool OverrideStun)
+void ABaseCharacter::Stun(float StunDuration)
 {
-	if (!ensureMsgf(!FMath::IsNearlyZero(StunDuration), TEXT("StunDuration: %f"), StunDuration)) return;
-
 	// Override previous stun
-	if (bIsStunned)
-	{
-		GetWorldTimerManager().ClearTimer(StunTimerHandle);
-	}
+	GetWorldTimerManager().ClearTimer(StunTimerHandle);
 
 	bIsStunned = true;
 	bCanMove = false;
 	bCanUseSpell = false;
 	GetWorldTimerManager().SetTimer(StunTimerHandle, this, &ABaseCharacter::InterruptStun, StunDuration);
+	InterruptCasting();
+	InterruptLock();
 
 	// Add stun particle
 	if (!ensure(StunParticle)) return;
-	StunParticle->ActivateSystem();
 	StunParticle->SetVisibility(true);
 }
 
 void ABaseCharacter::InterruptStun()
 {
 	if (!bIsStunned) return;
+	UE_LOG(LogTemp, Warning, TEXT("Stun"));
 
 	bIsStunned = false;
 	bCanMove = true;
@@ -282,7 +270,6 @@ void ABaseCharacter::InterruptStun()
 
 	// Remove stun particle
 	if (!ensure(StunParticle)) return;
-	StunParticle->DeactivateSystem();
 	StunParticle->SetVisibility(false);
 }
 

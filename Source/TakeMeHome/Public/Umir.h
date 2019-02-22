@@ -65,8 +65,6 @@ public:
 
 	// Death event
 	virtual void OnDeath() override;
-	UFUNCTION(BlueprintCallable, Category = "Respawn")
-	void Respawn();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Death Camera")
 	void PlayDeathCamera();
 
@@ -136,7 +134,7 @@ public:
 	virtual void StartCasting(float CastDuration) override;
 	virtual bool InterruptCasting() override;
 	virtual void CastSuccesfull() override;
-	virtual void Stun(float StunDuration, bool OverrideStun) override;
+	virtual void Stun(float StunDuration) override;
 	UFUNCTION(BlueprintPure, Category = "Casting")
 	float GetCastingPercentage() const;
 
