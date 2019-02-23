@@ -61,7 +61,9 @@ public:
 	// Decal functions
 	void MoveDecalToMouseHitLocation();
 	void RotateDecalAroundPlayer();
-	void ResetDecalSize(float Radius = 256.0f);
+	void SetDecalSize(float Size = 256.0f);
+
+	void SetDecalScale(float Y = 1.0f, float Z = 1.0f);
 
 	// Death event
 	virtual void OnDeath() override;

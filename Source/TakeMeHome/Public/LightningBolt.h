@@ -22,6 +22,7 @@ public:
 	virtual void BeginPlay() override;
 	UFUNCTION()
 	void CastingStatusChanged(bool bSucceeded);
+	void SetRotationBasedOnGround();
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell settings")
@@ -30,5 +31,6 @@ public:
 	UParticleSystem *LightningEffect = nullptr;
 
 private:
-	FVector SpawnLocation;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float WaterBallHeight = 150.0f;
 };

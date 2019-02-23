@@ -449,8 +449,6 @@ void AUmir::ActivateOffensiveSlot3()
 
 void AUmir::ActivateDefensiveSlot()
 {
-	UE_LOG(LogTemp, Warning, TEXT("activate defensive slot"));
-
 	// Check if on cooldown or spell is not bound
 	if (DefensiveSpellBound == EDefensiveSpell::DS_None) return;
 	if (!FMath::IsNearlyZero(GetDefensiveSlotCooldown())) { IsOnCooldown(); return; }
@@ -533,7 +531,9 @@ void AUmir::MoveDecalToMouseHitLocation()
 	// Get spell
 	auto Spell = GameInstance->GetOffensiveSpell(ActivatedOffensiveSpell);
 
-	ResetDecalSize(Spell->DecalRadius);
+	// Set scale and size
+	SetDecalSize(Spell->DecalRadius);
+	SetDecalScale();
 
 	// Find mouse world pos
 	FVector MouseLocation;
@@ -544,7 +544,6 @@ void AUmir::MoveDecalToMouseHitLocation()
 	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTraceDistance);
 	FHitResult HitResult;
 	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
-	
 	if (bFoundGround == false)
 	{
 		// linetrace to find ground second attempt
@@ -558,11 +557,11 @@ void AUmir::MoveDecalToMouseHitLocation()
 		}
 	}
 
+	// Take spell range into account
 	float SpellRange = Spell->Range;
 	FVector DirectionFromPlayerToHitLocation = HitResult.Location - GetActorLocation();
 	if (DirectionFromPlayerToHitLocation.Size() > SpellRange)
 	{
-		// Find new location
 		DirectionFromPlayerToHitLocation.Z = GetActorLocation().Z;
 		FVector NewDirection = DirectionFromPlayerToHitLocation.GetSafeNormal();
 		FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);
@@ -581,8 +580,6 @@ void AUmir::RotateDecalAroundPlayer()
 {
 	if (!ensure(Decal)) return;
 	if (ActivatedOffensiveSpell == EOffensiveSpell::OS_None) return;
-
-	ResetDecalSize();
 
 	// Find mouse world pos
 	FVector MouseLocation;
@@ -614,23 +611,26 @@ void AUmir::RotateDecalAroundPlayer()
 
 	Decal->SetWorldRotation(NewDecalRotation);
 	Decal->SetWorldLocation(GetActorLocation() + (DirectionFromPlayerToHitLocation * 500.0f));
-	Decal->RelativeScale3D.Y = 2.0f;
-	Decal->RelativeScale3D.Z = 0.5f;
 
+	// Set scale and size
+	SetDecalSize();
+	SetDecalScale(2.0f, 0.5f);
 }
 
-void AUmir::ResetDecalSize(float Radius)
+void AUmir::SetDecalSize(float Size /*= 256.0f*/)
 {
-	// Reset decal scale
-	Decal->RelativeScale3D.Y = 1.0f;
-	Decal->RelativeScale3D.Z = 1.0f;
-	Decal->DecalSize.Z = Radius;
-	Decal->DecalSize.Y = Radius;
+	Decal->DecalSize.Y = Size;
+	Decal->DecalSize.Z = Size;
+}
+
+void AUmir::SetDecalScale(float Y /*= 1.0f*/, float Z /*= 1.0f*/)
+{
+	Decal->RelativeScale3D.Y = Y;
+	Decal->RelativeScale3D.Z = Z;
 }
 
 void AUmir::OnDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s died (Umir)"), *GetName());
 	//GetWorld()->GetFirstPlayerController()->StartSpectatingOnly();
 	bCanMoveCamera = false;
 	bCanMove = false;

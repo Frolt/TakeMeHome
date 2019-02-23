@@ -22,9 +22,10 @@ ABaseCharacter::ABaseCharacter()
 	// Create particle systems
 	StunParticle = CreateDefaultSubobject<UParticleSystemComponent>(FName("Stun Particle"));
 	StunParticle->SetupAttachment(RootComponent);
-	StunParticle->bAutoActivate = false;
+	StunParticle->SetVisibility(false);
 	CastParticle = CreateDefaultSubobject<UParticleSystemComponent>(FName("Cast Particle"));
 	CastParticle->bAutoActivate = false;
+	CastParticle->SetVisibility(false);
 	CastParticle->SetupAttachment(RootComponent);
 
 }
