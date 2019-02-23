@@ -50,10 +50,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
 	TSubclassOf<UDamageType> WaterDamage;
 	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
-	TSubclassOf<UDamageType> EarthDamage;
-	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
-	TSubclassOf<UDamageType> LightningDamage;
-	UPROPERTY(EditDefaultsOnly, Category = "Damage Type Refs")
 	TSubclassOf<UDamageType> PhysicalDamage;
 
 	// Character particle effects
@@ -87,10 +83,6 @@ public:
 	FLinearColor WaterColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
 	FLinearColor NatureColor;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
-	FLinearColor EarthColor;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Element Colors")
-	FLinearColor LightningColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")
 	FLinearColor PoorColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Quality Colors")

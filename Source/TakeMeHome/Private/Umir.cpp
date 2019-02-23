@@ -15,7 +15,7 @@
 #include "Tornado.h"
 #include "Starfall.h"
 #include "ForcePush.h"
-#include "LightningBolt.h"
+#include "LiquidDeath.h"
 #include "Abilities.h"
 #include "OffensiveSpellBase.h"
 #include "TakeMeHomeGameInstance.h"
@@ -83,7 +83,7 @@ void AUmir::BeginPlay()
 	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Lightning_Bolt);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
 
@@ -97,13 +97,11 @@ void AUmir::BeginPlay()
 	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
 	// Add potions
-	Abilities->AddPotion(EPotion::P_Healing_Potion);
-	Abilities->AddPotion(EPotion::P_Mana_Potion);
-	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion);
-	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion);
-	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion);
-	Abilities->AddPotion(EPotion::P_Lightning_Elemental_Potion);
-	Abilities->AddPotion(EPotion::P_Earth_Elemental_Potion);
+	Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
 
 	// Add items
 	Inventory->AddItems(EItem::I_Item_1, 2);

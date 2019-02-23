@@ -98,16 +98,6 @@ float ABaseCharacter::GetDamageMultiplier(TSubclassOf<UDamageType> DamageType)
 	else if (DamageType == GameInstance->NatureDamage)
 	{
 		if (ElementType == EElement::E_Nature) return 0.5f;
-		if (ElementType == EElement::E_Earth) return 2.0f;
-	}
-	else if (DamageType == GameInstance->EarthDamage)
-	{
-		if (ElementType == EElement::E_Earth) return 0.5f;
-		if (ElementType == EElement::E_Lightning) return 2.0f;
-	}
-	else if (DamageType == GameInstance->LightningDamage)
-	{
-		if (ElementType == EElement::E_Lightning) return 0.5f;
 		if (ElementType == EElement::E_Water) return 2.0f;
 	}
 	return 1.0f;
@@ -167,7 +157,7 @@ float ABaseCharacter::GetMana() const
 
 void ABaseCharacter::StartCasting(float CastDuration)
 {
-	if (!ensureMsgf(!FMath::IsNearlyZero(CastDuration), TEXT("CastDuration: %f"), CastDuration)) return;
+	if (FMath::IsNearlyZero(CastDuration)) return;
 
 	TimeCastingBegan = GetWorld()->GetTimeSeconds();
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
@@ -218,7 +208,7 @@ void ABaseCharacter::CastSuccesfull()
 
 void ABaseCharacter::LockCharacter(float LockDuration)
 {
-	if (!ensureMsgf(!FMath::IsNearlyZero(LockDuration), TEXT("LockDuration: %f"), LockDuration)) return;
+	if (FMath::IsNearlyZero(LockDuration)) return;
 
 	bCanMove = false;
 	bCanUseSpell = false;
@@ -262,7 +252,6 @@ void ABaseCharacter::Stun(float StunDuration)
 void ABaseCharacter::InterruptStun()
 {
 	if (!bIsStunned) return;
-	UE_LOG(LogTemp, Warning, TEXT("Stun"));
 
 	bIsStunned = false;
 	bCanMove = true;

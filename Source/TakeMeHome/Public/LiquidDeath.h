@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "OffensiveSpellBase.h"
-#include "LightningBolt.generated.h"
+#include "LiquidDeath.generated.h"
 
 class USphereComponent;
 class UParticleSystem;
@@ -13,12 +13,12 @@ class UParticleSystem;
  * Striking target area with a lightning bolt after channeling is successful
  */
 UCLASS()
-class TAKEMEHOME_API ALightningBolt : public AOffensiveSpellBase
+class TAKEMEHOME_API ALiquidDeath : public AOffensiveSpellBase
 {
 	GENERATED_BODY()
-		
+	
 public:
-	ALightningBolt();
+	ALiquidDeath();
 	virtual void BeginPlay() override;
 	UFUNCTION()
 	void CastingStatusChanged(bool bSucceeded);
@@ -28,7 +28,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell settings")
 	USphereComponent *SphereCollision = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Spell setup")
-	UParticleSystem *LightningEffect = nullptr;
+	UParticleSystem *BurstParticle = nullptr;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")

@@ -16,9 +16,6 @@ void AOffensiveSpellBase::BeginPlay()
 
 	switch (ElementType)
 	{
-	case EElement::E_Neutral:
-		// TODO remove NEUTRAL condition
-		break;
 	case EElement::E_Fire:
 		DamageType = GameInstance->FireDamage;
 		break;
@@ -27,12 +24,6 @@ void AOffensiveSpellBase::BeginPlay()
 		break;
 	case EElement::E_Water:
 		DamageType = GameInstance->WaterDamage;
-		break;
-	case EElement::E_Earth:
-		DamageType = GameInstance->EarthDamage;
-		break;
-	case EElement::E_Lightning:
-		DamageType = GameInstance->LightningDamage;
 		break;
 	}
 }

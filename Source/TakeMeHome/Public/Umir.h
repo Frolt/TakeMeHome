@@ -10,10 +10,6 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-class AStarfall;
-class AForcePush;
-class ATornado;
-class ALightningBolt;
 class UAbilities;
 class AOffensiveSpellBase;
 class UUserDefinedStruct;
@@ -189,11 +185,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Death_Plant;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Vaccum;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Starfall;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Lightning_Bolt;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Liquid_Death;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionBound = EPotion::P_Healing_Potion;
 	float LastTimeActivatedDefensiveSpell = 0.0f;

@@ -36,26 +36,36 @@ void UAbilities::AddPhysical(EPhysicalAttack PhysicalAttack)
 	PhysicalAttacks.Add(*GameInstance->GetPhysicalAttack(PhysicalAttack));
 }
 
-bool UAbilities::AddPotion(EPotion Key)
+bool UAbilities::AddPotion(EPotion Potion, int32 Num /*= 1*/)
 {
-	int32 Index = Potions.IndexOfByPredicate([Key](const FPotion &A) {
-		return A.Key == Key;
+	int32 Index = Potions.IndexOfByPredicate([Potion](const FPotion &A) {
+		return A.Key == Potion;
 	});
 
 	if (Index == INDEX_NONE)
 	{
-		Potions.Add(*GameInstance->GetPotion(Key));
-		return true;
-	}
-	else
-	{
-		if (Potions[Index].Quantity < Potions[Index].MaxQuantity)
+		Potions.Add(*GameInstance->GetPotion(Potion));
+		if (Num <= Potions.Last().MaxQuantity)
 		{
-			Potions[Index].Quantity++;
+			Potions.Last().Quantity = Num;
 			return true;
 		}
 		else
 		{
+			return false;
+		}
+	}
+	else
+	{
+		auto SpaceLeft = Potions[Index].MaxQuantity - Potions[Index].Quantity;
+		if (Num <= SpaceLeft)
+		{
+			Potions[Index].Quantity += Num;
+			return true;
+		}
+		else
+		{
+			// Hud warning if Umir
 			if (auto Umir = Cast<AUmir>(GetOwner()))
 			{
 				Umir->PotionsAreFull();

@@ -114,9 +114,9 @@ public:
 	FTimerHandle StunTimerHandle;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
-	EElement ActiveElement = EElement::E_Fire;
+	EElement ActiveElement = EElement::E_Neutral;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Element")
-	EElement ElementType = EElement::E_Fire;
+	EElement ElementType = EElement::E_Neutral;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mana")

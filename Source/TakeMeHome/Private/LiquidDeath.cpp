@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "LightningBolt.h"
+#include "LiquidDeath.h"
 #include "Components/SphereComponent.h"
 #include "Public/TimerManager.h"
 #include "Engine/World.h"
@@ -13,13 +13,13 @@
 #include "Particles/ParticleSystemComponent.h"
 
 
-ALightningBolt::ALightningBolt()
+ALiquidDeath::ALiquidDeath()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 }
 
-void ALightningBolt::BeginPlay()
+void ALiquidDeath::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -30,16 +30,17 @@ void ALightningBolt::BeginPlay()
 	// Subscribe to casting status
 	if (AbilityOwner)
 	{
-		AbilityOwner->OnCastingStatusChange.AddDynamic(this, &ALightningBolt::CastingStatusChanged);
+		AbilityOwner->OnCastingStatusChange.AddDynamic(this, &ALiquidDeath::CastingStatusChanged);
 	}
 
 	// Set actor rotation perpendicular to ground normal
 	SetRotationBasedOnGround();
 }
 
-void ALightningBolt::CastingStatusChanged(bool bSucceeded)
+void ALiquidDeath::CastingStatusChanged(bool bSucceeded)
 {
 	if (!ensure(SphereCollision)) return;
+	if (!ensure(BurstParticle)) return;
 
 	if (bSucceeded)
 	{
@@ -54,13 +55,13 @@ void ALightningBolt::CastingStatusChanged(bool bSucceeded)
 		}
 
 		// Spawn particle effect
-		auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LightningEffect, GetActorLocation() + (GetActorUpVector() * WaterBallHeight));
+		auto SpawnedParticle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BurstParticle, GetActorLocation() + (GetActorUpVector() * WaterBallHeight));
 		SpawnedParticle->SetRelativeScale3D(FVector(4.0f));
 	}
 	Destroy();
 }
 
-void ALightningBolt::SetRotationBasedOnGround()
+void ALiquidDeath::SetRotationBasedOnGround()
 {
 	FVector ActorLoc = GetActorLocation();
 	FHitResult HitResult;
@@ -132,3 +133,4 @@ void ALightningBolt::SetRotationBasedOnGround()
 
 	SetActorRotation(NewRotation);
 }
+

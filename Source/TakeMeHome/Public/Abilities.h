@@ -29,7 +29,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void AddPhysical(EPhysicalAttack PhysicalAttack);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	bool AddPotion(EPotion Potion);
+	bool AddPotion(EPotion Potion, int32 Num = 1);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool RemoveDefensive(EDefensiveSpell Key);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")

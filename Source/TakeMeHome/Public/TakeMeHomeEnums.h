@@ -16,10 +16,8 @@ enum class EElement : uint8
 {
 	E_Neutral			UMETA(DisplayName = "Neutral"),
 	E_Fire 				UMETA(DisplayName = "Fire"),
-	E_Nature 			UMETA(DisplayName = "Nature"),
 	E_Water				UMETA(DisplayName = "Water"),
-	E_Earth				UMETA(DisplayName = "Earth"),
-	E_Lightning			UMETA(DisplayName = "Lightning"),
+	E_Nature 			UMETA(DisplayName = "Nature"),
 };
 
 // Character types
@@ -49,7 +47,7 @@ enum class EOffensiveSpell : uint8
 	OS_Tornado 				UMETA(DisplayName = "Tornado"),
 	OS_Starfall 			UMETA(DisplayName = "Starfall"),
 	OS_Force_Push			UMETA(DisplayName = "Force Push"),
-	OS_Lightning_Bolt		UMETA(DisplayName = "Lightning Bolt"),
+	OS_Liquid_Death			UMETA(DisplayName = "Liquid Death"),
 	OS_Vaccum				UMETA(DisplayName = "Vaccum"),
 	OS_Death_Plant			UMETA(DisplayName = "Death Plant"),
 };
