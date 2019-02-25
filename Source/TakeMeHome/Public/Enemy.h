@@ -29,4 +29,6 @@ public:
 public:
 	// Abilities
 	EPhysicalAttack MeleeAttack = EPhysicalAttack::PA_Enemy_Attack;
+	UPROPERTY(BlueprintReadOnly, Category = "Aggro")
+	bool bWasAttacked = false;
 };

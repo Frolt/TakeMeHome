@@ -5,6 +5,7 @@
 #include "TakeMeHomeGameInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/PlayerController.h"
 
 
 AEnemy::AEnemy()
@@ -27,15 +28,22 @@ void AEnemy::BeginPlay()
 
 float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
 {
-	float DamageMultiplier = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	// Check if attacked by player
+	if (EventInstigator->IsA<APlayerController>())
+	{
+		bWasAttacked = true;
+	}
+
+	// Calculate damage
+	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	float Size;
 	FLinearColor Color;
-	if (DamageMultiplier > 1.1f)
+	if (FinalDamage > Damage)
 	{
 		Size = 2.0f;
 		Color = GameInstance->SuperEffectiveColor;
 	}
-	else if (DamageMultiplier < 0.9f)
+	else if (FinalDamage < Damage)
 	{
 		Size = 0.5f;
 		Color = GameInstance->NotVeryEffectiveColor;
@@ -45,9 +53,9 @@ float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AControl
 		Size = 1.0f;
 		Color = GameInstance->NormalColor;
 	}
-	SpawnCombatText(Damage * DamageMultiplier, Size, Color);
+	SpawnCombatText(FinalDamage, Size, Color);
 
-	return Damage;
+	return FinalDamage;
 }
 
 void AEnemy::OnDeath()

@@ -63,7 +63,7 @@ public:
 
 	// Locking
 	UFUNCTION(BlueprintCallable, Category = "Lock")
-	void LockCharacter(float LockDuration);
+	void LockCharacter(float LockDuration, bool bDisableMovement = true);
 	UFUNCTION(BlueprintCallable, Category = "Lock")
 	void UnlockCharacter();
 	UFUNCTION(BlueprintCallable, Category = "Lock")

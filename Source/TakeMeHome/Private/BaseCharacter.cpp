@@ -80,7 +80,7 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 		OnDeathDelegate.Broadcast();
 	}
 
-	return DamageMultiplier;
+	return Damage * DamageMultiplier;
 }
 
 float ABaseCharacter::GetDamageMultiplier(TSubclassOf<UDamageType> DamageType)
@@ -206,11 +206,14 @@ void ABaseCharacter::CastSuccesfull()
 	CastParticle->SetVisibility(false);
 }
 
-void ABaseCharacter::LockCharacter(float LockDuration)
+void ABaseCharacter::LockCharacter(float LockDuration, bool bDisableMovement /*= true*/)
 {
 	if (FMath::IsNearlyZero(LockDuration)) return;
 
-	bCanMove = false;
+	if (bDisableMovement)
+	{
+		bCanMove = false;
+	}
 	bCanUseSpell = false;
 	bIsLocked = true;
 	GetWorldTimerManager().SetTimer(LockTimerHandle, this, &ABaseCharacter::UnlockCharacter, LockDuration);
@@ -324,6 +327,7 @@ void ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 	SpawnedActor->LockTime = PhysicalAttack->LockTime;
 	SpawnedActor->Delay = PhysicalAttack->Delay;
 	SpawnedActor->StunDuration = PhysicalAttack->StunDuration;
+	SpawnedActor->bDisableMovementWhileAttacking = PhysicalAttack->bDisableMovementWhileAttacking;
 	SpawnedActor->FinishSpawning(GetActorTransform());
 }
 

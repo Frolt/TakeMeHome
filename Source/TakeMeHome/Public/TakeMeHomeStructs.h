@@ -107,6 +107,8 @@ struct FPhysicalAttack
 	float Delay = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float StunDuration = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	bool bDisableMovementWhileAttacking = true;
 
 };
 

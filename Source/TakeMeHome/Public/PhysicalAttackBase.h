@@ -23,4 +23,6 @@ public:
 	float Delay = 0.0f;
 	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
 	float StunDuration = 0.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	bool bDisableMovementWhileAttacking = true;
 };
