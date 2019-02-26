@@ -15,6 +15,7 @@ class AOffensiveSpellBase;
 class UUserDefinedStruct;
 class UTakeMeHomeGameInstance;
 class UInventory;
+class USoundBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityUsed, bool, bWasInstaCast);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRemoveHighlight);
@@ -73,7 +74,6 @@ public:
 	bool CancelActivatedSpell();
 	UFUNCTION(BlueprintCallable, Category = "Restore")
 	void EnterCastMode();
-
 	void ResetMousePos();
 
 	// Cooldown functions
@@ -115,6 +115,8 @@ public:
 	void CastingBarInterrupted();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Casting Bar")
 	void CastingBarSucceded();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void LeavingCombat();
 
 	// Ability binding
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -135,6 +137,19 @@ public:
 	virtual void Stun(float StunDuration) override;
 	UFUNCTION(BlueprintPure, Category = "Casting")
 	float GetCastingPercentage() const;
+
+	// Combat
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void EnteredCombat();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void LeftCombat();
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void RegisterAggro();
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void DeRegisterAggro();
+	UFUNCTION(BlueprintPure, Category = "Combat")
+	bool IsInCombat();
+	virtual void PassiveRegen(float DeltaTime) override;
 
 public:
 	// Umir's components
@@ -210,6 +225,8 @@ public:
 	float BaseTurnRate = 45.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate = 45.0f;
+	UPROPERTY(BlueprintReadWrite, Category = "Aggro")
+	int32 AggroCount = 0;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")

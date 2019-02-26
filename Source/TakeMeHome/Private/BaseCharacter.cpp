@@ -46,7 +46,11 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	// Passive regen TODO check if out of combat
+	PassiveRegen(DeltaSeconds);
+}
+
+void ABaseCharacter::PassiveRegen(float DeltaSeconds)
+{
 	if (!bIsDead)
 	{
 		Heal(PassiveHealthRegenPerSecond * DeltaSeconds);
@@ -237,6 +241,8 @@ void ABaseCharacter::InterruptLock()
 
 void ABaseCharacter::Stun(float StunDuration)
 {
+	if (!ensure(!FMath::IsNearlyZero(StunDuration))) return;
+
 	// Override previous stun
 	GetWorldTimerManager().ClearTimer(StunTimerHandle);
 
@@ -250,6 +256,7 @@ void ABaseCharacter::Stun(float StunDuration)
 	// Add stun particle
 	if (!ensure(StunParticle)) return;
 	StunParticle->SetVisibility(true);
+
 }
 
 void ABaseCharacter::InterruptStun()

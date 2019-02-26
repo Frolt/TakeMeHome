@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
+#include "DrawDebugHelpers.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Tornado.h"
 #include "Starfall.h"
@@ -560,7 +561,8 @@ void AUmir::MoveDecalToMouseHitLocation()
 	FVector DirectionFromPlayerToHitLocation = HitResult.Location - GetActorLocation();
 	if (DirectionFromPlayerToHitLocation.Size() > SpellRange)
 	{
-		DirectionFromPlayerToHitLocation.Z = GetActorLocation().Z;
+		UE_LOG(LogTemp, Warning, TEXT("Hei"));
+		DirectionFromPlayerToHitLocation.Z = 0.0f;
 		FVector NewDirection = DirectionFromPlayerToHitLocation.GetSafeNormal();
 		FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);
 		FVector StartTrace(NewPos.X, NewPos.Y, NewPos.Z + MaxTraceDistance);
@@ -927,4 +929,42 @@ float AUmir::GetCastingPercentage() const
 	auto TotalCastTime = TimeCastingEnds - TimeCastingBegan;
 
 	return CurrentCastTime / TotalCastTime;
+}
+
+void AUmir::RegisterAggro()
+{
+	AggroCount++;
+	if (AggroCount == 1)
+	{
+		EnteredCombat();
+	}
+}
+
+void AUmir::DeRegisterAggro()
+{
+	AggroCount = FMath::Max(--AggroCount, 0);
+	if (AggroCount == 0)
+	{
+		LeftCombat();
+	}
+}
+
+bool AUmir::IsInCombat()
+{
+	if (AggroCount == 0)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+void AUmir::PassiveRegen(float DeltaTime)
+{
+	if (!IsInCombat())
+	{
+		Super::PassiveRegen(DeltaTime);
+	}
 }

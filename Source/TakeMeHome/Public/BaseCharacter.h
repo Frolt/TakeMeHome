@@ -27,6 +27,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void PassiveRegen(float DeltaSeconds);
+
 	// Damage
 	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
 	float GetDamageMultiplier(TSubclassOf<UDamageType> DamageType);
