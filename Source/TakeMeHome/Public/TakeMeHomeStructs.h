@@ -102,6 +102,8 @@ struct FPhysicalAttack
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Damage = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	int32 StaminaCost = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float LockTime = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float Delay = 0.0f;

@@ -534,19 +534,21 @@ void AUmir::MoveDecalToMouseHitLocation()
 	SetDecalSize(Spell->DecalRadius);
 	SetDecalScale();
 
-	// Find mouse world pos
-	FVector MouseLocation;
-	FVector MouseDirection;
-	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+	// Find screen location and direction
+	FVector MiddleScreenLocation;
+	FVector MiddleScreenDirection;
+	FVector2D ViewportMaxSize;
+	GetWorld()->GetGameViewport()->GetViewportSize(ViewportMaxSize);
+	GetWorld()->GetFirstPlayerController()->DeprojectScreenPositionToWorld(ViewportMaxSize.X / 2.0f, ViewportMaxSize.Y / 3.0f, MiddleScreenLocation, MiddleScreenDirection);
 
 	// linetrace to find ground first attempt
-	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTraceDistance);
+	FVector EndLocation = MiddleScreenLocation + (MiddleScreenDirection.GetSafeNormal() * MaxTraceDistance);
 	FHitResult HitResult;
-	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
+	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MiddleScreenLocation, EndLocation, ECC_Visibility);
 	if (bFoundGround == false)
 	{
 		// linetrace to find ground second attempt
-		FVector NewStartPos = MouseLocation + (MouseDirection * 10000.0f);
+		FVector NewStartPos = MiddleScreenLocation + (MiddleScreenDirection * 10000.0f);
 		FVector NewEndPos = FVector::UpVector * -MaxTraceDistance;
 		bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, NewStartPos, NewEndPos, ECC_Visibility);
 		if (bFoundGround == false)
@@ -581,20 +583,22 @@ void AUmir::RotateDecalAroundPlayer()
 	if (!ensure(Decal)) return;
 	if (ActivatedOffensiveSpell == EOffensiveSpell::OS_None) return;
 
-	// Find mouse world pos
-	FVector MouseLocation;
-	FVector MouseDirection;
-	GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+	// Find screen location and direction
+	FVector MiddleScreenLocation;
+	FVector MiddleScreenDirection;
+	FVector2D ViewportMaxSize;
+	GetWorld()->GetGameViewport()->GetViewportSize(ViewportMaxSize);
+	GetWorld()->GetFirstPlayerController()->DeprojectScreenPositionToWorld(ViewportMaxSize.X / 2.0f, ViewportMaxSize.Y / 3.0f, MiddleScreenLocation, MiddleScreenDirection);
 
 	// linetrace to find ground first attempt
-	FVector EndLocation = MouseLocation + (MouseDirection.GetSafeNormal() * MaxTraceDistance);
+	FVector EndLocation = MiddleScreenLocation + (MiddleScreenDirection.GetSafeNormal() * MaxTraceDistance);
 	FHitResult HitResult;
-	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MouseLocation, EndLocation, ECC_Visibility);
+	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MiddleScreenLocation, EndLocation, ECC_Visibility);
 
 	if (bFoundGround == false)
 	{
 		// linetrace to find ground second attempt
-		FVector NewStartPos = MouseLocation + (MouseDirection * 10000.0f);
+		FVector NewStartPos = MiddleScreenLocation + (MiddleScreenDirection * 10000.0f);
 		FVector NewEndPos = FVector::UpVector * -MaxTraceDistance;
 		bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, NewStartPos, NewEndPos, ECC_Visibility);
 		if (bFoundGround == false)
@@ -644,10 +648,10 @@ void AUmir::OnDeath()
 
 void AUmir::EnterCastMode()
 {
-	auto PC = GetWorld()->GetFirstPlayerController();
-	PC->SetInputMode(FInputModeGameAndUI().SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways));
-	PC->bShowMouseCursor = true;
-	bCanMoveCamera = false;
+	//auto PC = GetWorld()->GetFirstPlayerController();
+	//PC->SetInputMode(FInputModeGameAndUI().SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways));
+	//PC->bShowMouseCursor = true;
+	//bCanMoveCamera = false;
 }
 
 void AUmir::ResetMousePos()
@@ -784,6 +788,27 @@ void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
 
 	// Cancel spell
 	CancelActivatedSpell();
+}
+
+bool AUmir::UsePhysicalAttack(EPhysicalAttack Key)
+{
+	// Check for stamina
+	auto *PhysicalAttack = GameInstance->GetPhysicalAttack(Key);
+	if (CurrentStamina < PhysicalAttack->StaminaCost)
+	{
+		StaminaBarFail();
+		return false;
+	}
+
+	auto Result = Super::UsePhysicalAttack(Key);
+
+	// Handle stamina bar
+	if (bIsStaminaFull)
+	{
+		bIsStaminaFull = false;
+		OnStaminaStatusChange.Broadcast(false);
+	}
+	return Result;
 }
 
 float AUmir::GetDefensiveSlotCooldown() const
@@ -966,5 +991,16 @@ void AUmir::PassiveRegen(float DeltaTime)
 	if (!IsInCombat())
 	{
 		Super::PassiveRegen(DeltaTime);
+	}
+}
+
+void AUmir::RestoreStamina()
+{
+	Super::RestoreStamina();
+
+	if (CurrentStamina == MaxStamina && bIsStaminaFull == false)
+	{
+		bIsStaminaFull = true;
+		OnStaminaStatusChange.Broadcast(true);
 	}
 }

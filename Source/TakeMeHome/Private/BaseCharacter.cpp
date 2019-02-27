@@ -112,7 +112,7 @@ void ABaseCharacter::OnDeath()
 
 }
 
-void ABaseCharacter::Heal(float Amount, bool bIsPassive)
+void ABaseCharacter::Heal(float Amount, bool bIsPassive /*= true*/)
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount, 0.0f, MaxHealth);
 
@@ -128,7 +128,7 @@ void ABaseCharacter::DrainMana(float Amount)
 	CurrentMana = FMath::Clamp(CurrentMana - Amount, 0.0f, MaxMana);
 }
 
-void ABaseCharacter::RestoreMana(float Amount, bool bIsPassive)
+void ABaseCharacter::RestoreMana(float Amount, bool bIsPassive /*= true*/)
 {
 	CurrentMana = FMath::Clamp(CurrentMana + Amount, 0.0f, MaxMana);
 
@@ -147,6 +147,37 @@ float ABaseCharacter::GetHealthPercentage() const
 float ABaseCharacter::GetManaPercentage() const
 {
 	return CurrentMana / MaxMana;
+}
+
+bool ABaseCharacter::DrainStamina(int32 Amount)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hei"));
+
+	if (CurrentStamina >= Amount)
+	{
+		CurrentStamina -= Amount;
+		GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ABaseCharacter::RestoreStamina, StaminaRegenInterval, true);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ABaseCharacter::RestoreStamina()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hei"));
+	CurrentStamina++;
+	if (CurrentStamina == MaxStamina)
+	{
+		GetWorldTimerManager().ClearTimer(StaminaRegenTimer);
+	}
+}
+
+float ABaseCharacter::GetStaminaPercentage() const
+{
+	return static_cast<float>(CurrentStamina) / static_cast<float>(MaxStamina);
 }
 
 float ABaseCharacter::GetHealth() const
@@ -278,6 +309,7 @@ void ABaseCharacter::UsePotion(EPotion Key)
 	if (!ensure(Key != EPotion::P_None)) return;
 	if (!bCanUseSpell) return;
 
+	// Get potion
 	auto *Potion = GameInstance->GetPotion(Key);
 
 	// Spawn potion
@@ -292,9 +324,10 @@ void ABaseCharacter::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTran
 	if (!ensure(Key != EDefensiveSpell::DS_None)) return;
 	if (!bCanUseSpell) return;
 
+	// Get spell
 	auto *Spell = GameInstance->GetDefensiveSpell(Key);
 
-	// Spawn defensive spell
+	// Spawn spell
 	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<ADefensiveSpellBase>(Spell->ClassRef, SpawnTransform);
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = Spell->Damage;
@@ -307,9 +340,10 @@ void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform Spaw
 	if (!ensure(SpellKey != EOffensiveSpell::OS_None)) return;
 	if (!bCanUseSpell) return;
 
+	// Get spell
 	auto *Spell = GameInstance->GetOffensiveSpell(SpellKey);
 
-	// Spawning offensive spell
+	// Spawning spell
 	auto SpawnedActor = GetWorld()->SpawnActorDeferred<AOffensiveSpellBase>(Spell->ClassRef, SpawnTransform);
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = Spell->Damage;
@@ -320,14 +354,25 @@ void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform Spaw
 	SpawnedActor->FinishSpawning(SpawnTransform);
 }
 
-void ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
+bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 {
-	if (!ensure(Key != EPhysicalAttack::PA_None)) return;
-	if (!bCanUseSpell) return;
+	if (!ensure(Key != EPhysicalAttack::PA_None)) return false;
+	if (!bCanUseSpell) return false;
 	
+	// Get attack
 	auto *PhysicalAttack = GameInstance->GetPhysicalAttack(Key);
 
-	// Spawn physical attack
+	// Check for stamina
+	if (CurrentStamina >= PhysicalAttack->StaminaCost)
+	{
+		DrainStamina(PhysicalAttack->StaminaCost);
+	}
+	else
+	{
+		return false;
+	}
+
+	// Spawn attack
 	auto *SpawnedActor = GetWorld()->SpawnActorDeferred<APhysicalAttackBase>(PhysicalAttack->ClassRef, GetActorTransform());
 	SpawnedActor->AbilityOwner = this;
 	SpawnedActor->Damage = PhysicalAttack->Damage;
@@ -336,6 +381,8 @@ void ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 	SpawnedActor->StunDuration = PhysicalAttack->StunDuration;
 	SpawnedActor->bDisableMovementWhileAttacking = PhysicalAttack->bDisableMovementWhileAttacking;
 	SpawnedActor->FinishSpawning(GetActorTransform());
+
+	return true;
 }
 
 void ABaseCharacter::BroadcastCounterStrike()

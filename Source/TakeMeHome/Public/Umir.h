@@ -19,6 +19,7 @@ class USoundBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityUsed, bool, bWasInstaCast);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRemoveHighlight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStaminaFull, bool, bIsFull);
 
 UCLASS()
 class TAKEMEHOME_API AUmir : public ABaseCharacter
@@ -70,6 +71,7 @@ public:
 	// Using abilities
 	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
 	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform) override;
+	virtual bool UsePhysicalAttack(EPhysicalAttack Key) override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	bool CancelActivatedSpell();
 	UFUNCTION(BlueprintCallable, Category = "Restore")
@@ -98,7 +100,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
 	float GetPotionSlotCooldownPercentage() const;
 
-	// HUD functions
+	// HUD warnings
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
 	void NotEnoughMana();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")
@@ -117,6 +119,8 @@ public:
 	void CastingBarSucceded();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
 	void LeavingCombat();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Stamina")
+	void StaminaBarFail();
 
 	// Ability binding
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
@@ -149,7 +153,10 @@ public:
 	void DeRegisterAggro();
 	UFUNCTION(BlueprintPure, Category = "Combat")
 	bool IsInCombat();
+
+	// Regen
 	virtual void PassiveRegen(float DeltaTime) override;
+	virtual void RestoreStamina() override;
 
 public:
 	// Umir's components
@@ -183,6 +190,8 @@ public:
 	FOnAbilityUsed OnPotionCast;
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FOnRemoveHighlight OnRemoveHighlight;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnStaminaFull OnStaminaStatusChange;
 
 	// Timers
 	FTimerHandle ResetMouseTimer;
@@ -215,6 +224,8 @@ public:
 	// ---------------------------------------------------------------------------------------------------------
 
 public:
+	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+	bool bIsStaminaFull = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanMoveCamera = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")

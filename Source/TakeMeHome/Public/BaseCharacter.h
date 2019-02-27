@@ -49,9 +49,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mana")
 	void DrainMana(float Amount);
 	UFUNCTION(BlueprintPure, Category = "Mana")
-	float GetManaPercentage() const;
-	UFUNCTION(BlueprintPure, Category = "Mana")
 	float GetMana() const;
+	UFUNCTION(BlueprintPure, Category = "Mana")
+	float GetManaPercentage() const;
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	bool DrainStamina(int32 Amount);
+	UFUNCTION(BlueprintCallable, Category = "Stamina")
+	virtual void RestoreStamina();
+	UFUNCTION(BlueprintPure, Category = "Stamina")
+	float GetStaminaPercentage() const;
 	UFUNCTION(BlueprintImplementableEvent, Category = "Healing")
 	void SpawnHealthManaText(float Damage, float FontScale, FLinearColor Color);
 
@@ -85,7 +91,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void UsePhysicalAttack(EPhysicalAttack Key);
+	virtual bool UsePhysicalAttack(EPhysicalAttack Key);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BroadcastCounterStrike();
 
@@ -114,6 +120,7 @@ public:
 	FTimerHandle CastTimerHandle;
 	FTimerHandle LockTimerHandle;
 	FTimerHandle StunTimerHandle;
+	FTimerHandle StaminaRegenTimer;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
 	EElement ActiveElement = EElement::E_Neutral;
@@ -123,6 +130,8 @@ public:
 	float PassiveHealthRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mana")
 	float PassiveManaRegenPerSecond = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stamina")
+	float PassiveStaminaRegenPerSecond = 25.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanMove = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
@@ -147,11 +156,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float MaxHealth = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
-	float CurrentHealth;
+	float CurrentHealth = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Mana")
 	float MaxMana = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Mana")
-	float CurrentMana;
+	float CurrentMana = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	int32 MaxStamina = 3.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	int32 CurrentStamina = 3.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenInterval = 1.0f;
 	// Casting
 	float TimeCastingBegan = 0.0f;
 	float TimeCastingEnds = 0.0f;
