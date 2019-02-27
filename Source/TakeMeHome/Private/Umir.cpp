@@ -563,7 +563,6 @@ void AUmir::MoveDecalToMouseHitLocation()
 	FVector DirectionFromPlayerToHitLocation = HitResult.Location - GetActorLocation();
 	if (DirectionFromPlayerToHitLocation.Size() > SpellRange)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hei"));
 		DirectionFromPlayerToHitLocation.Z = 0.0f;
 		FVector NewDirection = DirectionFromPlayerToHitLocation.GetSafeNormal();
 		FVector NewPos = GetActorLocation() + (NewDirection * SpellRange);

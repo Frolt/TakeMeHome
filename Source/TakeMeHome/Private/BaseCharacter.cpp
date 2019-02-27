@@ -151,8 +151,6 @@ float ABaseCharacter::GetManaPercentage() const
 
 bool ABaseCharacter::DrainStamina(int32 Amount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hei"));
-
 	if (CurrentStamina >= Amount)
 	{
 		CurrentStamina -= Amount;
@@ -167,7 +165,6 @@ bool ABaseCharacter::DrainStamina(int32 Amount)
 
 void ABaseCharacter::RestoreStamina()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hei"));
 	CurrentStamina++;
 	if (CurrentStamina == MaxStamina)
 	{
