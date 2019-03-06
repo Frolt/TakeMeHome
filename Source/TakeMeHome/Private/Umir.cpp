@@ -80,29 +80,29 @@ void AUmir::BeginPlay()
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
-	// Add offensive spells
-	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
+	//// Add offensive spells
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
 
-	// Add physical attacks
-	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
-	Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
+	//// Add physical attacks
+	//Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
+	//Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
-	// Add defensive spells
-	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
-	Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
-	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
+	//// Add defensive spells
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
-	// Add potions
-	Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
+	//// Add potions
+	//Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
 
 	// Add items
 	Inventory->AddItems(EItem::I_Item_1, 2);
@@ -799,15 +799,15 @@ bool AUmir::UsePhysicalAttack(EPhysicalAttack Key)
 		return false;
 	}
 
-	auto Result = Super::UsePhysicalAttack(Key);
+	auto bDidAttack = Super::UsePhysicalAttack(Key);
 
 	// Handle stamina bar
-	if (bIsStaminaFull)
+	if (bIsStaminaFull && bDidAttack)
 	{
 		bIsStaminaFull = false;
 		OnStaminaStatusChange.Broadcast(false);
 	}
-	return Result;
+	return bDidAttack;
 }
 
 float AUmir::GetDefensiveSlotCooldown() const

@@ -48,13 +48,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spells")
 	TArray<FOffensiveSpell> OffensiveSpells;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spells")
 	TArray<FDefensiveSpell> DefensiveSpells;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spells")
 	TArray<FPhysicalAttack> PhysicalAttacks;
-	UPROPERTY(BlueprintReadOnly, Category = "Spells")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spells")
 	TArray<FPotion> Potions;
 
 };

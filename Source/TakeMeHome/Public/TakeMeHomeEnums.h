@@ -100,12 +100,26 @@ enum class EAbilityType : uint8
 UENUM(BlueprintType)
 enum class EItem : uint8
 {
-	I_None			UMETA(DisplayName = "None"),
-	I_Empty			UMETA(DisplayName = "Empty"),
-	I_Item_1		UMETA(DisplayName = "Item 1"),
-	I_Item_2		UMETA(DisplayName = "Item 2"),
-	I_Item_3		UMETA(DisplayName = "Item 3"),
-	I_Item_4		UMETA(DisplayName = "Item 4"),
+	I_None					UMETA(DisplayName = "None"),
+	I_Empty					UMETA(DisplayName = "Empty"),
+	I_Item_1				UMETA(DisplayName = "Item 1"),
+	I_Item_2				UMETA(DisplayName = "Item 2"),
+	I_Item_3				UMETA(DisplayName = "Item 3"),
+	I_Item_4				UMETA(DisplayName = "Item 4"),
+	I_Tornado				UMETA(DisplayName = "Tornado"),
+	I_Vaccum				UMETA(DisplayName = "Vaccum"),
+	I_Force_Push			UMETA(DisplayName = "Force Push"),
+	I_Liquid_Death			UMETA(DisplayName = "Liquid Death"),
+	I_Death_Plant			UMETA(DisplayName = "Death Plant"),
+	I_Starfall				UMETA(DisplayName = "Starfall"),
+	I_Spirit_Walk			UMETA(DisplayName = "Spirit Walk"),
+	I_Counter_Strike		UMETA(DisplayName = "Counter Strike"),
+	I_Star_Shield			UMETA(DisplayName = "Star Shield"),
+	I_Healing_Potion		UMETA(DisplayName = "Healing Potion"),
+	I_Mana_Potion			UMETA(DisplayName = "Mana Potion"),
+	I_Fire_Potion			UMETA(DisplayName = "Fire Potion"),
+	I_Water_Potion			UMETA(DisplayName = "Water Potion"),
+	I_Nature_Potion			UMETA(DisplayName = "Nature Potion"),
 };
 
 // Decal types

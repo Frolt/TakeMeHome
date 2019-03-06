@@ -145,6 +145,24 @@ bool UInventory::RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index)
 	return true;
 }
 
+bool UInventory::RemoveGold(int32 Amount)
+{
+	if (Gold >= Amount)
+	{
+		Gold -= Amount;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void UInventory::AddGold(int32 Amount)
+{
+	Gold += Amount;
+}
+
 void UInventory::SortByName()
 {
 	Items.Sort([](const FItem& A, const FItem& B) {

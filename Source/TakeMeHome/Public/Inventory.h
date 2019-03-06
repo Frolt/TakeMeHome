@@ -28,6 +28,10 @@ public:
 	bool RemoveItems(EItem Item, int32 Quantity);
 	UFUNCTION(BlueprintCallable, Category = "Utilities")
 	bool RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index);
+	UFUNCTION(BlueprintCallable, Category = "Gold")
+	bool RemoveGold(int32 Amount);
+	UFUNCTION(BlueprintCallable, Category = "Gold")
+	void AddGold(int32 Amount);
 
 	// Sorting
 	UFUNCTION(BlueprintCallable, Category = "Sorting")
@@ -43,11 +47,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	TArray<FItem> Items;
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings")
 	int32 InventorySize = 100;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gold")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Gold")
 	int32 Gold = 10;
 
 };

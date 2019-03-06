@@ -207,15 +207,15 @@ public:
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Starfall;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Liquid_Death;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EPotion PotionBound = EPotion::P_Healing_Potion;
+	EPotion PotionBound = EPotion::P_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
 	float LastTimeActivatedOffensiveSpell1 = 0.0f;
 	float LastTimeActivatedOffensiveSpell2 = 0.0f;

@@ -51,7 +51,6 @@ struct FOffensiveSpell
 	EDecalType DecalType = EDecalType::DT_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
-
 };
 
 USTRUCT(BlueprintType)
@@ -81,7 +80,6 @@ struct FDefensiveSpell
 	EDecalType DecalType = EDecalType::DT_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float DecalRadius;
-
 };
 
 USTRUCT(BlueprintType)
@@ -111,7 +109,6 @@ struct FPhysicalAttack
 	float StunDuration = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	bool bDisableMovementWhileAttacking = true;
-
 };
 
 USTRUCT(BlueprintType)
@@ -137,7 +134,6 @@ struct FPotion
 	float Cooldown = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float LockTime = 0.0f;
-
 };
 
 USTRUCT(BlueprintType)
@@ -163,7 +159,8 @@ struct FItem
 	EQuality Quality = EQuality::Q_Poor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TSubclassOf<AActor> ClassRef;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	bool bAutoUseWhenAttained = false;
 };
 
 // Empty class to show in editor
