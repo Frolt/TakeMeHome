@@ -207,7 +207,7 @@ public:
 	// Action bar
 	// ---------------------------------------------------------------------------------------------------------
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_None;
+	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
