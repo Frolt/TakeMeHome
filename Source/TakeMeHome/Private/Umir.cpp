@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Tornado.h"
@@ -80,29 +81,29 @@ void AUmir::BeginPlay()
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
-	//// Add offensive spells
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
-	//Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
+	// Add offensive spells
+	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
 
-	//// Add physical attacks
-	//Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
-	//Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
+	// Add physical attacks
+	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
+	Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
-	//// Add defensive spells
-	//Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
-	//Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
-	//Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
+	// Add defensive spells
+	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
-	//// Add potions
-	//Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
-	//Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
-	//Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
-	//Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
-	//Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
+	// Add potions
+	Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
+	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
 
 	// Add items
 	Inventory->AddItems(EItem::I_Item_1, 2);
@@ -118,6 +119,36 @@ void AUmir::Tick(float DeltaSeconds)
 	if (!ensure(Decal)) return;
 
 	// Activate correct decal type
+	FindDecalMode();
+
+	// Enter spell placing mode
+	TogglePlaceSpellMode();
+}
+
+void AUmir::TogglePlaceSpellMode()
+{
+	if (ActiveDecal == EDecalType::DT_Spell_Circle && bCanPlaceSpell)
+	{
+		bCanPlaceSpell = false;
+
+		// Place spell event
+		PlaceSpell();
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	}
+	else if (ActiveDecal != EDecalType::DT_Spell_Circle && !bCanPlaceSpell)
+	{
+		bCanPlaceSpell = true;
+
+		// Restore variables
+		bCanMoveCamera = true;
+		bCanPitchCamera = true;
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	}
+}
+
+void AUmir::FindDecalMode()
+{
 	switch (ActiveDecal)
 	{
 	case EDecalType::DT_None:
@@ -137,7 +168,6 @@ void AUmir::Tick(float DeltaSeconds)
 	default:
 		break;
 	}
-
 }
 
 void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -213,7 +243,7 @@ void AUmir::LookRight(float NormalizedRate)
 
 void AUmir::LookUp(float NormalizedRate)
 {
-	if (bCanMoveCamera)
+	if (bCanMoveCamera && bCanPitchCamera)
 	{
 		AddControllerPitchInput(-NormalizedRate);
 	}
@@ -535,20 +565,24 @@ void AUmir::MoveDecalToMouseHitLocation()
 	SetDecalScale();
 
 	// Find screen location and direction
-	FVector MiddleScreenLocation;
-	FVector MiddleScreenDirection;
+	FVector ScreenLocation;
+	FVector ScreenDirection;
 	FVector2D ViewportMaxSize;
 	GetWorld()->GetGameViewport()->GetViewportSize(ViewportMaxSize);
-	GetWorld()->GetFirstPlayerController()->DeprojectScreenPositionToWorld(ViewportMaxSize.X / 2.0f, ViewportMaxSize.Y / 3.0f, MiddleScreenLocation, MiddleScreenDirection);
+	FVector2D MousePos;
+	GetWorld()->GetFirstPlayerController()->GetMousePosition(MousePos.X, MousePos.Y);
+	GetWorld()->GetFirstPlayerController()->DeprojectScreenPositionToWorld(ViewportMaxSize.X / 2.0f, MousePos.Y, ScreenLocation, ScreenDirection);
+
+	GetWorld()->GetFirstPlayerController()->SetMouseLocation(ViewportMaxSize.X / 2.0f, MousePos.Y);
 
 	// linetrace to find ground first attempt
-	FVector EndLocation = MiddleScreenLocation + (MiddleScreenDirection.GetSafeNormal() * MaxTraceDistance);
+	FVector EndLocation = ScreenLocation + (ScreenDirection.GetSafeNormal() * MaxTraceDistance);
 	FHitResult HitResult;
-	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, MiddleScreenLocation, EndLocation, ECC_Visibility);
+	bool bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, ScreenLocation, EndLocation, ECC_Visibility);
 	if (bFoundGround == false)
 	{
 		// linetrace to find ground second attempt
-		FVector NewStartPos = MiddleScreenLocation + (MiddleScreenDirection * 10000.0f);
+		FVector NewStartPos = ScreenLocation + (ScreenDirection * 10000.0f);
 		FVector NewEndPos = FVector::UpVector * -MaxTraceDistance;
 		bFoundGround = GetWorld()->LineTraceSingleByChannel(HitResult, NewStartPos, NewEndPos, ECC_Visibility);
 		if (bFoundGround == false)

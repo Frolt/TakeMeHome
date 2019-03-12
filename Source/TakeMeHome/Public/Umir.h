@@ -60,8 +60,11 @@ public:
 	void MoveDecalToMouseHitLocation();
 	void RotateDecalAroundPlayer();
 	void SetDecalSize(float Size = 256.0f);
-
 	void SetDecalScale(float Y = 1.0f, float Z = 1.0f);
+	void TogglePlaceSpellMode();
+	void FindDecalMode();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Place Spell")
+	void PlaceSpell();
 
 	// Death event
 	virtual void OnDeath() override;
@@ -209,11 +212,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_None;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Liquid_Death;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_None;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Death_Plant;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_None;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Vaccum;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionBound = EPotion::P_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
@@ -228,6 +231,8 @@ public:
 	bool bIsStaminaFull = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanMoveCamera = true;
+	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
+	bool bCanPitchCamera = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Umir Controller")
 	bool bCanZoom = true;
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
@@ -247,5 +252,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Umir Controller")
 	float ZoomStrength = 50.0f;
 	bool bShouldResetMouse = false;
-
+	bool bCanPlaceSpell = true;
 };
