@@ -132,8 +132,8 @@ void AUmir::TogglePlaceSpellMode()
 		bCanPlaceSpell = false;
 
 		// Place spell event
-		PlaceSpell();
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		PlaceSpell();
 	}
 	else if (ActiveDecal != EDecalType::DT_Spell_Circle && !bCanPlaceSpell)
 	{

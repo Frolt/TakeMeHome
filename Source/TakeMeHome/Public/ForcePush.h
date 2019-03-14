@@ -21,9 +21,6 @@ public:
 	AForcePush();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION()
-	void InterruptEvent(bool bWasInterrupted);
 	void PushOverlappingActors();
 
 public:

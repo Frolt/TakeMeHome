@@ -22,8 +22,6 @@ void AForcePush::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Subscribe to casting status
-	AbilityOwner->OnCastingStatusChange.AddDynamic(this, &AForcePush::InterruptEvent);
 }
 
 void AForcePush::Tick(float DeltaTime)
@@ -31,7 +29,7 @@ void AForcePush::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Push actors inside the collision box
-	PushOverlappingActors();
+	//PushOverlappingActors();
 }
 
 void AForcePush::PushOverlappingActors()
@@ -57,9 +55,4 @@ void AForcePush::PushOverlappingActors()
 			}
 		}
 	}
-}
-
-void AForcePush::InterruptEvent(bool bWasInterrupted)
-{
-	Destroy();
 }

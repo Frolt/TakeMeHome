@@ -212,7 +212,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Liquid_Death;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Death_Plant;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
