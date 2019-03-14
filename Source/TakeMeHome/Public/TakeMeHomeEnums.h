@@ -50,6 +50,7 @@ enum class EOffensiveSpell : uint8
 	OS_Liquid_Death			UMETA(DisplayName = "Liquid Death"),
 	OS_Vaccum				UMETA(DisplayName = "Vaccum"),
 	OS_Death_Plant			UMETA(DisplayName = "Death Plant"),
+	OS_Meteor				UMETA(DisplayName = "Meteor"),
 };
 
 // Potions

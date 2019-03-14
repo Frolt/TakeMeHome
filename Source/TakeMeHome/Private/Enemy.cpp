@@ -29,9 +29,13 @@ void AEnemy::BeginPlay()
 float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
 {
 	// Check if attacked by player
-	if (EventInstigator->IsA<APlayerController>())
+
+	if (EventInstigator)
 	{
-		bWasAttacked = true;
+		if (EventInstigator->IsA<APlayerController>())
+		{
+			bWasAttacked = true;
+		}
 	}
 
 	// Calculate damage

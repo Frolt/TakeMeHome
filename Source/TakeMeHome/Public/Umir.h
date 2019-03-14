@@ -216,7 +216,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Death_Plant;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Vaccum;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Meteor;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionBound = EPotion::P_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;

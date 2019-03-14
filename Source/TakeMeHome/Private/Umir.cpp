@@ -88,6 +88,7 @@ void AUmir::BeginPlay()
 	Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
 	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
+	Abilities->AddOffensive(EOffensiveSpell::OS_Meteor);
 
 	// Add physical attacks
 	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
