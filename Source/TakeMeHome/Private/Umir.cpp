@@ -144,6 +144,8 @@ void AUmir::TogglePlaceSpellMode()
 		bCanMoveCamera = true;
 		bCanPitchCamera = true;
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+		
+		CustomTimeDilation = 1.0f;
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	}
 }
