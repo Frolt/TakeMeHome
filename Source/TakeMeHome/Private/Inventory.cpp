@@ -133,14 +133,29 @@ bool UInventory::RemoveItems(EItem Item, int32 Quantity)
 	return true;
 }
 
-bool UInventory::RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index)
+bool UInventory::RemoveItemsAtIndex(int32 Quantity, int32 Index)
 {
-	// TODO
+	// Check if possible
+	if (!Items.IsValidIndex(Index))
+	{
+		return false;
+	}
+	if (Quantity > Items[Index].Quantity)
+	{
+		return false;
+	}
 
-	// check if index is not full
-	// remove as much as possible
-	// replace with "Empty struct"
-	// call RemoveItems() to remove rest
+	// Remove items
+	if (Quantity < Items[Index].Quantity)
+	{
+		Items[Index].Quantity -= Quantity;
+	}
+
+	// Remove element
+	if (Quantity >= Items[Index].Quantity)
+	{
+		Items.RemoveAt(Index);
+	}
 
 	return true;
 }

@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Utilities")
 	bool RemoveItems(EItem Item, int32 Quantity);
 	UFUNCTION(BlueprintCallable, Category = "Utilities")
-	bool RemoveItemsAtIndex(EItem Item, int32 Quantity, int32 Index);
+	bool RemoveItemsAtIndex(int32 Quantity, int32 Index);
 	UFUNCTION(BlueprintCallable, Category = "Gold")
 	bool RemoveGold(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Gold")
