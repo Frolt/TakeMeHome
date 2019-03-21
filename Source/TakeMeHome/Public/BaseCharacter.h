@@ -27,8 +27,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void PassiveRegen(float DeltaSeconds);
-
 	// Damage
 	virtual float TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser) override;
 	float GetDamageMultiplier(TSubclassOf<UDamageType> DamageType);
@@ -38,6 +36,7 @@ public:
 	virtual void OnDeath();
 
 	// Health/Mana
+	virtual void PassiveRegen(float DeltaSeconds);
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void Heal(float Amount, bool bIsPassive = true);
 	UFUNCTION(BlueprintPure, Category = "Health")
@@ -95,6 +94,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void BroadcastCounterStrike();
 
+	// Others
+	UFUNCTION(BlueprintCallable, Category = "Active Element")
+	void ChangeActiveElement(EElement Element, float Duration);
+
+	void ResetActiveElement();
+
 public:
 	// Game instance ref (Safe to use since game instance are never destroyed)
 	UPROPERTY(BlueprintReadOnly, Category = "Game Instance")
@@ -117,10 +122,11 @@ public:
 	FOnCounterStrikeActivate OnCounterStrikeActivated;
 
 	// Timer handles
-	FTimerHandle CastTimerHandle;
-	FTimerHandle LockTimerHandle;
-	FTimerHandle StunTimerHandle;
+	FTimerHandle CastTimer;
+	FTimerHandle LockTimer;
+	FTimerHandle StunTimer;
 	FTimerHandle StaminaRegenTimer;
+	FTimerHandle ResetActiveElementTimer;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Element")
 	EElement ActiveElement = EElement::E_Neutral;
@@ -170,4 +176,6 @@ protected:
 	// Casting
 	float TimeCastingBegan = 0.0f;
 	float TimeCastingEnds = 0.0f;
+	// Other
+	float TimeActiveElementExpires = 0.0f;
 };

@@ -147,6 +147,7 @@ void AUmir::TogglePlaceSpellMode()
 		
 		CustomTimeDilation = 1.0f;
 		GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+		FinishedPlacingSpell();
 	}
 }
 
@@ -925,6 +926,11 @@ float AUmir::GetPotionSlotCooldownPercentage() const
 		return 0.0f;
 	else
 		return GetPotionSlotCooldown() / GameInstance->GetPotion(PotionBound)->Cooldown;
+}
+
+float AUmir::GetActiveElementDuration() const
+{
+	return TimeActiveElementExpires - GetWorld()->GetTimeSeconds();
 }
 
 void AUmir::BindDefensiveSpell(EDefensiveSpell DefensiveSpell)

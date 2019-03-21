@@ -134,6 +134,8 @@ struct FPotion
 	float Cooldown = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float LockTime = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	float BuffDurationInMin = 10.0f;
 };
 
 USTRUCT(BlueprintType)

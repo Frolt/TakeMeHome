@@ -65,6 +65,8 @@ public:
 	void FindDecalMode();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Place Spell")
 	void PlaceSpell();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Place Spell")
+	void FinishedPlacingSpell();
 
 	// Death event
 	virtual void OnDeath() override;
@@ -102,6 +104,8 @@ public:
 	float GetPotionSlotCooldown() const;
 	UFUNCTION(BlueprintPure, Category = "Cooldown")
 	float GetPotionSlotCooldownPercentage() const;
+	UFUNCTION(BlueprintPure, Category = "Buff Duration")
+	float GetActiveElementDuration() const;
 
 	// HUD warnings
 	UFUNCTION(BlueprintImplementableEvent, Category = "Warning")

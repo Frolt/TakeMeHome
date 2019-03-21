@@ -40,11 +40,14 @@ float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AControl
 
 	// Calculate damage
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+
+	// Combat text
 	float Size;
 	FLinearColor Color;
 	if (FinalDamage > Damage)
 	{
-		Size = 2.0f;
+		Size = 1.0f;
 		Color = GameInstance->SuperEffectiveColor;
 	}
 	else if (FinalDamage < Damage)

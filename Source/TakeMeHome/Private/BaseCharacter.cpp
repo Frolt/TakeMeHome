@@ -196,7 +196,7 @@ void ABaseCharacter::StartCasting(float CastDuration)
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
 	bIsCasting = true;
 	bCanUseSpell = false;
-	GetWorldTimerManager().SetTimer(CastTimerHandle, this, &ABaseCharacter::CastSuccesfull, CastDuration);
+	GetWorldTimerManager().SetTimer(CastTimer, this, &ABaseCharacter::CastSuccesfull, CastDuration);
 
 	// Add stun particle
 	if (!ensure(CastParticle)) return;
@@ -211,7 +211,7 @@ bool ABaseCharacter::InterruptCasting()
 		bIsCasting = false;
 		bCanUseSpell = true;
 		OnCastingStatusChange.Broadcast(false);
-		GetWorldTimerManager().ClearTimer(CastTimerHandle);
+		GetWorldTimerManager().ClearTimer(CastTimer);
 
 		// Remove stun particle
 		if (!ensure(CastParticle)) return false;
@@ -231,7 +231,7 @@ void ABaseCharacter::CastSuccesfull()
 	bIsCasting = false;
 	bCanUseSpell = true;
 	OnCastingStatusChange.Broadcast(true);
-	GetWorldTimerManager().ClearTimer(CastTimerHandle);
+	GetWorldTimerManager().ClearTimer(CastTimer);
 
 	// Remove cast particle
 	if (!ensure(CastParticle)) return;
@@ -249,7 +249,7 @@ void ABaseCharacter::LockCharacter(float LockDuration, bool bDisableMovement /*=
 	}
 	bCanUseSpell = false;
 	bIsLocked = true;
-	GetWorldTimerManager().SetTimer(LockTimerHandle, this, &ABaseCharacter::UnlockCharacter, LockDuration);
+	GetWorldTimerManager().SetTimer(LockTimer, this, &ABaseCharacter::UnlockCharacter, LockDuration);
 }
 
 void ABaseCharacter::UnlockCharacter()
@@ -259,7 +259,7 @@ void ABaseCharacter::UnlockCharacter()
 	bCanMove = true;
 	bCanUseSpell = true;
 	bIsLocked = false;
-	GetWorldTimerManager().ClearTimer(LockTimerHandle);
+	GetWorldTimerManager().ClearTimer(LockTimer);
 }
 
 void ABaseCharacter::InterruptLock()
@@ -273,12 +273,12 @@ void ABaseCharacter::Stun(float StunDuration)
 	if (!ensure(!FMath::IsNearlyZero(StunDuration))) return;
 
 	// Override previous stun
-	GetWorldTimerManager().ClearTimer(StunTimerHandle);
+	GetWorldTimerManager().ClearTimer(StunTimer);
 
 	bIsStunned = true;
 	bCanMove = false;
 	bCanUseSpell = false;
-	GetWorldTimerManager().SetTimer(StunTimerHandle, this, &ABaseCharacter::InterruptStun, StunDuration);
+	GetWorldTimerManager().SetTimer(StunTimer, this, &ABaseCharacter::InterruptStun, StunDuration);
 	InterruptCasting();
 	InterruptLock();
 
@@ -295,7 +295,7 @@ void ABaseCharacter::InterruptStun()
 	bIsStunned = false;
 	bCanMove = true;
 	bCanUseSpell = true;
-	GetWorldTimerManager().ClearTimer(StunTimerHandle);
+	GetWorldTimerManager().ClearTimer(StunTimer);
 
 	// Remove stun particle
 	if (!ensure(StunParticle)) return;
@@ -386,4 +386,18 @@ bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 void ABaseCharacter::BroadcastCounterStrike()
 {
 	OnCounterStrikeActivated.Broadcast();
+}
+
+void ABaseCharacter::ChangeActiveElement(EElement Element, float Duration)
+{
+	ActiveElement = Element;
+
+	GetWorldTimerManager().SetTimer(ResetActiveElementTimer, this, &ABaseCharacter::ResetActiveElement, Duration);
+	TimeActiveElementExpires = GetWorld()->GetTimeSeconds() + Duration;
+}
+
+void ABaseCharacter::ResetActiveElement()
+{
+	UE_LOG(LogTemp, Warning, TEXT("resetting active element!"));
+	ActiveElement = EElement::E_Neutral;
 }
