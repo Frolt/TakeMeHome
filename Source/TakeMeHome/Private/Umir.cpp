@@ -767,6 +767,10 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 	{
 		StartCasting(Spell->CastTime);
 	}
+	else
+	{
+		OnInstaCast.Broadcast();
+	}
 
 	// Disable mouse
 	GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;

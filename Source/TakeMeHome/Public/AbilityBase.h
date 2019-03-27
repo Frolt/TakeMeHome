@@ -23,4 +23,6 @@ public:
 	ABaseCharacter *AbilityOwner = nullptr;	
 	UPROPERTY(BlueprintReadWrite, Category = "Setup", meta = (ExposeOnSpawn = true))
 	UTakeMeHomeGameInstance *GameInstance = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = "Spell Properties")
+	TSubclassOf<UDamageType> DamageType;
 };

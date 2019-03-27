@@ -13,8 +13,12 @@ class UParticleSystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInterruptLockDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStunned);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTookDamage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInstaCast);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCounterStrikeActivate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCastingFinishedDelegate, bool, bWasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPhysicalAttack, bool, bWasFastAttack, bool, bAttackStarted);
 
 UCLASS()
 class TAKEMEHOME_API ABaseCharacter : public ACharacter
@@ -119,7 +123,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnInterruptLockDelegate OnLockInterrupted;
 	UPROPERTY(BlueprintAssignable)
+	FOnStunned OnStunned;
+	UPROPERTY(BlueprintAssignable)
+	FOnTookDamage OnTookDamage;
+	UPROPERTY(BlueprintAssignable)
+	FOnInstaCast OnInstaCast;
+	UPROPERTY(BlueprintAssignable)
 	FOnCounterStrikeActivate OnCounterStrikeActivated;
+	UPROPERTY(BlueprintAssignable)
+	FOnPhysicalAttack OnPhysicalAttack;
 
 	// Timer handles
 	FTimerHandle CastTimer;

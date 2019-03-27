@@ -70,11 +70,19 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 	{
 		InterruptLock();
 		InterruptCasting();
+		OnTookDamage.Broadcast();
 	}
 
 	// Take damage/heal
 	float DamageMultiplier = GetDamageMultiplier(DamageEvent.DamageTypeClass);
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage * DamageMultiplier, 0.0f, MaxHealth);
+
+	// Play hit animation
+	if (DamageEvent.DamageTypeClass == GameInstance->PhysicalDamage)
+	{
+		//OnPhysicalAttack.Broadcast()
+		// Fire hit event to animation BP
+	}
 
 	// TODO consider adding sound/particle/animation when taking damage or healing
 
@@ -265,7 +273,10 @@ void ABaseCharacter::UnlockCharacter()
 void ABaseCharacter::InterruptLock()
 {
 	UnlockCharacter();
-	OnLockInterrupted.Broadcast();
+	if (bIsLocked)
+	{
+		OnLockInterrupted.Broadcast();
+	}
 }
 
 void ABaseCharacter::Stun(float StunDuration)
@@ -281,6 +292,9 @@ void ABaseCharacter::Stun(float StunDuration)
 	GetWorldTimerManager().SetTimer(StunTimer, this, &ABaseCharacter::InterruptStun, StunDuration);
 	InterruptCasting();
 	InterruptLock();
+
+	// Fire stun event
+	OnStunned.Broadcast();
 
 	// Add stun particle
 	if (!ensure(StunParticle)) return;
@@ -379,6 +393,17 @@ bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 	SpawnedActor->StunDuration = PhysicalAttack->StunDuration;
 	SpawnedActor->bDisableMovementWhileAttacking = PhysicalAttack->bDisableMovementWhileAttacking;
 	SpawnedActor->FinishSpawning(GetActorTransform());
+
+	// Fire animation event
+	switch (Key)
+	{
+	case EPhysicalAttack::PA_Fast_Attack:
+		OnPhysicalAttack.Broadcast(true, true);
+		break;
+	case EPhysicalAttack::PA_Slow_Attack:
+		OnPhysicalAttack.Broadcast(false, true);
+		break;
+	}
 
 	return true;
 }

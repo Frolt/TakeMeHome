@@ -13,6 +13,7 @@ class TAKEMEHOME_API APhysicalAttackBase : public AAbilityBase
 	
 public:	
 	APhysicalAttackBase();
+	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spell Properties")
