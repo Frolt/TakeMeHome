@@ -70,7 +70,7 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, 
 	{
 		InterruptLock();
 		InterruptCasting();
-		OnTookDamage.Broadcast();
+		OnPhysicalDamageRecieved.Broadcast();
 	}
 
 	// Take damage/heal
@@ -398,10 +398,13 @@ bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 	switch (Key)
 	{
 	case EPhysicalAttack::PA_Fast_Attack:
-		OnPhysicalAttack.Broadcast(true, true);
+		OnPhysicalAttackStarted.Broadcast(true);
 		break;
 	case EPhysicalAttack::PA_Slow_Attack:
-		OnPhysicalAttack.Broadcast(false, true);
+		OnPhysicalAttackStarted.Broadcast(false);
+		break;
+	case EPhysicalAttack::PA_Enemy_Attack:
+		OnPhysicalAttackStarted.Broadcast(false);
 		break;
 	}
 
