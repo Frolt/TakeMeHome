@@ -196,10 +196,12 @@ float ABaseCharacter::GetMana() const
 	return CurrentMana;
 }
 
-void ABaseCharacter::StartCasting(float CastDuration)
+void ABaseCharacter::StartCasting(float CastDuration, bool bCanInterrupt /*= true*/)
 {
 	if (FMath::IsNearlyZero(CastDuration)) return;
 
+	bCanInterruptCasting = bCanInterrupt;
+	UE_LOG(LogTemp, Warning, TEXT("hei %i"), bCanInterruptCasting);
 	TimeCastingBegan = GetWorld()->GetTimeSeconds();
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
 	bIsCasting = true;
@@ -214,6 +216,10 @@ void ABaseCharacter::StartCasting(float CastDuration)
 
 bool ABaseCharacter::InterruptCasting()
 {
+	if (!bCanInterruptCasting)
+	{
+		return false;
+	}
 	if (bIsCasting)
 	{
 		bIsCasting = false;
@@ -236,6 +242,7 @@ bool ABaseCharacter::InterruptCasting()
 
 void ABaseCharacter::CastSuccesfull()
 {
+	bCanInterruptCasting = true;
 	bIsCasting = false;
 	bCanUseSpell = true;
 	OnCastingStatusChange.Broadcast(true);

@@ -962,9 +962,9 @@ void AUmir::BindPotion(EPotion Potion)
 	PotionBound = Potion;
 }
 
-void AUmir::StartCasting(float CastDuration)
+void AUmir::StartCasting(float CastDuration, bool bCanInterrupt /*= true*/)
 {
-	Super::StartCasting(CastDuration);
+	Super::StartCasting(CastDuration, bCanInterrupt);
 
 	CastingBarActivated();
 }

@@ -142,7 +142,7 @@ public:
 	void BindPotion(EPotion Potion);
 
 	// Casting/interrupt/stun
-	virtual void StartCasting(float CastDuration) override;
+	virtual void StartCasting(float CastDuration, bool bCanInterrupt = true) override;
 	virtual bool InterruptCasting() override;
 	virtual void CastSuccesfull() override;
 	virtual void Stun(float StunDuration) override;

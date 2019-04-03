@@ -66,7 +66,7 @@ public:
 
 	// Casting
 	UFUNCTION(BlueprintCallable, Category = "Casting")
-	virtual void StartCasting(float CastDuration);
+	virtual void StartCasting(float CastDuration, bool bCanInterrupt = true);
 	UFUNCTION(BlueprintCallable, Category = "Casting")
 	virtual bool InterruptCasting();
 	UFUNCTION(BlueprintCallable, Category = "Casting")
@@ -164,6 +164,8 @@ public:
 	bool bIsLocked = false;
 	UPROPERTY(BlueprintReadOnly, Category = "Restrictions")
 	bool bIsStunned = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
+	bool bCanInterruptCasting = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Counter Strike")
 	bool bCounterStrikeActive = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Direction")
