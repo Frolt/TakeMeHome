@@ -216,11 +216,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EDefensiveSpell DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_Force_Push;
+	EOffensiveSpell OffensiveSpell1Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_Death_Plant;
+	EOffensiveSpell OffensiveSpell2Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
-	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_Meteor;
+	EOffensiveSpell OffensiveSpell3Bound = EOffensiveSpell::OS_None;
 	UPROPERTY(BlueprintReadWrite, Category = "Spells")
 	EPotion PotionBound = EPotion::P_None;
 	float LastTimeActivatedDefensiveSpell = 0.0f;
