@@ -81,36 +81,36 @@ void AUmir::BeginPlay()
 	// Set camera init rotation
 	CameraBoom->SetRelativeRotation(GetControlRotation());
 
-	// Add offensive spells
-	Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
-	Abilities->AddOffensive(EOffensiveSpell::OS_Meteor);
+	//// Add offensive spells
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
+	//Abilities->AddOffensive(EOffensiveSpell::OS_Meteor);
 
 	// Add physical attacks
 	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
 	Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
 	// Add defensive spells
-	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
-	Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
 	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
-	// Add potions
-	Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
-	Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
+	//// Add potions
+	//Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Mana_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Fire_Elemental_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Nature_Elemental_Potion, 10);
+	//Abilities->AddPotion(EPotion::P_Water_Elemental_Potion, 10);
 
-	// Add items
-	Inventory->AddItems(EItem::I_Item_1, 2);
-	Inventory->AddItems(EItem::I_Item_2, 14);
-	Inventory->AddItems(EItem::I_Item_3, 35);
-	Inventory->AddItems(EItem::I_Item_4, 551);
+	//// Add items
+	//Inventory->AddItems(EItem::I_Item_1, 2);
+	//Inventory->AddItems(EItem::I_Item_2, 14);
+	//Inventory->AddItems(EItem::I_Item_3, 35);
+	//Inventory->AddItems(EItem::I_Item_4, 551);
 }
 
 void AUmir::Tick(float DeltaSeconds)
