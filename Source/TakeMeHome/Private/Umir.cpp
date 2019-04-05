@@ -75,6 +75,9 @@ void AUmir::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Load save
+	GameInstance->LoadUmir();
+
 	// Subscribe to death event
 	OnDeathDelegate.AddUniqueDynamic(this, &AUmir::OnDeath);
 
@@ -91,13 +94,13 @@ void AUmir::BeginPlay()
 	//Abilities->AddOffensive(EOffensiveSpell::OS_Meteor);
 
 	// Add physical attacks
-	Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
-	Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
+	//Abilities->AddPhysical(EPhysicalAttack::PA_Fast_Attack);
+	//Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
 	// Add defensive spells
 	//Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
 	//Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
-	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
+	//Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
 	//// Add potions
 	//Abilities->AddPotion(EPotion::P_Healing_Potion, 10);

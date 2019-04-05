@@ -1,6 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TakeMeHomeGameInstance.h"
+#include "Umir.h"
+#include "Abilities.h"
+#include "Inventory.h"
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 
 FDefensiveSpell *UTakeMeHomeGameInstance::GetDefensiveSpell(EDefensiveSpell Key)
@@ -31,4 +36,51 @@ FItem * UTakeMeHomeGameInstance::GetItem(EItem Key)
 {
 	checkf(Key != EItem::I_None, TEXT("ITEM IS NOT CREATED IN GAME INSTANCE"));
 	return Items.Find(Key);
+}
+
+void UTakeMeHomeGameInstance::SaveUmir()
+{
+	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+
+	// Action bar
+	SaveDefensiveSpellBound = Umir->DefensiveSpellBound;
+	SaveOffensiveSpell1Bound = Umir->OffensiveSpell1Bound;
+	SaveOffensiveSpell2Bound = Umir->OffensiveSpell2Bound;
+	SaveOffensiveSpell3Bound = Umir->OffensiveSpell3Bound;
+	SavePotionBound = Umir->PotionBound;
+
+	// Abilities
+	SaveDefensiveSpells = Umir->Abilities->DefensiveSpells;
+	SaveOffensiveSpells = Umir->Abilities->OffensiveSpells;
+	SavePhysicalAttacks = Umir->Abilities->PhysicalAttacks;
+	SavePotions = Umir->Abilities->Potions;
+	
+	// Inventory
+	SaveItems = Umir->Inventory->Items;
+	SaveInventorySize = Umir->Inventory->InventorySize;
+	SaveGold = Umir->Inventory->Gold;
+
+}
+
+void UTakeMeHomeGameInstance::LoadUmir()
+{
+	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+
+	// Action bar
+	Umir->DefensiveSpellBound = SaveDefensiveSpellBound;
+	Umir->OffensiveSpell1Bound = SaveOffensiveSpell1Bound;
+	Umir->OffensiveSpell2Bound = SaveOffensiveSpell2Bound;
+	Umir->OffensiveSpell3Bound = SaveOffensiveSpell3Bound;
+	Umir->PotionBound = SavePotionBound;
+
+	// Abilities
+	Umir->Abilities->DefensiveSpells = SaveDefensiveSpells;
+	Umir->Abilities->OffensiveSpells = SaveOffensiveSpells;
+	Umir->Abilities->PhysicalAttacks = SavePhysicalAttacks;
+	Umir->Abilities->Potions = SavePotions;
+
+	// Inventory
+	Umir->Inventory->Items = SaveItems;
+	Umir->Inventory->InventorySize = SaveInventorySize;
+	Umir->Inventory->Gold = SaveGold;
 }

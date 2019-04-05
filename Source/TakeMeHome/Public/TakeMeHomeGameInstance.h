@@ -26,7 +26,12 @@ public:
 	FPhysicalAttack *GetPhysicalAttack(EPhysicalAttack Key);
 	FPotion *GetPotion(EPotion Key);
 	FItem *GetItem(EItem Key);
-	
+	// Saving
+	UFUNCTION(BlueprintCallable, Category = "Saving")
+	void SaveUmir();
+	UFUNCTION(BlueprintCallable, Category = "Loading")
+	void LoadUmir();
+
 public:
 	// Abilites 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "setup")
@@ -107,4 +112,22 @@ public:
 	FLinearColor SuperEffectiveColor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage Text Colors")
 	FLinearColor HealColor;
+
+	// Save umir action bar
+	EDefensiveSpell SaveDefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
+	EOffensiveSpell SaveOffensiveSpell1Bound = EOffensiveSpell::OS_None;
+	EOffensiveSpell SaveOffensiveSpell2Bound = EOffensiveSpell::OS_None;
+	EOffensiveSpell SaveOffensiveSpell3Bound = EOffensiveSpell::OS_None;
+	EPotion SavePotionBound = EPotion::P_None;
+
+	// Save umir abilities
+	TArray<FOffensiveSpell> SaveOffensiveSpells;
+	TArray<FDefensiveSpell> SaveDefensiveSpells;
+	TArray<FPhysicalAttack> SavePhysicalAttacks;
+	TArray<FPotion> SavePotions;
+
+	// Save Umir's inventory
+	TArray<FItem> SaveItems;
+	int32 SaveInventorySize = 100;
+	int32 SaveGold = 10;
 };
