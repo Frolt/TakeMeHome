@@ -150,6 +150,8 @@ public:
 	float PassiveManaRegenPerSecond = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stamina")
 	float PassiveStaminaRegenPerSecond = 25.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Casting")
+	float CastTime = 0.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")
 	bool bCanMove = true;
 	UPROPERTY(BlueprintReadWrite, Category = "Restrictions")

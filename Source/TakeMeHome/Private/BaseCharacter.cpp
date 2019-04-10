@@ -205,6 +205,7 @@ void ABaseCharacter::StartCasting(float CastDuration, bool bCanInterrupt /*= tru
 	TimeCastingEnds = TimeCastingBegan + CastDuration;
 	bIsCasting = true;
 	bCanUseSpell = false;
+	CastTime = CastDuration;
 	GetWorldTimerManager().SetTimer(CastTimer, this, &ABaseCharacter::CastSuccesfull, CastDuration);
 
 	// Add stun particle

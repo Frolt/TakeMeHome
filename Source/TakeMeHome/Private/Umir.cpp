@@ -98,9 +98,9 @@ void AUmir::BeginPlay()
 	//Abilities->AddPhysical(EPhysicalAttack::PA_Slow_Attack);
 
 	// Add defensive spells
-	//Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
 	//Abilities->AddDefensive(EDefensiveSpell::DS_Star_Shield);
-	//Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
+	Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
 
 	//// Add potions
 	//Abilities->AddPotion(EPotion::P_Healing_Potion, 10);
