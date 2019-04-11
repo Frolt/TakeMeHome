@@ -65,6 +65,7 @@ void UTakeMeHomeGameInstance::SaveUmir()
 void UTakeMeHomeGameInstance::LoadUmir()
 {
 	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (!ensure(Umir)) return;
 
 	// Action bar
 	Umir->DefensiveSpellBound = SaveDefensiveSpellBound;
