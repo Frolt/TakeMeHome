@@ -84,3 +84,27 @@ void UTakeMeHomeGameInstance::LoadUmir()
 	Umir->Inventory->InventorySize = SaveInventorySize;
 	Umir->Inventory->Gold = SaveGold;
 }
+
+void UTakeMeHomeGameInstance::ResetUmir()
+{
+	// Action bar
+	SaveDefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
+	SaveOffensiveSpell1Bound = EOffensiveSpell::OS_None;
+	SaveOffensiveSpell2Bound = EOffensiveSpell::OS_None;
+	SaveOffensiveSpell3Bound = EOffensiveSpell::OS_None;
+	SavePotionBound = EPotion::P_None;
+
+	// Abilities
+	SaveOffensiveSpells.Empty();
+	SaveDefensiveSpells.Empty();
+	SaveDefensiveSpells.Add(*DefensiveSpells.Find(EDefensiveSpell::DS_Spirit_Walk));
+	SavePhysicalAttacks.Empty();
+	SavePotions.Empty();
+
+	// Inventory
+	SaveItems.Empty();
+	SaveInventorySize = 100;
+	SaveGold = 10;
+
+	LoadUmir();
+}

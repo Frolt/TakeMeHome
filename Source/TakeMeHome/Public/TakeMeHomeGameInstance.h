@@ -31,6 +31,8 @@ public:
 	void SaveUmir();
 	UFUNCTION(BlueprintCallable, Category = "Loading")
 	void LoadUmir();
+	UFUNCTION(BlueprintCallable, Category = "Reset")
+	void ResetUmir();
 
 public:
 	// Abilites 
