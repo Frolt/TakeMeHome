@@ -180,8 +180,8 @@ void AUmir::FindDecalMode()
 void AUmir::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AUmir::StartJumping);
-	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AUmir::StartJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Physical1/ActivatedSpell", IE_Pressed, this, &AUmir::UseFastAttackOrCastSpell);
 	PlayerInputComponent->BindAction("Physical2/CancelSpell", IE_Pressed, this, &AUmir::UseSlowAttackOrCancel);
 	PlayerInputComponent->BindAction("ActivateOffensiveSpell1", IE_Pressed, this, &AUmir::ActivateOffensiveSlot1);
