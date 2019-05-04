@@ -68,9 +68,6 @@ float AEnemy::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AControl
 void AEnemy::OnDeath()
 {
 	DetachFromControllerPendingDestroy();
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetCapsuleComponent()->SetCollisionProfileName(FName("NoCollision"));
 	DeathEvent();
 }
 

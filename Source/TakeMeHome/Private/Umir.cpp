@@ -798,6 +798,9 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 
 	// Cancel spell
 	CancelActivatedSpell();
+
+	auto Rot = FRotator(0.0f, (SpawnTransform.GetLocation() - GetActorLocation()).Rotation().Yaw, 0.0f);
+	SetActorRotation(Rot);
 }
 
 void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)
