@@ -122,6 +122,7 @@ enum class EItem : uint8
 	I_Water_Potion			UMETA(DisplayName = "Water Potion"),
 	I_Nature_Potion			UMETA(DisplayName = "Nature Potion"),
 	I_Gold					UMETA(DisplayName = "Gold"),
+	I_GodPower				UMETA(DisplayName = "God Power"),
 };
 
 // Decal types
