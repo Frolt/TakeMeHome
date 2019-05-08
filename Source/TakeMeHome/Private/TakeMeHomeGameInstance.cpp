@@ -99,6 +99,7 @@ void UTakeMeHomeGameInstance::ResetUmir()
 	SaveOffensiveSpells.Empty();
 	SaveDefensiveSpells.Empty();
 	SaveDefensiveSpells.Add(*DefensiveSpells.Find(EDefensiveSpell::DS_Spirit_Walk));
+	SaveDefensiveSpells.Add(*DefensiveSpells.Find(EDefensiveSpell::DS_Counter_Strike));
 	SavePhysicalAttacks.Empty();
 	SavePotions.Empty();
 
