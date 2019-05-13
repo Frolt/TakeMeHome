@@ -88,6 +88,9 @@ void UTakeMeHomeGameInstance::LoadUmir()
 
 void UTakeMeHomeGameInstance::ResetUmir()
 {
+	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (!ensure(Umir)) return;
+
 	// Action bar
 	SaveDefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
 	SaveOffensiveSpell1Bound = EOffensiveSpell::OS_None;
@@ -100,6 +103,7 @@ void UTakeMeHomeGameInstance::ResetUmir()
 	SaveDefensiveSpells.Empty();
 	SaveDefensiveSpells.Add(*DefensiveSpells.Find(EDefensiveSpell::DS_Spirit_Walk));
 	SaveDefensiveSpells.Add(*DefensiveSpells.Find(EDefensiveSpell::DS_Counter_Strike));
+	Umir->Abilities->bNewDefensive = true;
 	SavePhysicalAttacks.Empty();
 	SavePotions.Empty();
 

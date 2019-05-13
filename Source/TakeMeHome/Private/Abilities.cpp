@@ -23,11 +23,13 @@ void UAbilities::BeginPlay()
 
 void UAbilities::AddDefensive(EDefensiveSpell DefensiveSpell)
 {
+	bNewDefensive = true;
 	DefensiveSpells.Add(*GameInstance->GetDefensiveSpell(DefensiveSpell));
 }
 
 void UAbilities::AddOffensive(EOffensiveSpell OffensiveSpell)
 {
+	bNewOffensive = true;
 	OffensiveSpells.Add(*GameInstance->GetOffensiveSpell(OffensiveSpell));
 }
 
@@ -38,6 +40,8 @@ void UAbilities::AddPhysical(EPhysicalAttack PhysicalAttack)
 
 bool UAbilities::AddPotion(EPotion Potion, int32 Num /*= 1*/)
 {
+	bNewPotion = true;
+
 	int32 Index = Potions.IndexOfByPredicate([Potion](const FPotion &A) {
 		return A.Key == Potion;
 	});

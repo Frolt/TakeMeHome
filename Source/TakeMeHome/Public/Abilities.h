@@ -57,4 +57,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spells")
 	TArray<FPotion> Potions;
 
+	UPROPERTY(BlueprintReadWrite, Category = "New Abilities")
+	bool bNewOffensive = false;
+	UPROPERTY(BlueprintReadWrite, Category = "New Abilities")
+	bool bNewDefensive = false;
+	UPROPERTY(BlueprintReadWrite, Category = "New Abilities")
+	bool bNewPotion = false;
 };
