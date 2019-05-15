@@ -728,27 +728,27 @@ bool AUmir::CancelActivatedSpell()
 	}
 }
 
-void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
+AActor * AUmir::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform)
 {
-	if (Key == EOffensiveSpell::OS_None) return;
-	if (!bCanUseSpell) { CancelActivatedSpell(); return; }
+	if (SpellKey == EOffensiveSpell::OS_None) return nullptr;
+	if (!bCanUseSpell) { CancelActivatedSpell(); return nullptr; }
 
 	// Get offensive spell
-	auto *Spell = GameInstance->GetOffensiveSpell(Key);
+	auto *Spell = GameInstance->GetOffensiveSpell(SpellKey);
 
 	// Check for mana
 	if (CurrentMana < Spell->ManaCost)
 	{
 		NotEnoughMana();
 		CancelActivatedSpell();
-		return;
+		return nullptr;
 	}
 
 	// Check if casting is possible
 	if (Spell->CastTime > 0.1f && GetMovementComponent()->IsFalling())
 	{
 		NeedToBeOnGround();
-		return;
+		return nullptr;
 	}
 
 	// Find correct spawn location/rotation
@@ -763,7 +763,7 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 		SpawnTransform.SetRotation((-Decal->GetRightVector()).Rotation().Quaternion());
 	}
 
-	Super::UseOffensiveSpell(Key, SpawnTransform);
+	auto *SpawnedActor = Super::UseOffensiveSpell(SpellKey, SpawnTransform);
 
 	// Start casting
 	if (Spell->CastTime > 0.1f)
@@ -783,15 +783,15 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 	DrainMana(Spell->ManaCost);
 
 	// Set cooldown
-	if (Key == OffensiveSpell1Bound)
+	if (SpellKey == OffensiveSpell1Bound)
 	{
 		LastTimeActivatedOffensiveSpell1 = GetWorld()->GetTimeSeconds();
 	}
-	else if (Key == OffensiveSpell2Bound)
+	else if (SpellKey == OffensiveSpell2Bound)
 	{
 		LastTimeActivatedOffensiveSpell2 = GetWorld()->GetTimeSeconds();
 	}
-	else if (Key == OffensiveSpell3Bound)
+	else if (SpellKey == OffensiveSpell3Bound)
 	{
 		LastTimeActivatedOffensiveSpell3 = GetWorld()->GetTimeSeconds();
 	}
@@ -801,6 +801,8 @@ void AUmir::UseOffensiveSpell(EOffensiveSpell Key, FTransform SpawnTransform)
 
 	auto Rot = FRotator(0.0f, (SpawnTransform.GetLocation() - GetActorLocation()).Rotation().Yaw, 0.0f);
 	SetActorRotation(Rot);
+
+	return SpawnedActor;
 }
 
 void AUmir::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform)

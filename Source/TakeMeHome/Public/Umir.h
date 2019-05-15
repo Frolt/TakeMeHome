@@ -74,7 +74,7 @@ public:
 	void PlayDeathCamera();
 
 	// Using abilities
-	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
+	virtual AActor *UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform) override;
 	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform) override;
 	virtual bool UsePhysicalAttack(EPhysicalAttack Key) override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")

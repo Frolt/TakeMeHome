@@ -354,10 +354,10 @@ void ABaseCharacter::UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTran
 	SpawnedActor->FinishSpawning(SpawnTransform);
 }
 
-void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform)
+AActor * ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform)
 {
-	if (!ensure(SpellKey != EOffensiveSpell::OS_None)) return;
-	if (!bCanUseSpell) return;
+	if (!ensure(SpellKey != EOffensiveSpell::OS_None)) return nullptr;
+	if (!bCanUseSpell) return nullptr;
 
 	// Get spell
 	auto *Spell = GameInstance->GetOffensiveSpell(SpellKey);
@@ -371,6 +371,7 @@ void ABaseCharacter::UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform Spaw
 	SpawnedActor->DecalRadius = Spell->DecalRadius;
 	Spell->ElementType == EElement::E_Neutral ? SpawnedActor->ElementType = ActiveElement : SpawnedActor->ElementType = Spell->ElementType;
 	SpawnedActor->FinishSpawning(SpawnTransform);
+	return SpawnedActor;
 }
 
 bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)

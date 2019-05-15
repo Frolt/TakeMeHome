@@ -92,7 +92,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	virtual void UseDefensiveSpell(EDefensiveSpell Key, FTransform SpawnTransform);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	virtual void UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform);
+	virtual AActor *UseOffensiveSpell(EOffensiveSpell SpellKey, FTransform SpawnTransform);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	virtual bool UsePhysicalAttack(EPhysicalAttack Key);
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
