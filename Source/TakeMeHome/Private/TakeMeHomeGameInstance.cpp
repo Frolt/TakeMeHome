@@ -41,6 +41,7 @@ FItem * UTakeMeHomeGameInstance::GetItem(EItem Key)
 void UTakeMeHomeGameInstance::SaveUmir()
 {
 	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (!ensure(Umir)) return;
 
 	// Action bar
 	SaveDefensiveSpellBound = Umir->DefensiveSpellBound;

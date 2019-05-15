@@ -51,6 +51,10 @@ enum class EOffensiveSpell : uint8
 	OS_Vaccum				UMETA(DisplayName = "Vaccum"),
 	OS_Death_Plant			UMETA(DisplayName = "Death Plant"),
 	OS_Meteor				UMETA(DisplayName = "Meteor"),
+	OS_Jump_Attack			UMETA(DisplayName = "Jump Attack"),
+	OS_Force_Blast			UMETA(DisplayName = "Force Blast"),
+	OS_Death_Ray			UMETA(DisplayName = "Death Ray"),
+	OS_Mass_Impale			UMETA(DisplayName = "Mass Impale"),
 };
 
 // Potions
@@ -75,6 +79,7 @@ enum class EPhysicalAttack : uint8
 	PA_Fast_Attack			UMETA(DisplayName = "Fast Attack"),
 	PA_Slow_Attack			UMETA(DisplayName = "Slow Attack"),
 	PA_Enemy_Attack			UMETA(DisplayName = "Enemy Attack"),
+	PA_HW_Attack			UMETA(DisplayName = "HW Attack"),
 };
 
 // Decal types

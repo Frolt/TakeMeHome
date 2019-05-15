@@ -412,6 +412,9 @@ bool ABaseCharacter::UsePhysicalAttack(EPhysicalAttack Key)
 		break;
 	case EPhysicalAttack::PA_Enemy_Attack:
 		OnPhysicalAttackStarted.Broadcast(false);
+		break;	
+	case EPhysicalAttack::PA_HW_Attack:
+		OnPhysicalAttackStarted.Broadcast(false);
 		break;
 	}
 
