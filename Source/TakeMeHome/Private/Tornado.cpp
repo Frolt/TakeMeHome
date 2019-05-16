@@ -76,7 +76,7 @@ void ATornado::OnOverlap(UPrimitiveComponent* OverlappingComp, AActor* OtherActo
 		{
 			ActorsToIgnore.Add(OtherActor);
 			OtherActor->TakeDamage(Damage, FDamageEvent(DamageType), AbilityOwner->GetController(), this);
-			LiftPawn(Cast<ABaseCharacter>(OtherActor), LiftHeight, StunDuration, SpinRate, GroundLocation);
+			LiftPawn(Cast<ABaseCharacter>(OtherActor), LiftHeight, StunDuration, SpinRate, OtherActor->GetActorLocation());
 		}
 	}
 }

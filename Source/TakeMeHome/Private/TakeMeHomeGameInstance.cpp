@@ -126,7 +126,7 @@ void UTakeMeHomeGameInstance::GiveAllAbilities()
 	Umir->OffensiveSpell1Bound = EOffensiveSpell::OS_Death_Plant;
 	Umir->OffensiveSpell2Bound = EOffensiveSpell::OS_Meteor;
 	Umir->OffensiveSpell3Bound = EOffensiveSpell::OS_Tornado;
-	Umir->PotionBound = EPotion::P_None;
+	Umir->PotionBound = EPotion::P_Healing_Potion;
 
 	// Abilities
 	Umir->Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
