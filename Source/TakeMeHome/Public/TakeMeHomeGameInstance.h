@@ -33,6 +33,8 @@ public:
 	void LoadUmir();
 	UFUNCTION(BlueprintCallable, Category = "Reset")
 	void ResetUmir();
+	UFUNCTION(BlueprintCallable, Category = "Give All")
+	void GiveAllAbilities();
 
 public:
 	// Abilites 
