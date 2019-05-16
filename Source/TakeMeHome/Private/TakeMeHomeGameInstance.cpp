@@ -115,3 +115,32 @@ void UTakeMeHomeGameInstance::ResetUmir()
 
 	LoadUmir();
 }
+
+void UTakeMeHomeGameInstance::GiveAllAbilities()
+{
+	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	if (!ensure(Umir)) return;
+
+	// Action bar
+	Umir->DefensiveSpellBound = EDefensiveSpell::DS_Spirit_Walk;
+	Umir->OffensiveSpell1Bound = EOffensiveSpell::OS_Death_Plant;
+	Umir->OffensiveSpell2Bound = EOffensiveSpell::OS_Meteor;
+	Umir->OffensiveSpell3Bound = EOffensiveSpell::OS_Tornado;
+	Umir->PotionBound = EPotion::P_None;
+
+	// Abilities
+	Umir->Abilities->AddDefensive(EDefensiveSpell::DS_Spirit_Walk);
+	Umir->Abilities->AddDefensive(EDefensiveSpell::DS_Counter_Strike);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Death_Plant);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Liquid_Death);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Meteor);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Starfall);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Force_Push);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Tornado);
+	Umir->Abilities->AddOffensive(EOffensiveSpell::OS_Vaccum);
+
+	// Inventory
+	//Umir->Inventory->Items = SaveItems;
+	//Umir->Inventory->InventorySize = SaveInventorySize;
+	//Umir->Inventory->Gold = SaveGold;
+}

@@ -60,7 +60,6 @@ void ABaseCharacter::PassiveRegen(float DeltaSeconds)
 
 float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent &DamageEvent, AController *EventInstigator, AActor *DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("hei"));
 	// Check if dead
 	if (bIsDead) return Damage;
 	if (!bCanBeDamaged) return 0.0f;
@@ -437,6 +436,5 @@ void ABaseCharacter::ChangeActiveElement(EElement Element, float Duration)
 
 void ABaseCharacter::ResetActiveElement()
 {
-	UE_LOG(LogTemp, Warning, TEXT("resetting active element!"));
 	ActiveElement = EElement::E_Neutral;
 }

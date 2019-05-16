@@ -32,7 +32,8 @@ FGitScopedTempFile::FGitScopedTempFile(const FText& InText)
 	Filename = FPaths::CreateTempFilename(*FPaths::ProjectLogDir(), TEXT("Git-Temp"), TEXT(".txt"));
 	if(!FFileHelper::SaveStringToFile(InText.ToString(), *Filename, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM))
 	{
-		UE_LOG(LogSourceControl, Error, TEXT("Failed to write to temp file: %s"), *Filename);
+		
+		(LogSourceControl, Error, TEXT("Failed to write to temp file: %s"), *Filename);
 	}
 }
 
