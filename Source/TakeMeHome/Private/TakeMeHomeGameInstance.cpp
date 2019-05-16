@@ -89,6 +89,7 @@ void UTakeMeHomeGameInstance::LoadUmir()
 
 void UTakeMeHomeGameInstance::ResetUmir()
 {
+	UE_LOG(LogTemp, Warning, TEXT("resetUmir"));
 	auto Umir = Cast<AUmir>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 	if (!ensure(Umir)) return;
 
